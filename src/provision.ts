@@ -5,8 +5,8 @@ import { getUserAccounts } from "./account/get";
 import { Authentication } from "./auth";
 import { type TXubeAccountDevices } from "./constants";
 import { type IDeviceType } from "./device-type/device-type.interface";
-import { getDeviceTypeByDeviceId } from "./device-type/device-types/get";
 import { DeviceTypeFactory } from "./device-type/factory/device-type-factory";
+import { getDeviceTypeByDeviceId } from "./device-type/get";
 import { getAccountDevices } from "./device/get";
 import {
   fetchAndExtractDeviceVersion,
