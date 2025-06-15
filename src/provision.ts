@@ -1,5 +1,4 @@
-import { search } from "@inquirer/prompts";
-import inquirer from "inquirer";
+import { search, select } from "@inquirer/prompts";
 import { creds } from "../config";
 import { getUserAccounts } from "./account/get";
 import { Authentication } from "./auth";
@@ -33,14 +32,10 @@ async function main() {
 const promptToSelectAccount = async (
   userAccounts: string[]
 ): Promise<string> => {
-  const { account } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "account",
-      message: "Select the account the device is assigned to:",
-      choices: userAccounts,
-    },
-  ]);
+  const account: string = await select({
+    message: "Select the account the device is assigned to:",
+    choices: userAccounts,
+  });
   return account;
 };
 
@@ -63,38 +58,30 @@ const promptToSelectDevice = async (
 const promptToSelectDeviceVersion = async (
   deviceVersions: number[]
 ): Promise<number> => {
-  const { version } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "version",
-      message: "Select the device version you want to provision:",
-      choices: deviceVersions.map((version) => ({
-        name: version.toString(),
-        value: version,
-      })),
-    },
-  ]);
+  const version: number = await select({
+    message: "Select the device version you want to provision:",
+    choices: deviceVersions.map((version) => ({
+      name: version.toString(),
+      value: version,
+    })),
+  });
   return version;
 };
 
 const promptToFlashDevice = async (): Promise<boolean> => {
-  const { flashDeviceChoice } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "flashDeviceChoice",
-      message: "Do you want to flash the device?",
-      choices: [
-        {
-          name: "Yes",
-          value: true,
-        },
-        {
-          name: "No",
-          value: false,
-        },
-      ],
-    },
-  ]);
+  const flashDeviceChoice: boolean = await select({
+    message: "Do you want to flash the device?",
+    choices: [
+      {
+        name: "Yes",
+        value: true,
+      },
+      {
+        name: "No",
+        value: false,
+      },
+    ],
+  });
   return flashDeviceChoice;
 };
 
