@@ -1,11 +1,11 @@
-import { xubeSdk } from "../../constants";
-import type { Authentication } from "../../auth";
-import unzipper from "unzipper";
-import { resolve } from "path";
 import { mkdir } from "fs/promises";
 import ora from "ora";
+import { resolve } from "path";
 import { Readable } from "stream";
 import { pipeline } from "stream/promises";
+import unzipper from "unzipper";
+import type { Authentication } from "../../auth";
+import { xubeSdk } from "../../constants";
 
 export const getDeviceVersions = async (
   auth: Authentication,
@@ -58,17 +58,8 @@ export const fetchAndExtractDeviceVersion = async (
     }
     spinner.succeed(`Downloaded version ${version} for ${device}`);
 
-    if (response.headers.get("content-type") !== "application/zip") {
-      spinner.fail(
-        `File is not a zip: ${response.headers.get("content-type")}`
-      );
-      throw new Error(
-        `File is not a zip: ${response.headers.get("content-type")}`
-      );
-    }
-
     spinner.start(`Extracting version ${version} for ${device}`);
-    const bodyNodeStream = Readable.fromWeb(response.body as any);
+    const bodyNodeStream = Readable.fromWeb(response.body);
     await mkdir(extractPath, { recursive: true });
     const extractionStream = unzipper.Extract({ path: extractPath });
     await pipeline(bodyNodeStream, extractionStream);

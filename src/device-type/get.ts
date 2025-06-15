@@ -36,7 +36,7 @@ export const getDeviceTypeByDeviceId = async (
     throw new Error(`Device Model ${deviceModel.name} is not supported`);
   }
 
-  spinner.succeed(`Created device type for ${deviceModel.name}`);
+  spinner.succeed(`Turns out that ${deviceId} is a ${deviceType.type}!`);
 
   return deviceType;
 };
