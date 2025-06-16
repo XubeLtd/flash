@@ -401,6 +401,630 @@ export const XubeDataDestination = z.object({
   ]),
 });
 export type TXubeDataDestination = z.infer<typeof XubeDataDestination>;
+export const XubeDeviceRequest = z.object({ device: z.string() });
+export type TXubeDeviceRequest = z.infer<typeof XubeDeviceRequest>;
+export const XubeDevice = z.object({
+  generation: z.string(),
+  creator: z.string().optional(),
+  modelId: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  certificate: z.object({ certificateArn: z.string() }).partial().optional(),
+  name: z.string().optional(),
+  model: z.string(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+  make: z.string(),
+});
+export type TXubeDevice = z.infer<typeof XubeDevice>;
+export const XubeUpdateDeviceRequest = z.object({
+  name: z.string().optional(),
+  device: z.string(),
+});
+export type TXubeUpdateDeviceRequest = z.infer<typeof XubeUpdateDeviceRequest>;
+export const XubeStringModel = z.string();
+export type TXubeStringModel = z.infer<typeof XubeStringModel>;
+export const XubeSubscribeToDevice = z.object({
+  headers: z.record(z.string()).optional(),
+  subscriptionPath: z.string(),
+  destination: z.string(),
+  device: z.string(),
+});
+export type TXubeSubscribeToDevice = z.infer<typeof XubeSubscribeToDevice>;
+export const XubeDeviceUpdate = z.object({
+  creator: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  approval: z.object({
+    created: z.string().datetime({ offset: true }),
+    state: z.enum(["approved", "denied", "pending"]),
+    conditions: z.array(z.enum(["local", "remote"])).optional(),
+    updated: z.string().datetime({ offset: true }).optional(),
+    updater: z.string().optional(),
+  }),
+  type: z.string().min(3).optional(),
+  updater: z.string().optional(),
+  mismatch: z
+    .record(z.object({ actual: z.string(), expected: z.string() }))
+    .optional(),
+  name: z.string().optional(),
+  progress: z.record(
+    z
+      .object({
+        totalSize: z.number(),
+        lastOffset: z.number(),
+        updated: z.string(),
+      })
+      .partial()
+  ),
+  id: z.string().min(3),
+  state: z.enum([
+    "waiting_for_device_status",
+    "ready_to_send",
+    "sent",
+    "failed",
+    "in_progress",
+    "completed",
+  ]),
+  job: z.string().optional(),
+  conditions: z.array(z.enum(["local", "remote"])).optional(),
+  updated: z.string().datetime({ offset: true }).optional(),
+  device: z.string(),
+  tasks: z.array(
+    z.object({
+      a: z.enum([
+        "d",
+        "u",
+        "upd",
+        "r",
+        "cdr",
+        "z",
+        "a",
+        "s",
+        "b",
+        "e",
+        "k",
+        "x",
+        "crash",
+        "t",
+      ]),
+      tries: z.number().optional(),
+      topics: z.record(z.string()).optional(),
+      ctx: z.record(z.object({}).partial().passthrough()).optional(),
+      timeout: z.number().optional(),
+    })
+  ),
+});
+export type TXubeDeviceUpdate = z.infer<typeof XubeDeviceUpdate>;
+export const XubeDeleteSubscriptionRequest = z.boolean();
+export type TXubeDeleteSubscriptionRequest = z.infer<
+  typeof XubeDeleteSubscriptionRequest
+>;
+export const XubeSubscribeToAccountDevicesRequest = z.object({
+  headers: z.record(z.string()).optional(),
+  subscriptionPath: z.string(),
+  destination: z.string(),
+  account: z.string(),
+});
+export type TXubeSubscribeToAccountDevicesRequest = z.infer<
+  typeof XubeSubscribeToAccountDevicesRequest
+>;
+export const XubeJobResponse = z.object({ job: z.string() });
+export type TXubeJobResponse = z.infer<typeof XubeJobResponse>;
+export const XubeDeviceStatus = z.object({
+  connectivity: z
+    .object({
+      wifi: z.object({
+        signalStrength: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        ssid: z.string().optional(),
+      }),
+      cellular: z.object({
+        signalStrength: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+      }),
+      eth: z.object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        mac: z.string().optional(),
+      }),
+      platform: z.object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+      }),
+    })
+    .partial(),
+  engine: z
+    .object({
+      state: z.enum(["running", "stopped", "error", "unknown"]),
+      updated: z.string(),
+    })
+    .optional(),
+  temperature: z
+    .object({
+      state: z.enum([
+        "disabled",
+        "pending",
+        "unknown",
+        "error",
+        "warning",
+        "healthy",
+      ]),
+      message: z.string().optional(),
+      updated: z.string(),
+      value: z.number(),
+    })
+    .optional(),
+  availability: z
+    .object({
+      state: z.enum(["online", "offline", "unknown"]),
+      updated: z.string(),
+    })
+    .optional(),
+  power: z.object({
+    auxiliary: z
+      .object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        voltage: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    usb: z
+      .object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        voltage: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    solar: z
+      .object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        voltage: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    source: z.object({
+      currentSource: z.object({
+        state: z.enum([
+          "disabled",
+          "pending",
+          "unknown",
+          "error",
+          "warning",
+          "healthy",
+        ]),
+        message: z.string().optional(),
+        updated: z.string(),
+        value: z.enum([
+          "battery",
+          "usb",
+          "solar",
+          "auxiliary",
+          "noSource",
+          "unknownSource",
+        ]),
+      }),
+    }),
+    battery: z
+      .object({
+        charge: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.number(),
+        }),
+        temperature: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number(),
+          })
+          .optional(),
+        chargingState: z.enum(["charging", "notCharging", "unknown"]),
+      })
+      .optional(),
+  }),
+  timestamp: z.string(),
+});
+export type TXubeDeviceStatus = z.infer<typeof XubeDeviceStatus>;
+export const XubeSetUpdateApprovalRequest = z.object({
+  approval: z.enum(["approved", "denied", "pending"]),
+  conditions: z.array(z.enum(["local", "remote"])).optional(),
+  device: z.string(),
+});
+export type TXubeSetUpdateApprovalRequest = z.infer<
+  typeof XubeSetUpdateApprovalRequest
+>;
+export const XubeGetLatestDeviceVersionRequest = z.object({
+  device: z.string(),
+});
+export type TXubeGetLatestDeviceVersionRequest = z.infer<
+  typeof XubeGetLatestDeviceVersionRequest
+>;
+export const XubeFirmwareRequest = z.union([
+  z.object({
+    device: z.string(),
+    version: z.union([z.literal("current"), z.literal("expected")]),
+  }),
+  z.object({ version: z.string() }),
+  z.object({}).partial(),
+]);
+export type TXubeFirmwareRequest = z.infer<typeof XubeFirmwareRequest>;
+export const XubeFirmwares = z.array(
+  z.object({
+    creator: z.string().optional(),
+    created: z.string().datetime({ offset: true }).optional(),
+    forceUpdate: z.boolean().optional(),
+    type: z.string().min(3).optional(),
+    version: z.string(),
+    versionDescriptions: z.record(z.array(z.string())).optional(),
+    partition: z.string().optional(),
+    size: z.number().optional(),
+    checksum: z.number().optional(),
+    name: z.string().optional(),
+    id: z.string().min(3),
+    compatibility: z.array(
+      z.object({
+        bootloader: z
+          .object({ min: z.string(), max: z.string().optional() })
+          .optional(),
+        firmware: z
+          .object({ min: z.string(), max: z.string().optional() })
+          .optional(),
+        hardware: z.object({
+          generation: z
+            .object({ min: z.string(), max: z.string().optional() })
+            .optional(),
+          model: z.string(),
+          make: z.string(),
+        }),
+      })
+    ),
+    key: z.string(),
+  })
+);
+export type TXubeFirmwares = z.infer<typeof XubeFirmwares>;
+export const XubeSetFirmwareVersionsRequest = z.object({
+  devices: z.array(z.string()),
+  firmwareVersion: z.string(),
+});
+export type TXubeSetFirmwareVersionsRequest = z.infer<
+  typeof XubeSetFirmwareVersionsRequest
+>;
+export const XubeGetDeviceLocationRequest = z.object({ device: z.string() });
+export type TXubeGetDeviceLocationRequest = z.infer<
+  typeof XubeGetDeviceLocationRequest
+>;
+export const XubeDeviceLocation = z.object({
+  creator: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  latitude: z.number(),
+  name: z.string().optional(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+  deviceId: z.string(),
+  updated: z.string().datetime({ offset: true }).optional(),
+  longitude: z.number(),
+  updater: z.string().optional(),
+});
+export type TXubeDeviceLocation = z.infer<typeof XubeDeviceLocation>;
+export const XubeSetDeviceLocationRequest = z.object({
+  latitude: z.number().gte(-90).lte(90),
+  device: z.string(),
+  longitude: z.number().gte(-180).lte(180),
+});
+export type TXubeSetDeviceLocationRequest = z.infer<
+  typeof XubeSetDeviceLocationRequest
+>;
+export const XubeSuccessModel = z.object({ success: z.boolean() });
+export type TXubeSuccessModel = z.infer<typeof XubeSuccessModel>;
+export const XubeClearDeviceLocationRequest = z.object({ device: z.string() });
+export type TXubeClearDeviceLocationRequest = z.infer<
+  typeof XubeClearDeviceLocationRequest
+>;
+export const XubeGetDeviceVersionsRequest = z.object({ device: z.string() });
+export type TXubeGetDeviceVersionsRequest = z.infer<
+  typeof XubeGetDeviceVersionsRequest
+>;
+export const XubeGetDeviceVersionsResponse = z.object({
+  versions: z.array(z.number()),
+});
+export type TXubeGetDeviceVersionsResponse = z.infer<
+  typeof XubeGetDeviceVersionsResponse
+>;
+export const XubeGetDevicesRequestModelName = z.object({
+  devices: z.array(z.string()),
+});
+export type TXubeGetDevicesRequestModelName = z.infer<
+  typeof XubeGetDevicesRequestModelName
+>;
+export const XubeDeviceModel = z.object({
+  generation: z.string(),
+  creator: z.string().optional(),
+  created: z.string().datetime({ offset: true }),
+  name: z.string(),
+  model: z.string(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+  updates: z
+    .object({
+      config: z
+        .object({ conditions: z.array(z.enum(["local", "remote"])) })
+        .partial(),
+      firmware: z
+        .object({ conditions: z.array(z.enum(["local", "remote"])) })
+        .partial(),
+    })
+    .partial()
+    .optional(),
+  make: z.string(),
+  config: z
+    .object({
+      schema: z.record(z.object({}).partial().passthrough()),
+      properties: z.array(
+        z.object({
+          readable: z.boolean().optional(),
+          format: z.enum(["WIFI_CREDENTIALS", "GENERAL"]).optional(),
+          label: z.string(),
+          value: z.string().optional(),
+          validation: z.record(z.object({}).partial().passthrough()).optional(),
+          writable: z.boolean().optional(),
+        })
+      ),
+    })
+    .partial()
+    .optional(),
+});
+export type TXubeDeviceModel = z.infer<typeof XubeDeviceModel>;
+export const XubeSetFirmwareVersionRequest = z.object({
+  firmwareVersion: z.string(),
+  device: z.string(),
+});
+export type TXubeSetFirmwareVersionRequest = z.infer<
+  typeof XubeSetFirmwareVersionRequest
+>;
+export const XubeResetConnectedDevicesRequest = z.object({
+  duration: z.number().gte(0).lte(10000).optional(),
+  device: z.string(),
+  targets: z.array(z.enum(["others", "all"])).min(1),
+});
+export type TXubeResetConnectedDevicesRequest = z.infer<
+  typeof XubeResetConnectedDevicesRequest
+>;
+export const XubeSetDeviceUpdateRequest = z.object({
+  mismatch: z
+    .record(
+      z.object({
+        actual: z.object({ cv: z.number(), v: z.number() }),
+        expected: z.object({ cv: z.number(), v: z.number() }),
+      })
+    )
+    .optional(),
+  progress: z
+    .record(
+      z
+        .object({
+          totalSize: z.number(),
+          lastOffset: z.number(),
+          updated: z.string(),
+        })
+        .partial()
+    )
+    .optional(),
+  state: z
+    .enum([
+      "waiting_for_device_status",
+      "ready_to_send",
+      "sent",
+      "failed",
+      "in_progress",
+      "completed",
+    ])
+    .optional(),
+  device: z.string(),
+});
+export type TXubeSetDeviceUpdateRequest = z.infer<
+  typeof XubeSetDeviceUpdateRequest
+>;
+export const XubeDevicesModelName = z.array(
+  z
+    .object({
+      generation: z.string(),
+      creator: z.string().optional(),
+      modelId: z.string().optional(),
+      created: z.string().datetime({ offset: true }).optional(),
+      certificate: z
+        .object({ certificateArn: z.string() })
+        .partial()
+        .optional(),
+      name: z.string().optional(),
+      model: z.string(),
+      id: z.string().min(3),
+      type: z.string().min(3).optional(),
+      make: z.string(),
+    })
+    .passthrough()
+);
+export type TXubeDevicesModelName = z.infer<typeof XubeDevicesModelName>;
+export const XubeVersionResponse = z.object({ version: z.string() });
+export type TXubeVersionResponse = z.infer<typeof XubeVersionResponse>;
+export const XubeGetDeviceFilesUploadUrlRequest = z.object({
+  device: z.string(),
+});
+export type TXubeGetDeviceFilesUploadUrlRequest = z.infer<
+  typeof XubeGetDeviceFilesUploadUrlRequest
+>;
+export const XubeSubscribeToDevicesStatusRequest = z.object({
+  headers: z.record(z.string()).optional(),
+  subscriptionPath: z.string(),
+  devices: z.array(z.string()),
+  destination: z.string(),
+});
+export type TXubeSubscribeToDevicesStatusRequest = z.infer<
+  typeof XubeSubscribeToDevicesStatusRequest
+>;
 export const XubeGetDeviceLatestActivationStatusRequest = z.object({
   device: z.string(),
   account: z.string(),
@@ -432,10 +1056,6 @@ export const XubeSetDeviceActivationStatusRequest = z.object({
 export type TXubeSetDeviceActivationStatusRequest = z.infer<
   typeof XubeSetDeviceActivationStatusRequest
 >;
-export const XubeSuccessModel = z.object({ success: z.boolean() });
-export type TXubeSuccessModel = z.infer<typeof XubeSuccessModel>;
-export const XubeDeviceRequest = z.object({ device: z.string() });
-export type TXubeDeviceRequest = z.infer<typeof XubeDeviceRequest>;
 export const XubeGetDeviceFilesResponse = z
   .object({
     current: z.object({
@@ -861,29 +1481,6 @@ export const XubeGetDeviceFilesResponse = z
 export type TXubeGetDeviceFilesResponse = z.infer<
   typeof XubeGetDeviceFilesResponse
 >;
-export const XubeDevice = z.object({
-  generation: z.string(),
-  partitions: z
-    .object({ firmware: z.array(z.string()) })
-    .partial()
-    .optional(),
-  creator: z.string().optional(),
-  modelId: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
-  certificate: z.object({ certificateArn: z.string() }).partial().optional(),
-  name: z.string().optional(),
-  model: z.string(),
-  id: z.string().min(3),
-  type: z.string().min(3).optional(),
-  make: z.string(),
-  version: z.string().optional(),
-});
-export type TXubeDevice = z.infer<typeof XubeDevice>;
-export const XubeUpdateDeviceRequest = z.object({
-  name: z.string().optional(),
-  device: z.string(),
-});
-export type TXubeUpdateDeviceRequest = z.infer<typeof XubeUpdateDeviceRequest>;
 export const XubeGetDeviceModelsRequest = z.object({}).partial();
 export type TXubeGetDeviceModelsRequest = z.infer<
   typeof XubeGetDeviceModelsRequest
@@ -891,104 +1488,46 @@ export type TXubeGetDeviceModelsRequest = z.infer<
 export const XubeGetDeviceModelsResponse = z.array(
   z.object({
     generation: z.string(),
-    partitions: z
-      .object({ firmware: z.array(z.string()) })
-      .partial()
-      .optional(),
     creator: z.string().optional(),
     created: z.string().datetime({ offset: true }),
     name: z.string(),
     model: z.string(),
     id: z.string().min(3),
     type: z.string().min(3).optional(),
+    updates: z
+      .object({
+        config: z
+          .object({ conditions: z.array(z.enum(["local", "remote"])) })
+          .partial(),
+        firmware: z
+          .object({ conditions: z.array(z.enum(["local", "remote"])) })
+          .partial(),
+      })
+      .partial()
+      .optional(),
     make: z.string(),
-    version: z.string().optional(),
+    config: z
+      .object({
+        schema: z.record(z.object({}).partial().passthrough()),
+        properties: z.array(
+          z.object({
+            readable: z.boolean().optional(),
+            format: z.enum(["WIFI_CREDENTIALS", "GENERAL"]).optional(),
+            label: z.string(),
+            value: z.string().optional(),
+            validation: z
+              .record(z.object({}).partial().passthrough())
+              .optional(),
+            writable: z.boolean().optional(),
+          })
+        ),
+      })
+      .partial()
+      .optional(),
   })
 );
 export type TXubeGetDeviceModelsResponse = z.infer<
   typeof XubeGetDeviceModelsResponse
->;
-export const XubeStringModel = z.string();
-export type TXubeStringModel = z.infer<typeof XubeStringModel>;
-export const XubeSubscribeToDevice = z.object({
-  headers: z.record(z.string()).optional(),
-  subscriptionPath: z.string(),
-  destination: z.string(),
-  device: z.string(),
-});
-export type TXubeSubscribeToDevice = z.infer<typeof XubeSubscribeToDevice>;
-export const XubeDeviceUpdate = z.object({
-  creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
-  approval: z.object({
-    created: z.string().datetime({ offset: true }),
-    state: z.enum(["approved", "denied", "pending"]),
-    conditions: z.array(z.enum(["local", "remote"])).optional(),
-    updated: z.string().datetime({ offset: true }).optional(),
-    updater: z.string().optional(),
-  }),
-  type: z.string().min(3).optional(),
-  updater: z.string().optional(),
-  name: z.string().optional(),
-  progress: z.record(
-    z
-      .object({
-        totalSize: z.number(),
-        lastOffset: z.number(),
-        updated: z.string(),
-      })
-      .partial()
-  ),
-  id: z.string().min(3),
-  state: z.enum([
-    "waiting_for_device_status",
-    "ready_to_send",
-    "sent",
-    "failed",
-    "in_progress",
-    "completed",
-  ]),
-  job: z.string().optional(),
-  conditions: z.array(z.enum(["local", "remote"])).optional(),
-  updated: z.string().datetime({ offset: true }).optional(),
-  device: z.string(),
-  tasks: z.array(
-    z.object({
-      a: z.enum([
-        "d",
-        "u",
-        "r",
-        "cdr",
-        "z",
-        "a",
-        "s",
-        "b",
-        "e",
-        "k",
-        "x",
-        "crash",
-        "t",
-      ]),
-      tries: z.number().optional(),
-      topics: z.record(z.string()).optional(),
-      ctx: z.record(z.object({}).partial().passthrough()).optional(),
-      timeout: z.number().optional(),
-    })
-  ),
-});
-export type TXubeDeviceUpdate = z.infer<typeof XubeDeviceUpdate>;
-export const XubeDeleteSubscriptionRequest = z.boolean();
-export type TXubeDeleteSubscriptionRequest = z.infer<
-  typeof XubeDeleteSubscriptionRequest
->;
-export const XubeSubscribeToAccountDevicesRequest = z.object({
-  headers: z.record(z.string()).optional(),
-  subscriptionPath: z.string(),
-  destination: z.string(),
-  account: z.string(),
-});
-export type TXubeSubscribeToAccountDevicesRequest = z.infer<
-  typeof XubeSubscribeToAccountDevicesRequest
 >;
 export const XubeSubscribeToDevicesRequestModelName = z.object({
   headers: z.record(z.string()).optional(),
@@ -998,296 +1537,6 @@ export const XubeSubscribeToDevicesRequestModelName = z.object({
 });
 export type TXubeSubscribeToDevicesRequestModelName = z.infer<
   typeof XubeSubscribeToDevicesRequestModelName
->;
-export const XubeJobResponse = z.object({ job: z.string() });
-export type TXubeJobResponse = z.infer<typeof XubeJobResponse>;
-export const XubeDeviceStatus = z.object({
-  connectivity: z
-    .object({
-      wifi: z.object({
-        signalStrength: z
-          .object({
-            state: z.enum([
-              "disabled",
-              "pending",
-              "unknown",
-              "error",
-              "warning",
-              "healthy",
-            ]),
-            message: z.string().optional(),
-            updated: z.string(),
-            value: z.number().optional(),
-          })
-          .optional(),
-        connection: z.object({
-          state: z.enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ]),
-          message: z.string().optional(),
-          updated: z.string(),
-          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
-        }),
-        ssid: z.string().optional(),
-      }),
-      cellular: z.object({
-        signalStrength: z
-          .object({
-            state: z.enum([
-              "disabled",
-              "pending",
-              "unknown",
-              "error",
-              "warning",
-              "healthy",
-            ]),
-            message: z.string().optional(),
-            updated: z.string(),
-            value: z.number().optional(),
-          })
-          .optional(),
-        connection: z.object({
-          state: z.enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ]),
-          message: z.string().optional(),
-          updated: z.string(),
-          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
-        }),
-      }),
-      eth: z.object({
-        connection: z.object({
-          state: z.enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ]),
-          message: z.string().optional(),
-          updated: z.string(),
-          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
-        }),
-        mac: z.string().optional(),
-      }),
-      platform: z.object({
-        connection: z.object({
-          state: z.enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ]),
-          message: z.string().optional(),
-          updated: z.string(),
-          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
-        }),
-      }),
-    })
-    .partial(),
-  engine: z
-    .object({
-      state: z.enum(["running", "stopped", "error", "unknown"]),
-      updated: z.string(),
-    })
-    .optional(),
-  temperature: z
-    .object({
-      state: z.enum([
-        "disabled",
-        "pending",
-        "unknown",
-        "error",
-        "warning",
-        "healthy",
-      ]),
-      message: z.string().optional(),
-      updated: z.string(),
-      value: z.number(),
-    })
-    .optional(),
-  availability: z
-    .object({
-      state: z.enum(["online", "offline", "unknown"]),
-      updated: z.string(),
-    })
-    .optional(),
-  power: z.object({
-    auxiliary: z
-      .object({
-        connection: z.object({
-          state: z.enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ]),
-          message: z.string().optional(),
-          updated: z.string(),
-          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
-        }),
-        voltage: z
-          .object({
-            state: z.enum([
-              "disabled",
-              "pending",
-              "unknown",
-              "error",
-              "warning",
-              "healthy",
-            ]),
-            message: z.string().optional(),
-            updated: z.string(),
-            value: z.number().optional(),
-          })
-          .optional(),
-      })
-      .optional(),
-    usb: z
-      .object({
-        connection: z.object({
-          state: z.enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ]),
-          message: z.string().optional(),
-          updated: z.string(),
-          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
-        }),
-        voltage: z
-          .object({
-            state: z.enum([
-              "disabled",
-              "pending",
-              "unknown",
-              "error",
-              "warning",
-              "healthy",
-            ]),
-            message: z.string().optional(),
-            updated: z.string(),
-            value: z.number().optional(),
-          })
-          .optional(),
-      })
-      .optional(),
-    solar: z
-      .object({
-        connection: z.object({
-          state: z.enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ]),
-          message: z.string().optional(),
-          updated: z.string(),
-          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
-        }),
-        voltage: z
-          .object({
-            state: z.enum([
-              "disabled",
-              "pending",
-              "unknown",
-              "error",
-              "warning",
-              "healthy",
-            ]),
-            message: z.string().optional(),
-            updated: z.string(),
-            value: z.number().optional(),
-          })
-          .optional(),
-      })
-      .optional(),
-    source: z.object({
-      currentSource: z.object({
-        state: z.enum([
-          "disabled",
-          "pending",
-          "unknown",
-          "error",
-          "warning",
-          "healthy",
-        ]),
-        message: z.string().optional(),
-        updated: z.string(),
-        value: z.enum([
-          "battery",
-          "usb",
-          "solar",
-          "auxiliary",
-          "noSource",
-          "unknownSource",
-        ]),
-      }),
-    }),
-    battery: z
-      .object({
-        charge: z.object({
-          state: z.enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ]),
-          message: z.string().optional(),
-          updated: z.string(),
-          value: z.number(),
-        }),
-        temperature: z
-          .object({
-            state: z.enum([
-              "disabled",
-              "pending",
-              "unknown",
-              "error",
-              "warning",
-              "healthy",
-            ]),
-            message: z.string().optional(),
-            updated: z.string(),
-            value: z.number(),
-          })
-          .optional(),
-        chargingState: z.enum(["charging", "notCharging", "unknown"]),
-      })
-      .optional(),
-  }),
-  timestamp: z.string(),
-});
-export type TXubeDeviceStatus = z.infer<typeof XubeDeviceStatus>;
-export const XubeSetUpdateApprovalRequest = z.object({
-  approval: z.enum(["approved", "denied", "pending"]),
-  conditions: z.array(z.enum(["local", "remote"])).optional(),
-  device: z.string(),
-});
-export type TXubeSetUpdateApprovalRequest = z.infer<
-  typeof XubeSetUpdateApprovalRequest
 >;
 export const XubeGetDevicesHeartbeatsRequest = z.object({
   devices: z.array(z.string()),
@@ -1306,12 +1555,6 @@ export const XubeGetDevicesHeartbeatsResponse = z.object({
 });
 export type TXubeGetDevicesHeartbeatsResponse = z.infer<
   typeof XubeGetDevicesHeartbeatsResponse
->;
-export const XubeGetLatestDeviceVersionRequest = z.object({
-  device: z.string(),
-});
-export type TXubeGetLatestDeviceVersionRequest = z.infer<
-  typeof XubeGetLatestDeviceVersionRequest
 >;
 export const XubeAccountDevicesRequest = z.object({
   nextToken: z.string().optional(),
@@ -1337,84 +1580,12 @@ export const XubeAccountDevices = z.object({
   nextToken: z.string().optional(),
 });
 export type TXubeAccountDevices = z.infer<typeof XubeAccountDevices>;
-export const XubeFirmwareRequest = z.union([
-  z.object({
-    device: z.string(),
-    version: z.union([z.literal("current"), z.literal("expected")]),
-  }),
-  z.object({ version: z.string() }),
-  z.object({}).partial(),
-]);
-export type TXubeFirmwareRequest = z.infer<typeof XubeFirmwareRequest>;
-export const XubeFirmwares = z.array(
-  z.object({
-    creator: z.string().optional(),
-    created: z.string().datetime({ offset: true }).optional(),
-    forceUpdate: z.boolean().optional(),
-    type: z.string().min(3).optional(),
-    version: z.string(),
-    versionDescriptions: z.record(z.array(z.string())).optional(),
-    partition: z.string().optional(),
-    size: z.number().optional(),
-    checksum: z.number().optional(),
-    name: z.string().optional(),
-    id: z.string().min(3),
-    compatibility: z.array(
-      z.object({
-        bootloader: z
-          .object({ min: z.string(), max: z.string().optional() })
-          .optional(),
-        firmware: z
-          .object({ min: z.string(), max: z.string().optional() })
-          .optional(),
-        hardware: z.object({
-          generation: z
-            .object({ min: z.string(), max: z.string().optional() })
-            .optional(),
-          model: z.string(),
-          make: z.string(),
-        }),
-      })
-    ),
-    key: z.string(),
-  })
-);
-export type TXubeFirmwares = z.infer<typeof XubeFirmwares>;
-export const XubeSetFirmwareVersionsRequest = z.object({
-  devices: z.array(z.string()),
-  firmwareVersion: z.string(),
-});
-export type TXubeSetFirmwareVersionsRequest = z.infer<
-  typeof XubeSetFirmwareVersionsRequest
->;
-export const XubeGetDeviceLocationRequest = z.object({ device: z.string() });
-export type TXubeGetDeviceLocationRequest = z.infer<
-  typeof XubeGetDeviceLocationRequest
->;
-export const XubeDeviceLocation = z.object({
-  creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
-  latitude: z.number(),
-  name: z.string().optional(),
-  id: z.string().min(3),
-  type: z.string().min(3).optional(),
-  deviceId: z.string(),
-  updated: z.string().datetime({ offset: true }).optional(),
-  longitude: z.number(),
-  updater: z.string().optional(),
-});
-export type TXubeDeviceLocation = z.infer<typeof XubeDeviceLocation>;
-export const XubeSetDeviceLocationRequest = z.object({
-  latitude: z.number().gte(-90).lte(90),
+export const XubeGetDeviceVersionDownloadUrlRequest = z.object({
   device: z.string(),
-  longitude: z.number().gte(-180).lte(180),
+  version: z.string(),
 });
-export type TXubeSetDeviceLocationRequest = z.infer<
-  typeof XubeSetDeviceLocationRequest
->;
-export const XubeClearDeviceLocationRequest = z.object({ device: z.string() });
-export type TXubeClearDeviceLocationRequest = z.infer<
-  typeof XubeClearDeviceLocationRequest
+export type TXubeGetDeviceVersionDownloadUrlRequest = z.infer<
+  typeof XubeGetDeviceVersionDownloadUrlRequest
 >;
 export const XubeDeviceAccount = z.object({
   accountId: z.string(),
@@ -1426,54 +1597,6 @@ export const XubeDeviceAccount = z.object({
   deviceId: z.string(),
 });
 export type TXubeDeviceAccount = z.infer<typeof XubeDeviceAccount>;
-export const XubeSetFirmwareVersionRequest = z.object({
-  firmwareVersion: z.string(),
-  device: z.string(),
-});
-export type TXubeSetFirmwareVersionRequest = z.infer<
-  typeof XubeSetFirmwareVersionRequest
->;
-export const XubeResetConnectedDevicesRequest = z.object({
-  duration: z.number().gte(0).lte(10000).optional(),
-  device: z.string(),
-  targets: z.array(z.enum(["others", "all"])).min(1),
-});
-export type TXubeResetConnectedDevicesRequest = z.infer<
-  typeof XubeResetConnectedDevicesRequest
->;
-export const XubeGetDeviceFilesUploadUrlRequest = z.object({
-  device: z.string(),
-});
-export type TXubeGetDeviceFilesUploadUrlRequest = z.infer<
-  typeof XubeGetDeviceFilesUploadUrlRequest
->;
-export const XubeSetDeviceUpdateRequest = z.object({
-  progress: z
-    .record(
-      z
-        .object({
-          totalSize: z.number(),
-          lastOffset: z.number(),
-          updated: z.string(),
-        })
-        .partial()
-    )
-    .optional(),
-  state: z
-    .enum([
-      "waiting_for_device_status",
-      "ready_to_send",
-      "sent",
-      "failed",
-      "in_progress",
-      "completed",
-    ])
-    .optional(),
-  device: z.string(),
-});
-export type TXubeSetDeviceUpdateRequest = z.infer<
-  typeof XubeSetDeviceUpdateRequest
->;
 export const XubeCopyDeviceConfigRequest = z.object({
   sourceDeviceId: z.string(),
   targetDeviceIds: z.array(z.string()),
@@ -1481,39 +1604,6 @@ export const XubeCopyDeviceConfigRequest = z.object({
 export type TXubeCopyDeviceConfigRequest = z.infer<
   typeof XubeCopyDeviceConfigRequest
 >;
-export const XubeGetDevicesRequestModelName = z.object({
-  devices: z.array(z.string()),
-});
-export type TXubeGetDevicesRequestModelName = z.infer<
-  typeof XubeGetDevicesRequestModelName
->;
-export const XubeDevicesModelName = z.array(
-  z
-    .object({
-      generation: z.string(),
-      partitions: z
-        .object({ firmware: z.array(z.string()) })
-        .partial()
-        .optional(),
-      creator: z.string().optional(),
-      modelId: z.string().optional(),
-      created: z.string().datetime({ offset: true }).optional(),
-      certificate: z
-        .object({ certificateArn: z.string() })
-        .partial()
-        .optional(),
-      name: z.string().optional(),
-      model: z.string(),
-      id: z.string().min(3),
-      type: z.string().min(3).optional(),
-      make: z.string(),
-      version: z.string().optional(),
-    })
-    .passthrough()
-);
-export type TXubeDevicesModelName = z.infer<typeof XubeDevicesModelName>;
-export const XubeVersionResponse = z.object({ version: z.string() });
-export type TXubeVersionResponse = z.infer<typeof XubeVersionResponse>;
 export const XubeGetDevicesStatusRequestModelName = z.object({
   devices: z.array(z.string()),
 });
@@ -1826,15 +1916,6 @@ export const XubeGetDeviceHeartbeatsResponse = z.object({
 });
 export type TXubeGetDeviceHeartbeatsResponse = z.infer<
   typeof XubeGetDeviceHeartbeatsResponse
->;
-export const XubeSubscribeToDevicesStatusRequest = z.object({
-  headers: z.record(z.string()).optional(),
-  subscriptionPath: z.string(),
-  devices: z.array(z.string()),
-  destination: z.string(),
-});
-export type TXubeSubscribeToDevicesStatusRequest = z.infer<
-  typeof XubeSubscribeToDevicesStatusRequest
 >;
 export const GetProvisioningDocsrequest = z.object({}).partial().passthrough();
 export type TGetProvisioningDocsrequest = z.infer<
@@ -2674,10 +2755,6 @@ export const endpoints = makeApi([
       z
         .object({
           generation: z.string(),
-          partitions: z
-            .object({ firmware: z.array(z.string()) })
-            .partial()
-            .optional(),
           creator: z.string().optional(),
           modelId: z.string().optional(),
           created: z.string().datetime({ offset: true }).optional(),
@@ -2690,7 +2767,6 @@ export const endpoints = makeApi([
           id: z.string().min(3),
           type: z.string().min(3).optional(),
           make: z.string(),
-          version: z.string().optional(),
         })
         .passthrough()
     ),
@@ -3376,6 +3452,26 @@ export const endpoints = makeApi([
     response: z.object({ success: z.boolean() }),
   },
   {
+    method: "get",
+    path: "/devices/:device/models",
+    alias: "Get Device Model By Device Id",
+    description: `Get device model by device id. Actions: Device:GetDeviceInstance, Device:GetDevice`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeGetDevicesRequestModelName,
+      },
+      {
+        name: "device",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: XubeDeviceModel,
+  },
+  {
     method: "post",
     path: "/devices/:device/restart",
     alias: "Restart Device",
@@ -3534,6 +3630,51 @@ export const endpoints = makeApi([
       },
     ],
     response: z.boolean(),
+  },
+  {
+    method: "get",
+    path: "/devices/:device/versions",
+    alias: "List Device Versions",
+    description: `List device versions. Actions: `,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ device: z.string() }),
+      },
+      {
+        name: "device",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: XubeGetDeviceVersionsResponse,
+  },
+  {
+    method: "get",
+    path: "/devices/:device/versions/:version/download",
+    alias: "Get Device Version Download URL",
+    description: `Get a device version&#x27;s download URL. Actions: Device:GetDeviceVersions`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeGetDeviceVersionDownloadUrlRequest,
+      },
+      {
+        name: "device",
+        type: "Path",
+        schema: z.string(),
+      },
+      {
+        name: "version",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.string(),
   },
   {
     method: "get",

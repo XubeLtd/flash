@@ -711,6 +711,9 @@ export const XubeDeviceUpdate = z.object({
   }),
   type: z.string().min(3).optional(),
   updater: z.string().optional(),
+  mismatch: z
+    .record(z.object({ actual: z.string(), expected: z.string() }))
+    .optional(),
   name: z.string().optional(),
   progress: z.record(
     z
@@ -1200,6 +1203,7 @@ export const XubeDeviceModel = z.object({
         })
       ),
     })
+    .partial()
     .optional(),
 });
 export type TXubeDeviceModel = z.infer<typeof XubeDeviceModel>;
@@ -1239,6 +1243,14 @@ export const XubeDevicesModelName = z.array(
 );
 export type TXubeDevicesModelName = z.infer<typeof XubeDevicesModelName>;
 export const XubeSetDeviceUpdateRequest = z.object({
+  mismatch: z
+    .record(
+      z.object({
+        actual: z.object({ cv: z.number(), v: z.number() }),
+        expected: z.object({ cv: z.number(), v: z.number() }),
+      })
+    )
+    .optional(),
   progress: z
     .record(
       z
@@ -1779,6 +1791,7 @@ export const XubeGetDeviceModelsResponse = z.array(
           })
         ),
       })
+      .partial()
       .optional(),
   })
 );
