@@ -15,17 +15,24 @@ export class Authentication implements IAuthentication {
   }
 
   getToken: () => Promise<string> = async (): Promise<string> => {
-    if (this.tokens) {
+    const spinner = ora("Logging in...");
+    try {
+      if (this.tokens) {
+        return this.tokens.token;
+      }
+
+      spinner.start();
+
+      this.tokens = await this.login();
+
+      spinner.succeed("Login successful.");
+
       return this.tokens.token;
+    } catch (error) {
+      console.error(error);
+      spinner.fail("Login failed.");
+      throw error;
     }
-
-    const spinner = ora("Logging in...").start();
-
-    this.tokens = await this.login();
-
-    spinner.succeed("Login successful.");
-
-    return this.tokens.token;
   };
 
   async login(): Promise<TXubeLogInResponse> {
