@@ -1,4 +1,7 @@
 import { $ } from "bun";
+import { rm, writeFile } from "fs/promises";
+import { tmpdir } from "os";
+import { join } from "path";
 
 export interface FlashImageOptions {
   deviceId: string;
@@ -8,11 +11,14 @@ export interface FlashImageOptions {
 export async function flashWithJLink(
   options: FlashImageOptions
 ): Promise<boolean> {
-  console.log(`Flashing with J-Link`);
+  console.log(`⚡ Flashing ${options.deviceId} with J-Link...`);
+
+  const tempFilePath = join(tmpdir(), `flash-${options.deviceId}.jlink`);
 
   try {
-    const command = $`echo ${options.commanderScript} | JLinkExe -if swd -autoconnect 1 -NoGui 1`;
+    await writeFile(tempFilePath, options.commanderScript);
 
+    const command = $`JLinkExe -CommandFile ${tempFilePath} -if swd -autoconnect 1 -NoGui 1`;
     console.log(`Executing: ${command.text}`);
 
     const { exitCode, stdout, stderr } = await command.nothrow();
@@ -25,21 +31,21 @@ export async function flashWithJLink(
       console.log(stderr.toString());
     }
 
+    await rm(tempFilePath);
+
     if (exitCode === 0) {
       console.log(`✅ J-Link process completed successfully.`);
       return true;
     } else {
-      console.warn(
-        `⚠️ J-Link process finished with a non-zero exit code: ${exitCode}`
-      );
+      console.warn(`⚠️ J-Link finished with non-zero exit code: ${exitCode}`);
       return false;
     }
   } catch (error) {
-    console.error(`❌ Failed to execute JLinkExe command.`);
+    console.error(`❌ Failed to flash using JLinkExe.`);
     if (error instanceof Error) {
       console.error(error.message);
     } else {
-      console.error("An unknown error occurred during execution.", error);
+      console.error("An unknown error occurred.", error);
     }
     return false;
   }

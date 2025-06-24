@@ -2,6 +2,7 @@ export * from "./sdk/prod/xube-sdk";
 export { xubeSdk };
 
 import { xube as xubeSdk } from "./sdk/prod/xube-sdk";
+// import { xubeDev as xubeSdk } from "./sdk/dev/xube-sdk";
 
 export const BOOTLOADER_FOLDER_NAME = "bootloader";
 export const CONFIG_FOLDER_NAME = "config";
