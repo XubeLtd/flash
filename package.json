@@ -21,7 +21,7 @@
     "zodios": "^5.1.0"
   },
   "scripts": {
-    "provision": "bun run src/provision.ts",
+    "flash": "bun run src/provision.ts",
     "generate:sdk": "bun run generate:prod && bun run generate:dev",
     "generate:prod": "bun run ./scripts/generate-xube-sdk.ts generate prod ./src/sdk",
     "generate:dev": "bun run ./scripts/generate-xube-sdk.ts generate dev ./src/sdk"

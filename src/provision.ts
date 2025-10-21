@@ -14,7 +14,7 @@ import {
 
 async function main() {
   console.log("--------------------------------------------------");
-  console.log("📦 Welcome to the Xube Device Provisioning Tool 🏗");
+  console.log("📦 Welcome to the Xube Device Flash Tool 🏗");
   console.log("--------------------------------------------------\n");
 
   const auth = new Authentication(creds);

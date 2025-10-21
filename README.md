@@ -29,5 +29,5 @@ You're now ready to flash some devices 💥💥💥
 Simply run the script and following the prompts:
 
 ```bash
-bun provision
+bun flash
 ```
