@@ -10,10 +10,10 @@ import { xubeSdk } from "../../constants";
 export const getDeviceVersions = async (
   auth: Authentication,
   device: string
-): Promise<number[]> => {
+): Promise<string[]> => {
   let spinner = ora();
   spinner.start(`Fetching versions for ${device}`);
-  const versions: { versions: number[] } = await xubeSdk[
+  const versions: { versions: string[] } = await xubeSdk[
     "List Device Versions"
   ]({
     params: { device },
@@ -29,17 +29,17 @@ export const getDeviceVersions = async (
 export const fetchAndExtractDeviceVersion = async (
   auth: Authentication,
   device: string,
-  version: number,
+  version: string,
   destinationDir: string = "./devices"
 ): Promise<boolean> => {
   let spinner = ora();
   try {
     spinner.start(`Getting download URL for ${version} for ${device}`);
 
-    const extractPath = resolve(destinationDir, device, version.toString());
+    const extractPath = resolve(destinationDir, device, version);
 
     const url = await xubeSdk["Get Device Version Download URL"]({
-      params: { device, version: version.toString() },
+      params: { device, version },
       headers: {
         Authorization: `Bearer ${await auth.getToken()}`,
       },

@@ -56,14 +56,11 @@ const promptToSelectDevice = async (
 };
 
 const promptToSelectDeviceVersion = async (
-  deviceVersions: number[]
-): Promise<number> => {
-  const version: number = await select({
+  deviceVersions: string[]
+): Promise<string> => {
+  const version: string = await select({
     message: "Select the device version you want to provision:",
-    choices: deviceVersions.map((version) => ({
-      name: version.toString(),
-      value: version,
-    })),
+    choices: [...deviceVersions].sort().reverse(),
   });
   return version;
 };
@@ -100,7 +97,7 @@ const provisionExistingDevice = async (auth: Authentication): Promise<void> => {
   }
   const deviceId = await promptToSelectDevice(accountDevices);
 
-  const deviceVersions: number[] = await getDeviceVersions(auth, deviceId);
+  const deviceVersions: string[] = await getDeviceVersions(auth, deviceId);
   const version = await promptToSelectDeviceVersion(deviceVersions);
   const fetchedAndExtractedDeviceVersion: boolean =
     await fetchAndExtractDeviceVersion(auth, deviceId, version);

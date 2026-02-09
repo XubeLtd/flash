@@ -16,7 +16,7 @@ export abstract class DeviceType implements IDeviceType {
     public readonly type: TDeviceTypeOption
   ) {}
 
-  abstract flash(deviceId: string, version: number): Promise<boolean>;
+  abstract flash(deviceId: string, version: string): Promise<boolean>;
 }
 
 export const getDeviceTypes = async (

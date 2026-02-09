@@ -11,7 +11,7 @@ import { flashWithJLink } from "../../jlink";
 import { DeviceType } from "../device-type";
 import { DEVICE_TYPE_SUN, type IDeviceType } from "../device-type.interface";
 
-export const getCommanderScript = (deviceId: string, version: number) => `
+export const getCommanderScript = (deviceId: string, version: string) => `
   device RW612
   speed 4000
   r
@@ -31,7 +31,7 @@ export class SunDeviceType extends DeviceType implements IDeviceType {
     super(model, DEVICE_TYPE_SUN);
   }
 
-  flash = async (deviceId: string, version: number): Promise<boolean> => {
+  flash = async (deviceId: string, version: string): Promise<boolean> => {
     return flashWithJLink({
       deviceId,
       commanderScript: getCommanderScript(deviceId, version),
