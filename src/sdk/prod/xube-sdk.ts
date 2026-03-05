@@ -463,163 +463,195 @@ export const XubeGetSubscriptionsByDestinationRequest = z.object({
 export type TXubeGetSubscriptionsByDestinationRequest = z.infer<
   typeof XubeGetSubscriptionsByDestinationRequest
 >;
+export const XubeGetSubscriptionsByTargetsFacetWebhookWebhookFacetResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    url: z.string(),
+    accountId: z.string().optional(),
+    facetType: z.string().optional(),
+    subscriptionVariant: z.literal("FACET-WEBHOOK"),
+    subscriptionType: z.literal("FACET"),
+    facetId: z.string().optional(),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBHOOK"),
+    id: z.string().min(3),
+  });
+export type TXubeGetSubscriptionsByTargetsFacetWebhookWebhookFacetResponse =
+  z.infer<typeof XubeGetSubscriptionsByTargetsFacetWebhookWebhookFacetResponse>;
+export const XubeGetSubscriptionsByTargetsDataWebhookWebhookDataResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    url: z.string(),
+    accountId: z.string().optional(),
+    subscriptionVariant: z.literal("DATA-WEBHOOK"),
+    subscriptionType: z.literal("DATA"),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBHOOK"),
+    id: z.string().min(3),
+  });
+export type TXubeGetSubscriptionsByTargetsDataWebhookWebhookDataResponse =
+  z.infer<typeof XubeGetSubscriptionsByTargetsDataWebhookWebhookDataResponse>;
+export const XubeGetSubscriptionsByTargetsMemberWebhookWebhookMemberResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    url: z.string(),
+    accountId: z.string().optional(),
+    subscriptionVariant: z.literal("MEMBER-WEBHOOK"),
+    subscriptionType: z.literal("MEMBER"),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBHOOK"),
+    id: z.string().min(3),
+  });
+export type TXubeGetSubscriptionsByTargetsMemberWebhookWebhookMemberResponse =
+  z.infer<
+    typeof XubeGetSubscriptionsByTargetsMemberWebhookWebhookMemberResponse
+  >;
+export const XubeGetSubscriptionsByTargetsFacetWebsocketWebsocketFacetResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    accountId: z.string().optional(),
+    facetType: z.string().optional(),
+    subscriptionVariant: z.literal("FACET-WEBSOCKET"),
+    subscriptionType: z.literal("FACET"),
+    facetId: z.string().optional(),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBSOCKET"),
+    connectionId: z.string(),
+    id: z.string().min(3),
+  });
+export type TXubeGetSubscriptionsByTargetsFacetWebsocketWebsocketFacetResponse =
+  z.infer<
+    typeof XubeGetSubscriptionsByTargetsFacetWebsocketWebsocketFacetResponse
+  >;
+export const XubeGetSubscriptionsByTargetsDataWebsocketWebsocketDataResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    accountId: z.string().optional(),
+    subscriptionVariant: z.literal("DATA-WEBSOCKET"),
+    subscriptionType: z.literal("DATA"),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBSOCKET"),
+    connectionId: z.string(),
+    id: z.string().min(3),
+  });
+export type TXubeGetSubscriptionsByTargetsDataWebsocketWebsocketDataResponse =
+  z.infer<
+    typeof XubeGetSubscriptionsByTargetsDataWebsocketWebsocketDataResponse
+  >;
+export const XubeGetSubscriptionsByTargetsMemberWebsocketWebsocketMemberResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    accountId: z.string().optional(),
+    subscriptionVariant: z.literal("MEMBER-WEBSOCKET"),
+    subscriptionType: z.literal("MEMBER"),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBSOCKET"),
+    connectionId: z.string(),
+    id: z.string().min(3),
+  });
+export type TXubeGetSubscriptionsByTargetsMemberWebsocketWebsocketMemberResponse =
+  z.infer<
+    typeof XubeGetSubscriptionsByTargetsMemberWebsocketWebsocketMemberResponse
+  >;
 export const XubeGetSubscriptionsByDestinationResponse = z.object({
   data: z.array(
-    z.union([
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        url: z.string(),
-        accountId: z.string().optional(),
-        facetType: z.string().optional(),
-        subscriptionVariant: z.literal("FACET-WEBHOOK"),
-        subscriptionType: z.literal("FACET"),
-        facetId: z.string().optional(),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBHOOK"),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        url: z.string(),
-        accountId: z.string().optional(),
-        subscriptionVariant: z.literal("DATA-WEBHOOK"),
-        subscriptionType: z.literal("DATA"),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBHOOK"),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        url: z.string(),
-        accountId: z.string().optional(),
-        subscriptionVariant: z.literal("MEMBER-WEBHOOK"),
-        subscriptionType: z.literal("MEMBER"),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBHOOK"),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        accountId: z.string().optional(),
-        facetType: z.string().optional(),
-        subscriptionVariant: z.literal("FACET-WEBSOCKET"),
-        subscriptionType: z.literal("FACET"),
-        facetId: z.string().optional(),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBSOCKET"),
-        connectionId: z.string(),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        accountId: z.string().optional(),
-        subscriptionVariant: z.literal("DATA-WEBSOCKET"),
-        subscriptionType: z.literal("DATA"),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBSOCKET"),
-        connectionId: z.string(),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        accountId: z.string().optional(),
-        subscriptionVariant: z.literal("MEMBER-WEBSOCKET"),
-        subscriptionType: z.literal("MEMBER"),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBSOCKET"),
-        connectionId: z.string(),
-        id: z.string().min(3),
-      }),
+    z.discriminatedUnion("subscriptionVariant", [
+      XubeGetSubscriptionsByTargetsFacetWebhookWebhookFacetResponse,
+      XubeGetSubscriptionsByTargetsDataWebhookWebhookDataResponse,
+      XubeGetSubscriptionsByTargetsMemberWebhookWebhookMemberResponse,
+      XubeGetSubscriptionsByTargetsFacetWebsocketWebsocketFacetResponse,
+      XubeGetSubscriptionsByTargetsDataWebsocketWebsocketDataResponse,
+      XubeGetSubscriptionsByTargetsMemberWebsocketWebsocketMemberResponse,
     ])
   ),
 });
@@ -653,36 +685,48 @@ export const XubeSendConfirmationToDestinationResponse = z.object({
 export type TXubeSendConfirmationToDestinationResponse = z.infer<
   typeof XubeSendConfirmationToDestinationResponse
 >;
+export const XubeCreateSubscriptionsFacetRequest = z
+  .object({
+    facetType: z.string().optional(),
+    subscriptionType: z.literal("FACET"),
+    facetId: z.string().optional(),
+    destination: z.string(),
+    targetType: z.string(),
+    target: z.string(),
+  })
+  .passthrough();
+export type TXubeCreateSubscriptionsFacetRequest = z.infer<
+  typeof XubeCreateSubscriptionsFacetRequest
+>;
+export const XubeCreateSubscriptionsDataRequest = z
+  .object({
+    subscriptionType: z.literal("DATA"),
+    destination: z.string(),
+    targetType: z.string(),
+    target: z.string(),
+  })
+  .passthrough();
+export type TXubeCreateSubscriptionsDataRequest = z.infer<
+  typeof XubeCreateSubscriptionsDataRequest
+>;
+export const XubeCreateSubscriptionsMemberRequest = z
+  .object({
+    subscriptionType: z.literal("MEMBER"),
+    destination: z.string(),
+    targetType: z.string(),
+    target: z.string(),
+  })
+  .passthrough();
+export type TXubeCreateSubscriptionsMemberRequest = z.infer<
+  typeof XubeCreateSubscriptionsMemberRequest
+>;
 export const XubeCreateSubscriptionsRequest = z.object({
   subscriptions: z
     .array(
-      z.union([
-        z
-          .object({
-            facetType: z.string().optional(),
-            subscriptionType: z.literal("FACET"),
-            facetId: z.string().optional(),
-            destination: z.string(),
-            targetType: z.string(),
-            target: z.string(),
-          })
-          .passthrough(),
-        z
-          .object({
-            subscriptionType: z.literal("DATA"),
-            destination: z.string(),
-            targetType: z.string(),
-            target: z.string(),
-          })
-          .passthrough(),
-        z
-          .object({
-            subscriptionType: z.literal("MEMBER"),
-            destination: z.string(),
-            targetType: z.string(),
-            target: z.string(),
-          })
-          .passthrough(),
+      z.discriminatedUnion("subscriptionType", [
+        XubeCreateSubscriptionsFacetRequest,
+        XubeCreateSubscriptionsDataRequest,
+        XubeCreateSubscriptionsMemberRequest,
       ])
     )
     .min(1)
@@ -703,162 +747,17 @@ export const XubeGetSubscriptionByIdRequest = z.object({
 export type TXubeGetSubscriptionByIdRequest = z.infer<
   typeof XubeGetSubscriptionByIdRequest
 >;
-export const XubeGetSubscriptionByIdResponse = z.union([
-  z.object({
-    delivery: z
-      .object({
-        lastDeliveryAttempt: z.string().optional(),
-        nextRetryAt: z.string().optional(),
-        lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
-        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-      })
-      .optional()
-      .default({ failedAttempts: 0, status: "ACTIVE" }),
-    creator: z.string().optional(),
-    targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
-    targetType: z.string().optional(),
-    type: z.string().min(3).optional(),
-    destinationId: z.string(),
-    url: z.string(),
-    accountId: z.string().optional(),
-    facetType: z.string().optional(),
-    subscriptionVariant: z.literal("FACET-WEBHOOK"),
-    subscriptionType: z.literal("FACET"),
-    facetId: z.string().optional(),
-    name: z.string().optional(),
-    destinationType: z.literal("WEBHOOK"),
-    id: z.string().min(3),
-  }),
-  z.object({
-    delivery: z
-      .object({
-        lastDeliveryAttempt: z.string().optional(),
-        nextRetryAt: z.string().optional(),
-        lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
-        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-      })
-      .optional()
-      .default({ failedAttempts: 0, status: "ACTIVE" }),
-    creator: z.string().optional(),
-    targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
-    targetType: z.string().optional(),
-    type: z.string().min(3).optional(),
-    destinationId: z.string(),
-    url: z.string(),
-    accountId: z.string().optional(),
-    subscriptionVariant: z.literal("DATA-WEBHOOK"),
-    subscriptionType: z.literal("DATA"),
-    name: z.string().optional(),
-    destinationType: z.literal("WEBHOOK"),
-    id: z.string().min(3),
-  }),
-  z.object({
-    delivery: z
-      .object({
-        lastDeliveryAttempt: z.string().optional(),
-        nextRetryAt: z.string().optional(),
-        lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
-        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-      })
-      .optional()
-      .default({ failedAttempts: 0, status: "ACTIVE" }),
-    creator: z.string().optional(),
-    targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
-    targetType: z.string().optional(),
-    type: z.string().min(3).optional(),
-    destinationId: z.string(),
-    url: z.string(),
-    accountId: z.string().optional(),
-    subscriptionVariant: z.literal("MEMBER-WEBHOOK"),
-    subscriptionType: z.literal("MEMBER"),
-    name: z.string().optional(),
-    destinationType: z.literal("WEBHOOK"),
-    id: z.string().min(3),
-  }),
-  z.object({
-    delivery: z
-      .object({
-        lastDeliveryAttempt: z.string().optional(),
-        nextRetryAt: z.string().optional(),
-        lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
-        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-      })
-      .optional()
-      .default({ failedAttempts: 0, status: "ACTIVE" }),
-    creator: z.string().optional(),
-    targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
-    targetType: z.string().optional(),
-    type: z.string().min(3).optional(),
-    destinationId: z.string(),
-    accountId: z.string().optional(),
-    facetType: z.string().optional(),
-    subscriptionVariant: z.literal("FACET-WEBSOCKET"),
-    subscriptionType: z.literal("FACET"),
-    facetId: z.string().optional(),
-    name: z.string().optional(),
-    destinationType: z.literal("WEBSOCKET"),
-    connectionId: z.string(),
-    id: z.string().min(3),
-  }),
-  z.object({
-    delivery: z
-      .object({
-        lastDeliveryAttempt: z.string().optional(),
-        nextRetryAt: z.string().optional(),
-        lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
-        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-      })
-      .optional()
-      .default({ failedAttempts: 0, status: "ACTIVE" }),
-    creator: z.string().optional(),
-    targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
-    targetType: z.string().optional(),
-    type: z.string().min(3).optional(),
-    destinationId: z.string(),
-    accountId: z.string().optional(),
-    subscriptionVariant: z.literal("DATA-WEBSOCKET"),
-    subscriptionType: z.literal("DATA"),
-    name: z.string().optional(),
-    destinationType: z.literal("WEBSOCKET"),
-    connectionId: z.string(),
-    id: z.string().min(3),
-  }),
-  z.object({
-    delivery: z
-      .object({
-        lastDeliveryAttempt: z.string().optional(),
-        nextRetryAt: z.string().optional(),
-        lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
-        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-      })
-      .optional()
-      .default({ failedAttempts: 0, status: "ACTIVE" }),
-    creator: z.string().optional(),
-    targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
-    targetType: z.string().optional(),
-    type: z.string().min(3).optional(),
-    destinationId: z.string(),
-    accountId: z.string().optional(),
-    subscriptionVariant: z.literal("MEMBER-WEBSOCKET"),
-    subscriptionType: z.literal("MEMBER"),
-    name: z.string().optional(),
-    destinationType: z.literal("WEBSOCKET"),
-    connectionId: z.string(),
-    id: z.string().min(3),
-  }),
-]);
+export const XubeGetSubscriptionByIdResponse = z.discriminatedUnion(
+  "subscriptionVariant",
+  [
+    XubeGetSubscriptionsByTargetsFacetWebhookWebhookFacetResponse,
+    XubeGetSubscriptionsByTargetsDataWebhookWebhookDataResponse,
+    XubeGetSubscriptionsByTargetsMemberWebhookWebhookMemberResponse,
+    XubeGetSubscriptionsByTargetsFacetWebsocketWebsocketFacetResponse,
+    XubeGetSubscriptionsByTargetsDataWebsocketWebsocketDataResponse,
+    XubeGetSubscriptionsByTargetsMemberWebsocketWebsocketMemberResponse,
+  ]
+);
 export type TXubeGetSubscriptionByIdResponse = z.infer<
   typeof XubeGetSubscriptionByIdResponse
 >;
@@ -893,190 +792,50 @@ export type TXubeGetSubscriptionsRequest = z.infer<
 >;
 export const XubeGetSubscriptionsResponse = z.object({
   data: z.array(
-    z.union([
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        url: z.string(),
-        accountId: z.string().optional(),
-        facetType: z.string().optional(),
-        subscriptionVariant: z.literal("FACET-WEBHOOK"),
-        subscriptionType: z.literal("FACET"),
-        facetId: z.string().optional(),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBHOOK"),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        url: z.string(),
-        accountId: z.string().optional(),
-        subscriptionVariant: z.literal("DATA-WEBHOOK"),
-        subscriptionType: z.literal("DATA"),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBHOOK"),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        url: z.string(),
-        accountId: z.string().optional(),
-        subscriptionVariant: z.literal("MEMBER-WEBHOOK"),
-        subscriptionType: z.literal("MEMBER"),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBHOOK"),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        accountId: z.string().optional(),
-        facetType: z.string().optional(),
-        subscriptionVariant: z.literal("FACET-WEBSOCKET"),
-        subscriptionType: z.literal("FACET"),
-        facetId: z.string().optional(),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBSOCKET"),
-        connectionId: z.string(),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        accountId: z.string().optional(),
-        subscriptionVariant: z.literal("DATA-WEBSOCKET"),
-        subscriptionType: z.literal("DATA"),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBSOCKET"),
-        connectionId: z.string(),
-        id: z.string().min(3),
-      }),
-      z.object({
-        delivery: z
-          .object({
-            lastDeliveryAttempt: z.string().optional(),
-            nextRetryAt: z.string().optional(),
-            lastSuccessfulDelivery: z.string().optional(),
-            failedAttempts: z.number().gte(0).optional().default(0),
-            status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-          })
-          .optional()
-          .default({ failedAttempts: 0, status: "ACTIVE" }),
-        creator: z.string().optional(),
-        targetId: z.string(),
-        created: z.string().datetime({ offset: true }).optional(),
-        targetType: z.string().optional(),
-        type: z.string().min(3).optional(),
-        destinationId: z.string(),
-        accountId: z.string().optional(),
-        subscriptionVariant: z.literal("MEMBER-WEBSOCKET"),
-        subscriptionType: z.literal("MEMBER"),
-        name: z.string().optional(),
-        destinationType: z.literal("WEBSOCKET"),
-        connectionId: z.string(),
-        id: z.string().min(3),
-      }),
+    z.discriminatedUnion("subscriptionVariant", [
+      XubeGetSubscriptionsByTargetsFacetWebhookWebhookFacetResponse,
+      XubeGetSubscriptionsByTargetsDataWebhookWebhookDataResponse,
+      XubeGetSubscriptionsByTargetsMemberWebhookWebhookMemberResponse,
+      XubeGetSubscriptionsByTargetsFacetWebsocketWebsocketFacetResponse,
+      XubeGetSubscriptionsByTargetsDataWebsocketWebsocketDataResponse,
+      XubeGetSubscriptionsByTargetsMemberWebsocketWebsocketMemberResponse,
     ])
   ),
 });
 export type TXubeGetSubscriptionsResponse = z.infer<
   typeof XubeGetSubscriptionsResponse
 >;
-export const XubeCreateDestinationRequest = z.union([
-  z
-    .object({
-      headers: z
-        .object({ Authorization: z.string(), "x-api-key": z.string() })
-        .partial()
-        .passthrough()
-        .optional(),
-      name: z.string(),
-      destinationType: z.literal("WEBHOOK"),
-      account: z.string(),
-      url: z.string().url(),
-    })
-    .passthrough(),
-  z
-    .object({
-      name: z.string(),
-      connectionId: z.string(),
-      destinationType: z.literal("WEBSOCKET"),
-      account: z.string(),
-    })
-    .passthrough(),
-]);
+export const XubeCreateDestinationWebhookRequest = z
+  .object({
+    headers: z
+      .object({ Authorization: z.string(), "x-api-key": z.string() })
+      .partial()
+      .passthrough()
+      .optional(),
+    name: z.string(),
+    destinationType: z.literal("WEBHOOK"),
+    account: z.string(),
+    url: z.string().url(),
+  })
+  .passthrough();
+export type TXubeCreateDestinationWebhookRequest = z.infer<
+  typeof XubeCreateDestinationWebhookRequest
+>;
+export const XubeCreateDestinationWebsocketRequest = z
+  .object({
+    name: z.string(),
+    connectionId: z.string(),
+    destinationType: z.literal("WEBSOCKET"),
+    account: z.string(),
+  })
+  .passthrough();
+export type TXubeCreateDestinationWebsocketRequest = z.infer<
+  typeof XubeCreateDestinationWebsocketRequest
+>;
+export const XubeCreateDestinationRequest = z.discriminatedUnion(
+  "destinationType",
+  [XubeCreateDestinationWebhookRequest, XubeCreateDestinationWebsocketRequest]
+);
 export type TXubeCreateDestinationRequest = z.infer<
   typeof XubeCreateDestinationRequest
 >;
@@ -1104,48 +863,56 @@ export const XubeGetDestinationRequest = z.object({ destination: z.string() });
 export type TXubeGetDestinationRequest = z.infer<
   typeof XubeGetDestinationRequest
 >;
-export const XubeGetDestinationResponse = z.union([
-  z.object({
-    accountId: z.string(),
-    headers: z
-      .object({ Authorization: z.string(), "x-api-key": z.string() })
-      .partial()
-      .passthrough()
-      .optional(),
-    creator: z.string().optional(),
-    created: z.string().datetime({ offset: true }).optional(),
-    iotDestination: z
-      .object({
-        state: z.enum(["NOT_SENT", "PENDING", "CONFIRMED"]),
-        arn: z.string(),
-      })
-      .optional(),
-    name: z.string(),
-    destinationType: z.literal("WEBHOOK"),
-    id: z.string().min(3),
-    confirmation: z.object({
+export const XubeGetDestinationsWebhookResponse = z.object({
+  accountId: z.string(),
+  headers: z
+    .object({ Authorization: z.string(), "x-api-key": z.string() })
+    .partial()
+    .passthrough()
+    .optional(),
+  creator: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  iotDestination: z
+    .object({
       state: z.enum(["NOT_SENT", "PENDING", "CONFIRMED"]),
-      sent: z.string().optional(),
-      token: z.string().optional(),
-    }),
-    state: z.enum(["ACTIVE", "PENDING", "UNSECURE"]),
-    type: z.string().min(3).optional(),
-    url: z.string().url(),
+      arn: z.string(),
+    })
+    .optional(),
+  name: z.string(),
+  destinationType: z.literal("WEBHOOK"),
+  id: z.string().min(3),
+  confirmation: z.object({
+    state: z.enum(["NOT_SENT", "PENDING", "CONFIRMED"]),
+    sent: z.string().optional(),
+    token: z.string().optional(),
   }),
-  z.object({
-    accountId: z.string(),
-    creator: z.string().optional(),
-    lastHeartbeat: z.string().datetime({ offset: true }),
-    created: z.string().datetime({ offset: true }).optional(),
-    name: z.string(),
-    missedHeartbeats: z.number().gte(0).optional().default(0),
-    destinationType: z.literal("WEBSOCKET"),
-    connectionId: z.string(),
-    id: z.string().min(3),
-    type: z.string().min(3).optional(),
-    status: z.enum(["ACTIVE", "STALE", "DISCONNECTED"]),
-  }),
-]);
+  state: z.enum(["ACTIVE", "PENDING", "UNSECURE"]),
+  type: z.string().min(3).optional(),
+  url: z.string().url(),
+});
+export type TXubeGetDestinationsWebhookResponse = z.infer<
+  typeof XubeGetDestinationsWebhookResponse
+>;
+export const XubeGetDestinationsWebsocketResponse = z.object({
+  accountId: z.string(),
+  creator: z.string().optional(),
+  lastHeartbeat: z.string().datetime({ offset: true }),
+  created: z.string().datetime({ offset: true }).optional(),
+  name: z.string(),
+  missedHeartbeats: z.number().gte(0).optional().default(0),
+  destinationType: z.literal("WEBSOCKET"),
+  connectionId: z.string(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+  status: z.enum(["ACTIVE", "STALE", "DISCONNECTED"]),
+});
+export type TXubeGetDestinationsWebsocketResponse = z.infer<
+  typeof XubeGetDestinationsWebsocketResponse
+>;
+export const XubeGetDestinationResponse = z.discriminatedUnion(
+  "destinationType",
+  [XubeGetDestinationsWebhookResponse, XubeGetDestinationsWebsocketResponse]
+);
 export type TXubeGetDestinationResponse = z.infer<
   typeof XubeGetDestinationResponse
 >;
@@ -1181,47 +948,9 @@ export type TXubeGetDestinationsRequest = z.infer<
 >;
 export const XubeGetDestinationsResponse = z.object({
   data: z.array(
-    z.union([
-      z.object({
-        accountId: z.string(),
-        headers: z
-          .object({ Authorization: z.string(), "x-api-key": z.string() })
-          .partial()
-          .passthrough()
-          .optional(),
-        creator: z.string().optional(),
-        created: z.string().datetime({ offset: true }).optional(),
-        iotDestination: z
-          .object({
-            state: z.enum(["NOT_SENT", "PENDING", "CONFIRMED"]),
-            arn: z.string(),
-          })
-          .optional(),
-        name: z.string(),
-        destinationType: z.literal("WEBHOOK"),
-        id: z.string().min(3),
-        confirmation: z.object({
-          state: z.enum(["NOT_SENT", "PENDING", "CONFIRMED"]),
-          sent: z.string().optional(),
-          token: z.string().optional(),
-        }),
-        state: z.enum(["ACTIVE", "PENDING", "UNSECURE"]),
-        type: z.string().min(3).optional(),
-        url: z.string().url(),
-      }),
-      z.object({
-        accountId: z.string(),
-        creator: z.string().optional(),
-        lastHeartbeat: z.string().datetime({ offset: true }),
-        created: z.string().datetime({ offset: true }).optional(),
-        name: z.string(),
-        missedHeartbeats: z.number().gte(0).optional().default(0),
-        destinationType: z.literal("WEBSOCKET"),
-        connectionId: z.string(),
-        id: z.string().min(3),
-        type: z.string().min(3).optional(),
-        status: z.enum(["ACTIVE", "STALE", "DISCONNECTED"]),
-      }),
+    z.discriminatedUnion("destinationType", [
+      XubeGetDestinationsWebhookResponse,
+      XubeGetDestinationsWebsocketResponse,
     ])
   ),
 });
@@ -1238,161 +967,13 @@ export type TXubeGetSubscriptionsByTargetsRequest = z.infer<
 export const XubeGetSubscriptionsByTargetsResponse = z.object({
   data: z.record(
     z.array(
-      z.union([
-        z.object({
-          delivery: z
-            .object({
-              lastDeliveryAttempt: z.string().optional(),
-              nextRetryAt: z.string().optional(),
-              lastSuccessfulDelivery: z.string().optional(),
-              failedAttempts: z.number().gte(0).optional().default(0),
-              status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-            })
-            .optional()
-            .default({ failedAttempts: 0, status: "ACTIVE" }),
-          creator: z.string().optional(),
-          targetId: z.string(),
-          created: z.string().datetime({ offset: true }).optional(),
-          targetType: z.string().optional(),
-          type: z.string().min(3).optional(),
-          destinationId: z.string(),
-          url: z.string(),
-          accountId: z.string().optional(),
-          facetType: z.string().optional(),
-          subscriptionVariant: z.literal("FACET-WEBHOOK"),
-          subscriptionType: z.literal("FACET"),
-          facetId: z.string().optional(),
-          name: z.string().optional(),
-          destinationType: z.literal("WEBHOOK"),
-          id: z.string().min(3),
-        }),
-        z.object({
-          delivery: z
-            .object({
-              lastDeliveryAttempt: z.string().optional(),
-              nextRetryAt: z.string().optional(),
-              lastSuccessfulDelivery: z.string().optional(),
-              failedAttempts: z.number().gte(0).optional().default(0),
-              status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-            })
-            .optional()
-            .default({ failedAttempts: 0, status: "ACTIVE" }),
-          creator: z.string().optional(),
-          targetId: z.string(),
-          created: z.string().datetime({ offset: true }).optional(),
-          targetType: z.string().optional(),
-          type: z.string().min(3).optional(),
-          destinationId: z.string(),
-          url: z.string(),
-          accountId: z.string().optional(),
-          subscriptionVariant: z.literal("DATA-WEBHOOK"),
-          subscriptionType: z.literal("DATA"),
-          name: z.string().optional(),
-          destinationType: z.literal("WEBHOOK"),
-          id: z.string().min(3),
-        }),
-        z.object({
-          delivery: z
-            .object({
-              lastDeliveryAttempt: z.string().optional(),
-              nextRetryAt: z.string().optional(),
-              lastSuccessfulDelivery: z.string().optional(),
-              failedAttempts: z.number().gte(0).optional().default(0),
-              status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-            })
-            .optional()
-            .default({ failedAttempts: 0, status: "ACTIVE" }),
-          creator: z.string().optional(),
-          targetId: z.string(),
-          created: z.string().datetime({ offset: true }).optional(),
-          targetType: z.string().optional(),
-          type: z.string().min(3).optional(),
-          destinationId: z.string(),
-          url: z.string(),
-          accountId: z.string().optional(),
-          subscriptionVariant: z.literal("MEMBER-WEBHOOK"),
-          subscriptionType: z.literal("MEMBER"),
-          name: z.string().optional(),
-          destinationType: z.literal("WEBHOOK"),
-          id: z.string().min(3),
-        }),
-        z.object({
-          delivery: z
-            .object({
-              lastDeliveryAttempt: z.string().optional(),
-              nextRetryAt: z.string().optional(),
-              lastSuccessfulDelivery: z.string().optional(),
-              failedAttempts: z.number().gte(0).optional().default(0),
-              status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-            })
-            .optional()
-            .default({ failedAttempts: 0, status: "ACTIVE" }),
-          creator: z.string().optional(),
-          targetId: z.string(),
-          created: z.string().datetime({ offset: true }).optional(),
-          targetType: z.string().optional(),
-          type: z.string().min(3).optional(),
-          destinationId: z.string(),
-          accountId: z.string().optional(),
-          facetType: z.string().optional(),
-          subscriptionVariant: z.literal("FACET-WEBSOCKET"),
-          subscriptionType: z.literal("FACET"),
-          facetId: z.string().optional(),
-          name: z.string().optional(),
-          destinationType: z.literal("WEBSOCKET"),
-          connectionId: z.string(),
-          id: z.string().min(3),
-        }),
-        z.object({
-          delivery: z
-            .object({
-              lastDeliveryAttempt: z.string().optional(),
-              nextRetryAt: z.string().optional(),
-              lastSuccessfulDelivery: z.string().optional(),
-              failedAttempts: z.number().gte(0).optional().default(0),
-              status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-            })
-            .optional()
-            .default({ failedAttempts: 0, status: "ACTIVE" }),
-          creator: z.string().optional(),
-          targetId: z.string(),
-          created: z.string().datetime({ offset: true }).optional(),
-          targetType: z.string().optional(),
-          type: z.string().min(3).optional(),
-          destinationId: z.string(),
-          accountId: z.string().optional(),
-          subscriptionVariant: z.literal("DATA-WEBSOCKET"),
-          subscriptionType: z.literal("DATA"),
-          name: z.string().optional(),
-          destinationType: z.literal("WEBSOCKET"),
-          connectionId: z.string(),
-          id: z.string().min(3),
-        }),
-        z.object({
-          delivery: z
-            .object({
-              lastDeliveryAttempt: z.string().optional(),
-              nextRetryAt: z.string().optional(),
-              lastSuccessfulDelivery: z.string().optional(),
-              failedAttempts: z.number().gte(0).optional().default(0),
-              status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-            })
-            .optional()
-            .default({ failedAttempts: 0, status: "ACTIVE" }),
-          creator: z.string().optional(),
-          targetId: z.string(),
-          created: z.string().datetime({ offset: true }).optional(),
-          targetType: z.string().optional(),
-          type: z.string().min(3).optional(),
-          destinationId: z.string(),
-          accountId: z.string().optional(),
-          subscriptionVariant: z.literal("MEMBER-WEBSOCKET"),
-          subscriptionType: z.literal("MEMBER"),
-          name: z.string().optional(),
-          destinationType: z.literal("WEBSOCKET"),
-          connectionId: z.string(),
-          id: z.string().min(3),
-        }),
+      z.discriminatedUnion("subscriptionVariant", [
+        XubeGetSubscriptionsByTargetsFacetWebhookWebhookFacetResponse,
+        XubeGetSubscriptionsByTargetsDataWebhookWebhookDataResponse,
+        XubeGetSubscriptionsByTargetsMemberWebhookWebhookMemberResponse,
+        XubeGetSubscriptionsByTargetsFacetWebsocketWebsocketFacetResponse,
+        XubeGetSubscriptionsByTargetsDataWebsocketWebsocketDataResponse,
+        XubeGetSubscriptionsByTargetsMemberWebsocketWebsocketMemberResponse,
       ])
     )
   ),
@@ -1429,6 +1010,709 @@ export const XubeGetAccountFacetRequest = z.object({
 export type TXubeGetAccountFacetRequest = z.infer<
   typeof XubeGetAccountFacetRequest
 >;
+export const XubeGetAccountFacetsAccountResponse = z.object({
+  accountId: z.string(),
+  componentType: z.string(),
+  facetType: z.literal("ACCOUNT"),
+  creator: z.string().optional(),
+  facetId: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  name: z.string().optional(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+  deviceId: z.string(),
+});
+export type TXubeGetAccountFacetsAccountResponse = z.infer<
+  typeof XubeGetAccountFacetsAccountResponse
+>;
+export const XubeGetAccountFacetsActivationStatusResponse = z.object({
+  componentType: z.string(),
+  creator: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  activationStatus: z.enum(["active", "inactive"]),
+  type: z.string().min(3).optional(),
+  deviceId: z.string(),
+  updater: z.string().optional(),
+  accountId: z.string(),
+  facetType: z.literal("ACTIVATION-STATUS"),
+  facetId: z.string().optional(),
+  name: z.string().optional(),
+  id: z.string().min(3),
+  updated: z.string().datetime({ offset: true }).optional(),
+  timestamp: z.string(),
+});
+export type TXubeGetAccountFacetsActivationStatusResponse = z.infer<
+  typeof XubeGetAccountFacetsActivationStatusResponse
+>;
+export const XubeGetAccountFacetsHeartbeatResponse = z.object({
+  componentType: z.string(),
+  facetType: z.literal("HEARTBEAT"),
+  facetId: z.string().optional(),
+  id: z.string().min(3),
+  deviceId: z.string(),
+  timestamp: z.string().datetime({ offset: true }),
+});
+export type TXubeGetAccountFacetsHeartbeatResponse = z.infer<
+  typeof XubeGetAccountFacetsHeartbeatResponse
+>;
+export const XubeGetAccountFacetsDataDestinationResponse = z.object({
+  componentType: z.string(),
+  creator: z.string().optional(),
+  targetId: z.string(),
+  created: z.string().datetime({ offset: true }).optional(),
+  destination: z.object({
+    headers: z
+      .object({ Authorization: z.string(), "x-api-key": z.string() })
+      .partial()
+      .passthrough()
+      .optional(),
+    id: z.string(),
+    url: z.string().url(),
+  }),
+  source: z.object({ id: z.string(), type: z.string() }).optional(),
+  type: z.string().min(3).optional(),
+  deviceId: z.string(),
+  updater: z.string(),
+  accountId: z.string(),
+  facetType: z.literal("DATA-DESTINATION"),
+  facetId: z.string().optional(),
+  name: z.string().optional(),
+  id: z.string().min(3),
+  updated: z.string().datetime({ offset: true }),
+});
+export type TXubeGetAccountFacetsDataDestinationResponse = z.infer<
+  typeof XubeGetAccountFacetsDataDestinationResponse
+>;
+export const XubeGetAccountFacetsFilesResponse = z.object({
+  componentType: z.string(),
+  orphaned: z
+    .record(
+      z.object({
+        path: z.string(),
+        existing: z
+          .array(
+            z.object({
+              partition: z.string().optional(),
+              size: z.number().optional(),
+              checksum: z.number().optional(),
+              version: z.string(),
+              key: z.string(),
+            })
+          )
+          .optional(),
+        acceptance: z
+          .object({ accepted: z.boolean(), timestamp: z.string().optional() })
+          .optional(),
+        active: z.object({
+          partition: z.string().optional(),
+          size: z.number().optional(),
+          checksum: z.number().optional(),
+          version: z.string(),
+          key: z.string(),
+        }),
+      })
+    )
+    .optional(),
+  storage: z
+    .record(
+      z.object({
+        path: z.string(),
+        existing: z
+          .array(
+            z.object({
+              partition: z.string().optional(),
+              size: z.number().optional(),
+              checksum: z.number().optional(),
+              version: z.string(),
+              key: z.string(),
+            })
+          )
+          .optional(),
+        acceptance: z
+          .object({ accepted: z.boolean(), timestamp: z.string().optional() })
+          .optional(),
+        active: z.object({
+          partition: z.string().optional(),
+          size: z.number().optional(),
+          checksum: z.number().optional(),
+          version: z.string(),
+          key: z.string(),
+        }),
+      })
+    )
+    .optional(),
+  scripting: z
+    .record(
+      z.object({
+        path: z.string(),
+        existing: z
+          .array(
+            z.object({
+              partition: z.string().optional(),
+              size: z.number().optional(),
+              checksum: z.number().optional(),
+              version: z.string(),
+              key: z.string(),
+            })
+          )
+          .optional(),
+        acceptance: z
+          .object({ accepted: z.boolean(), timestamp: z.string().optional() })
+          .optional(),
+        active: z.object({
+          partition: z.string().optional(),
+          size: z.number().optional(),
+          checksum: z.number().optional(),
+          version: z.string(),
+          key: z.string(),
+        }),
+      })
+    )
+    .optional(),
+  facetType: z.literal("FILES"),
+  environment: z.object({
+    release: z.string(),
+    mqttEndpoint: z.string(),
+    region: z.string(),
+    status: z
+      .enum(["disabled", "pending", "unknown", "error", "warning", "healthy"])
+      .optional(),
+  }),
+  system: z.object({
+    firmware: z.object({
+      path: z.string(),
+      existing: z
+        .array(
+          z.object({
+            partition: z.string().optional(),
+            size: z.number().optional(),
+            checksum: z.number().optional(),
+            version: z.string(),
+            key: z.string(),
+          })
+        )
+        .optional(),
+      acceptance: z
+        .object({ accepted: z.boolean(), timestamp: z.string().optional() })
+        .optional(),
+      active: z.object({
+        partition: z.string().optional(),
+        size: z.number().optional(),
+        checksum: z.number().optional(),
+        version: z.string(),
+        key: z.string(),
+      }),
+    }),
+  }),
+  stage: z.enum(["current", "expected", "historical"]),
+  facetId: z.string().optional(),
+  communication: z
+    .record(
+      z.object({
+        path: z.string(),
+        existing: z
+          .array(
+            z.object({
+              partition: z.string().optional(),
+              size: z.number().optional(),
+              checksum: z.number().optional(),
+              version: z.string(),
+              key: z.string(),
+            })
+          )
+          .optional(),
+        acceptance: z
+          .object({ accepted: z.boolean(), timestamp: z.string().optional() })
+          .optional(),
+        active: z.object({
+          partition: z.string().optional(),
+          size: z.number().optional(),
+          checksum: z.number().optional(),
+          version: z.string(),
+          key: z.string(),
+        }),
+      })
+    )
+    .optional(),
+  device: z.string(),
+  config: z
+    .record(
+      z.object({
+        path: z.string(),
+        existing: z
+          .array(
+            z.object({
+              partition: z.string().optional(),
+              size: z.number().optional(),
+              checksum: z.number().optional(),
+              version: z.string(),
+              key: z.string(),
+            })
+          )
+          .optional(),
+        acceptance: z
+          .object({ accepted: z.boolean(), timestamp: z.string().optional() })
+          .optional(),
+        active: z.object({
+          partition: z.string().optional(),
+          size: z.number().optional(),
+          checksum: z.number().optional(),
+          version: z.string(),
+          key: z.string(),
+        }),
+      })
+    )
+    .optional(),
+  updated: z.string().datetime({ offset: true }).optional(),
+  status: z.enum([
+    "disabled",
+    "pending",
+    "unknown",
+    "error",
+    "warning",
+    "healthy",
+  ]),
+});
+export type TXubeGetAccountFacetsFilesResponse = z.infer<
+  typeof XubeGetAccountFacetsFilesResponse
+>;
+export const XubeGetAccountFacetsLocationResponse = z.object({
+  componentType: z.string(),
+  creator: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  latitude: z.number(),
+  type: z.string().min(3).optional(),
+  deviceId: z.string(),
+  updater: z.string().optional(),
+  facetType: z.literal("LOCATION"),
+  facetId: z.string().optional(),
+  name: z.string().optional(),
+  id: z.string().min(3),
+  updated: z.string().datetime({ offset: true }).optional(),
+  longitude: z.number(),
+});
+export type TXubeGetAccountFacetsLocationResponse = z.infer<
+  typeof XubeGetAccountFacetsLocationResponse
+>;
+export const XubeGetAccountFacetsStatusResponse = z.object({
+  componentType: z.string(),
+  facetType: z.literal("STATUS"),
+  connectivity: z
+    .object({
+      wifi: z.object({
+        signalStrength: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        ssid: z.string().optional(),
+      }),
+      cellular: z.object({
+        signalStrength: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+      }),
+      eth: z.object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        mac: z.string().optional(),
+      }),
+      platform: z.object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+      }),
+    })
+    .partial(),
+  engine: z
+    .object({
+      state: z.enum(["running", "stopped", "error", "unknown"]),
+      updated: z.string(),
+    })
+    .optional(),
+  facetId: z.string().optional(),
+  temperature: z
+    .object({
+      state: z.enum([
+        "disabled",
+        "pending",
+        "unknown",
+        "error",
+        "warning",
+        "healthy",
+      ]),
+      message: z.string().optional(),
+      updated: z.string(),
+      value: z.number(),
+    })
+    .optional(),
+  availability: z
+    .object({
+      state: z.enum(["online", "offline", "unknown"]),
+      updated: z.string(),
+    })
+    .optional(),
+  power: z.object({
+    auxiliary: z
+      .object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        voltage: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    usb: z
+      .object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        voltage: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    solar: z
+      .object({
+        connection: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.enum(["connected", "notConnected", "notInUse", "pending"]),
+        }),
+        voltage: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number().optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    source: z.object({
+      currentSource: z.object({
+        state: z.enum([
+          "disabled",
+          "pending",
+          "unknown",
+          "error",
+          "warning",
+          "healthy",
+        ]),
+        message: z.string().optional(),
+        updated: z.string(),
+        value: z.enum([
+          "battery",
+          "usb",
+          "solar",
+          "auxiliary",
+          "noSource",
+          "unknownSource",
+        ]),
+      }),
+    }),
+    battery: z
+      .object({
+        charge: z.object({
+          state: z.enum([
+            "disabled",
+            "pending",
+            "unknown",
+            "error",
+            "warning",
+            "healthy",
+          ]),
+          message: z.string().optional(),
+          updated: z.string(),
+          value: z.number(),
+        }),
+        temperature: z
+          .object({
+            state: z.enum([
+              "disabled",
+              "pending",
+              "unknown",
+              "error",
+              "warning",
+              "healthy",
+            ]),
+            message: z.string().optional(),
+            updated: z.string(),
+            value: z.number(),
+          })
+          .optional(),
+        chargingState: z.enum(["charging", "notCharging", "unknown"]),
+      })
+      .optional(),
+  }),
+  timestamp: z.string(),
+});
+export type TXubeGetAccountFacetsStatusResponse = z.infer<
+  typeof XubeGetAccountFacetsStatusResponse
+>;
+export const XubeGetAccountFacetsSnapshotResponse = z.object({
+  componentType: z.string(),
+  facetType: z.literal("SNAPSHOT"),
+  creator: z.string().optional(),
+  facetId: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  name: z.string().optional(),
+  index: z.number(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+  updated: z.string().datetime({ offset: true }).optional(),
+  snapshot: z.object({
+    fw: z.object({ v: z.number() }),
+    cfg: z.record(
+      z.object({
+        cv: z.number(),
+        v: z.union([z.number(), z.string()]).optional(),
+        n: z.object({}).partial().passthrough().optional(),
+      })
+    ),
+  }),
+  updater: z.string().optional(),
+});
+export type TXubeGetAccountFacetsSnapshotResponse = z.infer<
+  typeof XubeGetAccountFacetsSnapshotResponse
+>;
+export const XubeGetAccountFacetsUpdateResponse = z.object({
+  componentType: z.string(),
+  creator: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  approval: z.object({
+    created: z.string().datetime({ offset: true }),
+    state: z.enum(["approved", "denied", "pending"]),
+    conditions: z.array(z.enum(["local", "remote"])).optional(),
+    updated: z.string().datetime({ offset: true }).optional(),
+    updater: z.string().optional(),
+  }),
+  type: z.string().min(3).optional(),
+  updater: z.string().optional(),
+  facetType: z.literal("UPDATE"),
+  facetId: z.string().optional(),
+  mismatch: z
+    .record(z.object({ actual: z.string(), expected: z.string() }))
+    .optional(),
+  name: z.string().optional(),
+  progress: z.record(
+    z
+      .object({
+        totalSize: z.number(),
+        lastOffset: z.number(),
+        updated: z.string(),
+      })
+      .partial()
+  ),
+  id: z.string().min(3),
+  state: z.enum([
+    "waiting_for_device_status",
+    "ready_to_send",
+    "sent",
+    "failed",
+    "in_progress",
+    "completed",
+    "cancelled",
+  ]),
+  job: z.string().optional(),
+  conditions: z.array(z.enum(["local", "remote"])).optional(),
+  updated: z.string().datetime({ offset: true }).optional(),
+  device: z.string(),
+  tasks: z.array(
+    z.object({
+      a: z.enum([
+        "d",
+        "uf",
+        "u",
+        "upd",
+        "r",
+        "cdr",
+        "z",
+        "a",
+        "s",
+        "b",
+        "e",
+        "k",
+        "x",
+        "crash",
+        "t",
+      ]),
+      tries: z.number().optional(),
+      topics: z.record(z.string()).optional(),
+      ctx: z.record(z.object({}).partial().passthrough()).optional(),
+      timeout: z.number().optional(),
+    })
+  ),
+});
+export type TXubeGetAccountFacetsUpdateResponse = z.infer<
+  typeof XubeGetAccountFacetsUpdateResponse
+>;
+export const XubeGetAccountFacetsFirmwareInfoResponse = z.object({
+  componentType: z.string(),
+  creator: z.string(),
+  created: z.string(),
+  firmwareHash: z.string(),
+  firmwareSize: z.number(),
+  type: z.string().min(3).optional(),
+  version: z.union([z.string(), z.number()]),
+  deviceId: z.string(),
+  target: z.string(),
+  facetType: z.literal("FIRMWARE-INFO"),
+  facetId: z.string().optional(),
+  name: z.string().optional(),
+  id: z.string().min(3),
+  firmwareVersion: z.string(),
+  key: z.string(),
+});
+export type TXubeGetAccountFacetsFirmwareInfoResponse = z.infer<
+  typeof XubeGetAccountFacetsFirmwareInfoResponse
+>;
+export const XubeGetAccountFacetsFirmwareResponse = z.object({
+  componentType: z.string(),
+  facetType: z.literal("FIRMWARE"),
+  creator: z.string().optional(),
+  facetId: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  name: z.string().optional(),
+  objectVersionId: z.string(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+  deviceId: z.string(),
+  version: z.union([z.string(), z.number()]),
+  key: z.string(),
+});
+export type TXubeGetAccountFacetsFirmwareResponse = z.infer<
+  typeof XubeGetAccountFacetsFirmwareResponse
+>;
 export const XubeGetAccountFacetsResponse = z.object({
   data: z.array(
     z.object({
@@ -1452,736 +1736,18 @@ export const XubeGetAccountFacetsResponse = z.object({
         })
         .passthrough(),
       facets: z.array(
-        z.union([
-          z.object({
-            accountId: z.string(),
-            componentType: z.string(),
-            facetType: z.literal("ACCOUNT"),
-            creator: z.string().optional(),
-            facetId: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            activationStatus: z.enum(["active", "inactive"]),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-            updater: z.string().optional(),
-            accountId: z.string(),
-            facetType: z.literal("ACTIVATION-STATUS"),
-            facetId: z.string().optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            updated: z.string().datetime({ offset: true }).optional(),
-            timestamp: z.string(),
-          }),
-          z.object({
-            componentType: z.string(),
-            facetType: z.literal("HEARTBEAT"),
-            facetId: z.string().optional(),
-            id: z.string().min(3),
-            deviceId: z.string(),
-            timestamp: z.string().datetime({ offset: true }),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string().optional(),
-            targetId: z.string(),
-            created: z.string().datetime({ offset: true }).optional(),
-            destination: z.object({
-              headers: z
-                .object({ Authorization: z.string(), "x-api-key": z.string() })
-                .partial()
-                .passthrough()
-                .optional(),
-              id: z.string(),
-              url: z.string().url(),
-            }),
-            source: z.object({ id: z.string(), type: z.string() }).optional(),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-            updater: z.string(),
-            accountId: z.string(),
-            facetType: z.literal("DATA-DESTINATION"),
-            facetId: z.string().optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            updated: z.string().datetime({ offset: true }),
-          }),
-          z.object({
-            componentType: z.string(),
-            orphaned: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            storage: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            scripting: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            facetType: z.literal("FILES"),
-            environment: z.object({
-              release: z.string(),
-              mqttEndpoint: z.string(),
-              region: z.string(),
-              status: z
-                .enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ])
-                .optional(),
-            }),
-            system: z.object({
-              firmware: z.object({
-                path: z.string(),
-                existing: z
-                  .array(
-                    z.object({
-                      partition: z.string().optional(),
-                      size: z.number().optional(),
-                      checksum: z.number().optional(),
-                      version: z.string(),
-                      key: z.string(),
-                    })
-                  )
-                  .optional(),
-                acceptance: z
-                  .object({
-                    accepted: z.boolean(),
-                    timestamp: z.string().optional(),
-                  })
-                  .optional(),
-                active: z.object({
-                  partition: z.string().optional(),
-                  size: z.number().optional(),
-                  checksum: z.number().optional(),
-                  version: z.string(),
-                  key: z.string(),
-                }),
-              }),
-            }),
-            stage: z.enum(["current", "expected", "historical"]),
-            facetId: z.string().optional(),
-            communication: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            device: z.string(),
-            config: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            updated: z.string().datetime({ offset: true }).optional(),
-            status: z.enum([
-              "disabled",
-              "pending",
-              "unknown",
-              "error",
-              "warning",
-              "healthy",
-            ]),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            latitude: z.number(),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-            updater: z.string().optional(),
-            facetType: z.literal("LOCATION"),
-            facetId: z.string().optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            updated: z.string().datetime({ offset: true }).optional(),
-            longitude: z.number(),
-          }),
-          z.object({
-            componentType: z.string(),
-            facetType: z.literal("STATUS"),
-            connectivity: z
-              .object({
-                wifi: z.object({
-                  signalStrength: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  ssid: z.string().optional(),
-                }),
-                cellular: z.object({
-                  signalStrength: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                }),
-                eth: z.object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  mac: z.string().optional(),
-                }),
-                platform: z.object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                }),
-              })
-              .partial(),
-            engine: z
-              .object({
-                state: z.enum(["running", "stopped", "error", "unknown"]),
-                updated: z.string(),
-              })
-              .optional(),
-            facetId: z.string().optional(),
-            temperature: z
-              .object({
-                state: z.enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ]),
-                message: z.string().optional(),
-                updated: z.string(),
-                value: z.number(),
-              })
-              .optional(),
-            availability: z
-              .object({
-                state: z.enum(["online", "offline", "unknown"]),
-                updated: z.string(),
-              })
-              .optional(),
-            power: z.object({
-              auxiliary: z
-                .object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  voltage: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                })
-                .optional(),
-              usb: z
-                .object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  voltage: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                })
-                .optional(),
-              solar: z
-                .object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  voltage: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                })
-                .optional(),
-              source: z.object({
-                currentSource: z.object({
-                  state: z.enum([
-                    "disabled",
-                    "pending",
-                    "unknown",
-                    "error",
-                    "warning",
-                    "healthy",
-                  ]),
-                  message: z.string().optional(),
-                  updated: z.string(),
-                  value: z.enum([
-                    "battery",
-                    "usb",
-                    "solar",
-                    "auxiliary",
-                    "noSource",
-                    "unknownSource",
-                  ]),
-                }),
-              }),
-              battery: z
-                .object({
-                  charge: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.number(),
-                  }),
-                  temperature: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number(),
-                    })
-                    .optional(),
-                  chargingState: z.enum(["charging", "notCharging", "unknown"]),
-                })
-                .optional(),
-            }),
-            timestamp: z.string(),
-          }),
-          z.object({
-            componentType: z.string(),
-            facetType: z.literal("SNAPSHOT"),
-            creator: z.string().optional(),
-            facetId: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            name: z.string().optional(),
-            index: z.number(),
-            id: z.string().min(3),
-            type: z.string().min(3).optional(),
-            updated: z.string().datetime({ offset: true }).optional(),
-            snapshot: z.object({
-              fw: z.object({ v: z.number() }),
-              cfg: z.record(
-                z.object({
-                  cv: z.number(),
-                  v: z.union([z.number(), z.string()]).optional(),
-                  n: z.object({}).partial().passthrough().optional(),
-                })
-              ),
-            }),
-            updater: z.string().optional(),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            approval: z.object({
-              created: z.string().datetime({ offset: true }),
-              state: z.enum(["approved", "denied", "pending"]),
-              conditions: z.array(z.enum(["local", "remote"])).optional(),
-              updated: z.string().datetime({ offset: true }).optional(),
-              updater: z.string().optional(),
-            }),
-            type: z.string().min(3).optional(),
-            updater: z.string().optional(),
-            facetType: z.literal("UPDATE"),
-            facetId: z.string().optional(),
-            mismatch: z
-              .record(z.object({ actual: z.string(), expected: z.string() }))
-              .optional(),
-            name: z.string().optional(),
-            progress: z.record(
-              z
-                .object({
-                  totalSize: z.number(),
-                  lastOffset: z.number(),
-                  updated: z.string(),
-                })
-                .partial()
-            ),
-            id: z.string().min(3),
-            state: z.enum([
-              "waiting_for_device_status",
-              "ready_to_send",
-              "sent",
-              "failed",
-              "in_progress",
-              "completed",
-            ]),
-            job: z.string().optional(),
-            conditions: z.array(z.enum(["local", "remote"])).optional(),
-            updated: z.string().datetime({ offset: true }).optional(),
-            device: z.string(),
-            tasks: z.array(
-              z.object({
-                a: z.enum([
-                  "d",
-                  "uf",
-                  "u",
-                  "upd",
-                  "r",
-                  "cdr",
-                  "z",
-                  "a",
-                  "s",
-                  "b",
-                  "e",
-                  "k",
-                  "x",
-                  "crash",
-                  "t",
-                ]),
-                tries: z.number().optional(),
-                topics: z.record(z.string()).optional(),
-                ctx: z.record(z.object({}).partial().passthrough()).optional(),
-                timeout: z.number().optional(),
-              })
-            ),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string(),
-            created: z.string(),
-            firmwareHash: z.string(),
-            firmwareSize: z.number(),
-            type: z.string().min(3).optional(),
-            version: z.union([z.string(), z.number()]),
-            deviceId: z.string(),
-            target: z.string(),
-            facetType: z.literal("FIRMWARE-INFO"),
-            facetId: z.string().optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            firmwareVersion: z.string(),
-            key: z.string(),
-          }),
-          z.object({
-            componentType: z.string(),
-            facetType: z.literal("FIRMWARE"),
-            creator: z.string().optional(),
-            facetId: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            name: z.string().optional(),
-            objectVersionId: z.string(),
-            id: z.string().min(3),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-            version: z.union([z.string(), z.number()]),
-            key: z.string(),
-          }),
+        z.discriminatedUnion("facetType", [
+          XubeGetAccountFacetsAccountResponse,
+          XubeGetAccountFacetsActivationStatusResponse,
+          XubeGetAccountFacetsHeartbeatResponse,
+          XubeGetAccountFacetsDataDestinationResponse,
+          XubeGetAccountFacetsFilesResponse,
+          XubeGetAccountFacetsLocationResponse,
+          XubeGetAccountFacetsStatusResponse,
+          XubeGetAccountFacetsSnapshotResponse,
+          XubeGetAccountFacetsUpdateResponse,
+          XubeGetAccountFacetsFirmwareInfoResponse,
+          XubeGetAccountFacetsFirmwareResponse,
         ])
       ),
     })
@@ -2193,24 +1759,35 @@ export type TXubeGetAccountFacetsResponse = z.infer<
 >;
 export const XubeStringModel = z.string();
 export type TXubeStringModel = z.infer<typeof XubeStringModel>;
-export const XubeSetDevicesSubscriptionsRequest = z.union([
-  z
-    .object({
-      facetType: z.string().optional(),
-      subscriptionType: z.literal("FACET"),
-      facetId: z.string().optional(),
-      destination: z.string(),
-      targets: z.array(z.string()),
-    })
-    .passthrough(),
-  z
-    .object({
-      subscriptionType: z.literal("DATA"),
-      destination: z.string(),
-      targets: z.array(z.string()),
-    })
-    .passthrough(),
-]);
+export const XubeSetDevicesSubscriptionsFacetRequest = z
+  .object({
+    facetType: z.string().optional(),
+    subscriptionType: z.literal("FACET"),
+    facetId: z.string().optional(),
+    destination: z.string(),
+    targets: z.array(z.string()),
+  })
+  .passthrough();
+export type TXubeSetDevicesSubscriptionsFacetRequest = z.infer<
+  typeof XubeSetDevicesSubscriptionsFacetRequest
+>;
+export const XubeSetDevicesSubscriptionsDataRequest = z
+  .object({
+    subscriptionType: z.literal("DATA"),
+    destination: z.string(),
+    targets: z.array(z.string()),
+  })
+  .passthrough();
+export type TXubeSetDevicesSubscriptionsDataRequest = z.infer<
+  typeof XubeSetDevicesSubscriptionsDataRequest
+>;
+export const XubeSetDevicesSubscriptionsRequest = z.discriminatedUnion(
+  "subscriptionType",
+  [
+    XubeSetDevicesSubscriptionsFacetRequest,
+    XubeSetDevicesSubscriptionsDataRequest,
+  ]
+);
 export type TXubeSetDevicesSubscriptionsRequest = z.infer<
   typeof XubeSetDevicesSubscriptionsRequest
 >;
@@ -2282,733 +1859,18 @@ export type TXubeGetLatestDeviceVersionRequest = z.infer<
   typeof XubeGetLatestDeviceVersionRequest
 >;
 export const XubeDeviceFacets = z.array(
-  z.union([
-    z.object({
-      accountId: z.string(),
-      componentType: z.string(),
-      facetType: z.literal("ACCOUNT"),
-      creator: z.string().optional(),
-      facetId: z.string().optional(),
-      created: z.string().datetime({ offset: true }).optional(),
-      name: z.string().optional(),
-      id: z.string().min(3),
-      type: z.string().min(3).optional(),
-      deviceId: z.string(),
-    }),
-    z.object({
-      componentType: z.string(),
-      creator: z.string().optional(),
-      created: z.string().datetime({ offset: true }).optional(),
-      activationStatus: z.enum(["active", "inactive"]),
-      type: z.string().min(3).optional(),
-      deviceId: z.string(),
-      updater: z.string().optional(),
-      accountId: z.string(),
-      facetType: z.literal("ACTIVATION-STATUS"),
-      facetId: z.string().optional(),
-      name: z.string().optional(),
-      id: z.string().min(3),
-      updated: z.string().datetime({ offset: true }).optional(),
-      timestamp: z.string(),
-    }),
-    z.object({
-      componentType: z.string(),
-      facetType: z.literal("HEARTBEAT"),
-      facetId: z.string().optional(),
-      id: z.string().min(3),
-      deviceId: z.string(),
-      timestamp: z.string().datetime({ offset: true }),
-    }),
-    z.object({
-      componentType: z.string(),
-      creator: z.string().optional(),
-      targetId: z.string(),
-      created: z.string().datetime({ offset: true }).optional(),
-      destination: z.object({
-        headers: z
-          .object({ Authorization: z.string(), "x-api-key": z.string() })
-          .partial()
-          .passthrough()
-          .optional(),
-        id: z.string(),
-        url: z.string().url(),
-      }),
-      source: z.object({ id: z.string(), type: z.string() }).optional(),
-      type: z.string().min(3).optional(),
-      deviceId: z.string(),
-      updater: z.string(),
-      accountId: z.string(),
-      facetType: z.literal("DATA-DESTINATION"),
-      facetId: z.string().optional(),
-      name: z.string().optional(),
-      id: z.string().min(3),
-      updated: z.string().datetime({ offset: true }),
-    }),
-    z.object({
-      componentType: z.string(),
-      orphaned: z
-        .record(
-          z.object({
-            path: z.string(),
-            existing: z
-              .array(
-                z.object({
-                  partition: z.string().optional(),
-                  size: z.number().optional(),
-                  checksum: z.number().optional(),
-                  version: z.string(),
-                  key: z.string(),
-                })
-              )
-              .optional(),
-            acceptance: z
-              .object({
-                accepted: z.boolean(),
-                timestamp: z.string().optional(),
-              })
-              .optional(),
-            active: z.object({
-              partition: z.string().optional(),
-              size: z.number().optional(),
-              checksum: z.number().optional(),
-              version: z.string(),
-              key: z.string(),
-            }),
-          })
-        )
-        .optional(),
-      storage: z
-        .record(
-          z.object({
-            path: z.string(),
-            existing: z
-              .array(
-                z.object({
-                  partition: z.string().optional(),
-                  size: z.number().optional(),
-                  checksum: z.number().optional(),
-                  version: z.string(),
-                  key: z.string(),
-                })
-              )
-              .optional(),
-            acceptance: z
-              .object({
-                accepted: z.boolean(),
-                timestamp: z.string().optional(),
-              })
-              .optional(),
-            active: z.object({
-              partition: z.string().optional(),
-              size: z.number().optional(),
-              checksum: z.number().optional(),
-              version: z.string(),
-              key: z.string(),
-            }),
-          })
-        )
-        .optional(),
-      scripting: z
-        .record(
-          z.object({
-            path: z.string(),
-            existing: z
-              .array(
-                z.object({
-                  partition: z.string().optional(),
-                  size: z.number().optional(),
-                  checksum: z.number().optional(),
-                  version: z.string(),
-                  key: z.string(),
-                })
-              )
-              .optional(),
-            acceptance: z
-              .object({
-                accepted: z.boolean(),
-                timestamp: z.string().optional(),
-              })
-              .optional(),
-            active: z.object({
-              partition: z.string().optional(),
-              size: z.number().optional(),
-              checksum: z.number().optional(),
-              version: z.string(),
-              key: z.string(),
-            }),
-          })
-        )
-        .optional(),
-      facetType: z.literal("FILES"),
-      environment: z.object({
-        release: z.string(),
-        mqttEndpoint: z.string(),
-        region: z.string(),
-        status: z
-          .enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ])
-          .optional(),
-      }),
-      system: z.object({
-        firmware: z.object({
-          path: z.string(),
-          existing: z
-            .array(
-              z.object({
-                partition: z.string().optional(),
-                size: z.number().optional(),
-                checksum: z.number().optional(),
-                version: z.string(),
-                key: z.string(),
-              })
-            )
-            .optional(),
-          acceptance: z
-            .object({ accepted: z.boolean(), timestamp: z.string().optional() })
-            .optional(),
-          active: z.object({
-            partition: z.string().optional(),
-            size: z.number().optional(),
-            checksum: z.number().optional(),
-            version: z.string(),
-            key: z.string(),
-          }),
-        }),
-      }),
-      stage: z.enum(["current", "expected", "historical"]),
-      facetId: z.string().optional(),
-      communication: z
-        .record(
-          z.object({
-            path: z.string(),
-            existing: z
-              .array(
-                z.object({
-                  partition: z.string().optional(),
-                  size: z.number().optional(),
-                  checksum: z.number().optional(),
-                  version: z.string(),
-                  key: z.string(),
-                })
-              )
-              .optional(),
-            acceptance: z
-              .object({
-                accepted: z.boolean(),
-                timestamp: z.string().optional(),
-              })
-              .optional(),
-            active: z.object({
-              partition: z.string().optional(),
-              size: z.number().optional(),
-              checksum: z.number().optional(),
-              version: z.string(),
-              key: z.string(),
-            }),
-          })
-        )
-        .optional(),
-      device: z.string(),
-      config: z
-        .record(
-          z.object({
-            path: z.string(),
-            existing: z
-              .array(
-                z.object({
-                  partition: z.string().optional(),
-                  size: z.number().optional(),
-                  checksum: z.number().optional(),
-                  version: z.string(),
-                  key: z.string(),
-                })
-              )
-              .optional(),
-            acceptance: z
-              .object({
-                accepted: z.boolean(),
-                timestamp: z.string().optional(),
-              })
-              .optional(),
-            active: z.object({
-              partition: z.string().optional(),
-              size: z.number().optional(),
-              checksum: z.number().optional(),
-              version: z.string(),
-              key: z.string(),
-            }),
-          })
-        )
-        .optional(),
-      updated: z.string().datetime({ offset: true }).optional(),
-      status: z.enum([
-        "disabled",
-        "pending",
-        "unknown",
-        "error",
-        "warning",
-        "healthy",
-      ]),
-    }),
-    z.object({
-      componentType: z.string(),
-      creator: z.string().optional(),
-      created: z.string().datetime({ offset: true }).optional(),
-      latitude: z.number(),
-      type: z.string().min(3).optional(),
-      deviceId: z.string(),
-      updater: z.string().optional(),
-      facetType: z.literal("LOCATION"),
-      facetId: z.string().optional(),
-      name: z.string().optional(),
-      id: z.string().min(3),
-      updated: z.string().datetime({ offset: true }).optional(),
-      longitude: z.number(),
-    }),
-    z.object({
-      componentType: z.string(),
-      facetType: z.literal("STATUS"),
-      connectivity: z
-        .object({
-          wifi: z.object({
-            signalStrength: z
-              .object({
-                state: z.enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ]),
-                message: z.string().optional(),
-                updated: z.string(),
-                value: z.number().optional(),
-              })
-              .optional(),
-            connection: z.object({
-              state: z.enum([
-                "disabled",
-                "pending",
-                "unknown",
-                "error",
-                "warning",
-                "healthy",
-              ]),
-              message: z.string().optional(),
-              updated: z.string(),
-              value: z.enum([
-                "connected",
-                "notConnected",
-                "notInUse",
-                "pending",
-              ]),
-            }),
-            ssid: z.string().optional(),
-          }),
-          cellular: z.object({
-            signalStrength: z
-              .object({
-                state: z.enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ]),
-                message: z.string().optional(),
-                updated: z.string(),
-                value: z.number().optional(),
-              })
-              .optional(),
-            connection: z.object({
-              state: z.enum([
-                "disabled",
-                "pending",
-                "unknown",
-                "error",
-                "warning",
-                "healthy",
-              ]),
-              message: z.string().optional(),
-              updated: z.string(),
-              value: z.enum([
-                "connected",
-                "notConnected",
-                "notInUse",
-                "pending",
-              ]),
-            }),
-          }),
-          eth: z.object({
-            connection: z.object({
-              state: z.enum([
-                "disabled",
-                "pending",
-                "unknown",
-                "error",
-                "warning",
-                "healthy",
-              ]),
-              message: z.string().optional(),
-              updated: z.string(),
-              value: z.enum([
-                "connected",
-                "notConnected",
-                "notInUse",
-                "pending",
-              ]),
-            }),
-            mac: z.string().optional(),
-          }),
-          platform: z.object({
-            connection: z.object({
-              state: z.enum([
-                "disabled",
-                "pending",
-                "unknown",
-                "error",
-                "warning",
-                "healthy",
-              ]),
-              message: z.string().optional(),
-              updated: z.string(),
-              value: z.enum([
-                "connected",
-                "notConnected",
-                "notInUse",
-                "pending",
-              ]),
-            }),
-          }),
-        })
-        .partial(),
-      engine: z
-        .object({
-          state: z.enum(["running", "stopped", "error", "unknown"]),
-          updated: z.string(),
-        })
-        .optional(),
-      facetId: z.string().optional(),
-      temperature: z
-        .object({
-          state: z.enum([
-            "disabled",
-            "pending",
-            "unknown",
-            "error",
-            "warning",
-            "healthy",
-          ]),
-          message: z.string().optional(),
-          updated: z.string(),
-          value: z.number(),
-        })
-        .optional(),
-      availability: z
-        .object({
-          state: z.enum(["online", "offline", "unknown"]),
-          updated: z.string(),
-        })
-        .optional(),
-      power: z.object({
-        auxiliary: z
-          .object({
-            connection: z.object({
-              state: z.enum([
-                "disabled",
-                "pending",
-                "unknown",
-                "error",
-                "warning",
-                "healthy",
-              ]),
-              message: z.string().optional(),
-              updated: z.string(),
-              value: z.enum([
-                "connected",
-                "notConnected",
-                "notInUse",
-                "pending",
-              ]),
-            }),
-            voltage: z
-              .object({
-                state: z.enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ]),
-                message: z.string().optional(),
-                updated: z.string(),
-                value: z.number().optional(),
-              })
-              .optional(),
-          })
-          .optional(),
-        usb: z
-          .object({
-            connection: z.object({
-              state: z.enum([
-                "disabled",
-                "pending",
-                "unknown",
-                "error",
-                "warning",
-                "healthy",
-              ]),
-              message: z.string().optional(),
-              updated: z.string(),
-              value: z.enum([
-                "connected",
-                "notConnected",
-                "notInUse",
-                "pending",
-              ]),
-            }),
-            voltage: z
-              .object({
-                state: z.enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ]),
-                message: z.string().optional(),
-                updated: z.string(),
-                value: z.number().optional(),
-              })
-              .optional(),
-          })
-          .optional(),
-        solar: z
-          .object({
-            connection: z.object({
-              state: z.enum([
-                "disabled",
-                "pending",
-                "unknown",
-                "error",
-                "warning",
-                "healthy",
-              ]),
-              message: z.string().optional(),
-              updated: z.string(),
-              value: z.enum([
-                "connected",
-                "notConnected",
-                "notInUse",
-                "pending",
-              ]),
-            }),
-            voltage: z
-              .object({
-                state: z.enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ]),
-                message: z.string().optional(),
-                updated: z.string(),
-                value: z.number().optional(),
-              })
-              .optional(),
-          })
-          .optional(),
-        source: z.object({
-          currentSource: z.object({
-            state: z.enum([
-              "disabled",
-              "pending",
-              "unknown",
-              "error",
-              "warning",
-              "healthy",
-            ]),
-            message: z.string().optional(),
-            updated: z.string(),
-            value: z.enum([
-              "battery",
-              "usb",
-              "solar",
-              "auxiliary",
-              "noSource",
-              "unknownSource",
-            ]),
-          }),
-        }),
-        battery: z
-          .object({
-            charge: z.object({
-              state: z.enum([
-                "disabled",
-                "pending",
-                "unknown",
-                "error",
-                "warning",
-                "healthy",
-              ]),
-              message: z.string().optional(),
-              updated: z.string(),
-              value: z.number(),
-            }),
-            temperature: z
-              .object({
-                state: z.enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ]),
-                message: z.string().optional(),
-                updated: z.string(),
-                value: z.number(),
-              })
-              .optional(),
-            chargingState: z.enum(["charging", "notCharging", "unknown"]),
-          })
-          .optional(),
-      }),
-      timestamp: z.string(),
-    }),
-    z.object({
-      componentType: z.string(),
-      facetType: z.literal("SNAPSHOT"),
-      creator: z.string().optional(),
-      facetId: z.string().optional(),
-      created: z.string().datetime({ offset: true }).optional(),
-      name: z.string().optional(),
-      index: z.number(),
-      id: z.string().min(3),
-      type: z.string().min(3).optional(),
-      updated: z.string().datetime({ offset: true }).optional(),
-      snapshot: z.object({
-        fw: z.object({ v: z.number() }),
-        cfg: z.record(
-          z.object({
-            cv: z.number(),
-            v: z.union([z.number(), z.string()]).optional(),
-            n: z.object({}).partial().passthrough().optional(),
-          })
-        ),
-      }),
-      updater: z.string().optional(),
-    }),
-    z.object({
-      componentType: z.string(),
-      creator: z.string().optional(),
-      created: z.string().datetime({ offset: true }).optional(),
-      approval: z.object({
-        created: z.string().datetime({ offset: true }),
-        state: z.enum(["approved", "denied", "pending"]),
-        conditions: z.array(z.enum(["local", "remote"])).optional(),
-        updated: z.string().datetime({ offset: true }).optional(),
-        updater: z.string().optional(),
-      }),
-      type: z.string().min(3).optional(),
-      updater: z.string().optional(),
-      facetType: z.literal("UPDATE"),
-      facetId: z.string().optional(),
-      mismatch: z
-        .record(z.object({ actual: z.string(), expected: z.string() }))
-        .optional(),
-      name: z.string().optional(),
-      progress: z.record(
-        z
-          .object({
-            totalSize: z.number(),
-            lastOffset: z.number(),
-            updated: z.string(),
-          })
-          .partial()
-      ),
-      id: z.string().min(3),
-      state: z.enum([
-        "waiting_for_device_status",
-        "ready_to_send",
-        "sent",
-        "failed",
-        "in_progress",
-        "completed",
-      ]),
-      job: z.string().optional(),
-      conditions: z.array(z.enum(["local", "remote"])).optional(),
-      updated: z.string().datetime({ offset: true }).optional(),
-      device: z.string(),
-      tasks: z.array(
-        z.object({
-          a: z.enum([
-            "d",
-            "uf",
-            "u",
-            "upd",
-            "r",
-            "cdr",
-            "z",
-            "a",
-            "s",
-            "b",
-            "e",
-            "k",
-            "x",
-            "crash",
-            "t",
-          ]),
-          tries: z.number().optional(),
-          topics: z.record(z.string()).optional(),
-          ctx: z.record(z.object({}).partial().passthrough()).optional(),
-          timeout: z.number().optional(),
-        })
-      ),
-    }),
-    z.object({
-      componentType: z.string(),
-      creator: z.string(),
-      created: z.string(),
-      firmwareHash: z.string(),
-      firmwareSize: z.number(),
-      type: z.string().min(3).optional(),
-      version: z.union([z.string(), z.number()]),
-      deviceId: z.string(),
-      target: z.string(),
-      facetType: z.literal("FIRMWARE-INFO"),
-      facetId: z.string().optional(),
-      name: z.string().optional(),
-      id: z.string().min(3),
-      firmwareVersion: z.string(),
-      key: z.string(),
-    }),
-    z.object({
-      componentType: z.string(),
-      facetType: z.literal("FIRMWARE"),
-      creator: z.string().optional(),
-      facetId: z.string().optional(),
-      created: z.string().datetime({ offset: true }).optional(),
-      name: z.string().optional(),
-      objectVersionId: z.string(),
-      id: z.string().min(3),
-      type: z.string().min(3).optional(),
-      deviceId: z.string(),
-      version: z.union([z.string(), z.number()]),
-      key: z.string(),
-    }),
+  z.discriminatedUnion("facetType", [
+    XubeGetAccountFacetsAccountResponse,
+    XubeGetAccountFacetsActivationStatusResponse,
+    XubeGetAccountFacetsHeartbeatResponse,
+    XubeGetAccountFacetsDataDestinationResponse,
+    XubeGetAccountFacetsFilesResponse,
+    XubeGetAccountFacetsLocationResponse,
+    XubeGetAccountFacetsStatusResponse,
+    XubeGetAccountFacetsSnapshotResponse,
+    XubeGetAccountFacetsUpdateResponse,
+    XubeGetAccountFacetsFirmwareInfoResponse,
+    XubeGetAccountFacetsFirmwareResponse,
   ])
 );
 export type TXubeDeviceFacets = z.infer<typeof XubeDeviceFacets>;
@@ -3165,6 +2027,26 @@ export const XubeResetConnectedDevicesRequest = z.object({
 export type TXubeResetConnectedDevicesRequest = z.infer<
   typeof XubeResetConnectedDevicesRequest
 >;
+export const XubeGetDeviceFacetCategoriesRequest = z
+  .object({ facetTypes: z.array(z.string()) })
+  .partial();
+export type TXubeGetDeviceFacetCategoriesRequest = z.infer<
+  typeof XubeGetDeviceFacetCategoriesRequest
+>;
+export const XubeGetDeviceFacetCategoriesResponse = z.object({
+  data: z.record(
+    z.object({
+      color: z.string().optional(),
+      name: z.string(),
+      icon: z.string().optional(),
+      description: z.string(),
+      id: z.string(),
+    })
+  ),
+});
+export type TXubeGetDeviceFacetCategoriesResponse = z.infer<
+  typeof XubeGetDeviceFacetCategoriesResponse
+>;
 export const XubeDeviceFirmwareUpdate = z.object({
   componentType: z.literal("DEVICE"),
   creator: z.string().optional(),
@@ -3201,6 +2083,7 @@ export const XubeDeviceFirmwareUpdate = z.object({
     "failed",
     "in_progress",
     "completed",
+    "cancelled",
   ]),
   job: z.string().optional(),
   conditions: z.array(z.enum(["local", "remote"])).optional(),
@@ -3263,6 +2146,7 @@ export const XubeSetDeviceUpdateRequest = z.object({
       "failed",
       "in_progress",
       "completed",
+      "cancelled",
     ])
     .optional(),
   device: z.string(),
@@ -3306,6 +2190,7 @@ export const XubeDeviceUpdate = z.object({
     "failed",
     "in_progress",
     "completed",
+    "cancelled",
   ]),
   job: z.string().optional(),
   conditions: z.array(z.enum(["local", "remote"])).optional(),
@@ -3838,162 +2723,191 @@ export const XubeGetDeviceSubscriptionsRequest = z.object({
 export type TXubeGetDeviceSubscriptionsRequest = z.infer<
   typeof XubeGetDeviceSubscriptionsRequest
 >;
+export const XubeGetDeviceSubscriptionsFacetWebhookWebhookFacetResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    url: z.string(),
+    accountId: z.string().optional(),
+    facetType: z.string().optional(),
+    subscriptionVariant: z.literal("FACET-WEBHOOK"),
+    subscriptionType: z.literal("FACET"),
+    facetId: z.string().optional(),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBHOOK"),
+    id: z.string().min(3),
+  });
+export type TXubeGetDeviceSubscriptionsFacetWebhookWebhookFacetResponse =
+  z.infer<typeof XubeGetDeviceSubscriptionsFacetWebhookWebhookFacetResponse>;
+export const XubeGetDeviceSubscriptionsDataWebhookWebhookDataResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    url: z.string(),
+    accountId: z.string().optional(),
+    subscriptionVariant: z.literal("DATA-WEBHOOK"),
+    subscriptionType: z.literal("DATA"),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBHOOK"),
+    id: z.string().min(3),
+  });
+export type TXubeGetDeviceSubscriptionsDataWebhookWebhookDataResponse = z.infer<
+  typeof XubeGetDeviceSubscriptionsDataWebhookWebhookDataResponse
+>;
+export const XubeGetDeviceSubscriptionsMemberWebhookWebhookMemberResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    url: z.string(),
+    accountId: z.string().optional(),
+    subscriptionVariant: z.literal("MEMBER-WEBHOOK"),
+    subscriptionType: z.literal("MEMBER"),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBHOOK"),
+    id: z.string().min(3),
+  });
+export type TXubeGetDeviceSubscriptionsMemberWebhookWebhookMemberResponse =
+  z.infer<typeof XubeGetDeviceSubscriptionsMemberWebhookWebhookMemberResponse>;
+export const XubeGetDeviceSubscriptionsFacetWebsocketWebsocketFacetResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    accountId: z.string().optional(),
+    facetType: z.string().optional(),
+    subscriptionVariant: z.literal("FACET-WEBSOCKET"),
+    subscriptionType: z.literal("FACET"),
+    facetId: z.string().optional(),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBSOCKET"),
+    connectionId: z.string(),
+    id: z.string().min(3),
+  });
+export type TXubeGetDeviceSubscriptionsFacetWebsocketWebsocketFacetResponse =
+  z.infer<
+    typeof XubeGetDeviceSubscriptionsFacetWebsocketWebsocketFacetResponse
+  >;
+export const XubeGetDeviceSubscriptionsDataWebsocketWebsocketDataResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    accountId: z.string().optional(),
+    subscriptionVariant: z.literal("DATA-WEBSOCKET"),
+    subscriptionType: z.literal("DATA"),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBSOCKET"),
+    connectionId: z.string(),
+    id: z.string().min(3),
+  });
+export type TXubeGetDeviceSubscriptionsDataWebsocketWebsocketDataResponse =
+  z.infer<typeof XubeGetDeviceSubscriptionsDataWebsocketWebsocketDataResponse>;
+export const XubeGetDeviceSubscriptionsMemberWebsocketWebsocketMemberResponse =
+  z.object({
+    delivery: z
+      .object({
+        lastDeliveryAttempt: z.string().optional(),
+        nextRetryAt: z.string().optional(),
+        lastSuccessfulDelivery: z.string().optional(),
+        failedAttempts: z.number().gte(0).optional().default(0),
+        status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
+      })
+      .optional()
+      .default({ failedAttempts: 0, status: "ACTIVE" }),
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z.string().datetime({ offset: true }).optional(),
+    targetType: z.string().optional(),
+    type: z.string().min(3).optional(),
+    destinationId: z.string(),
+    accountId: z.string().optional(),
+    subscriptionVariant: z.literal("MEMBER-WEBSOCKET"),
+    subscriptionType: z.literal("MEMBER"),
+    name: z.string().optional(),
+    destinationType: z.literal("WEBSOCKET"),
+    connectionId: z.string(),
+    id: z.string().min(3),
+  });
+export type TXubeGetDeviceSubscriptionsMemberWebsocketWebsocketMemberResponse =
+  z.infer<
+    typeof XubeGetDeviceSubscriptionsMemberWebsocketWebsocketMemberResponse
+  >;
 export const XubeGetDeviceSubscriptionsResponse = z.array(
-  z.union([
-    z.object({
-      delivery: z
-        .object({
-          lastDeliveryAttempt: z.string().optional(),
-          nextRetryAt: z.string().optional(),
-          lastSuccessfulDelivery: z.string().optional(),
-          failedAttempts: z.number().gte(0).optional().default(0),
-          status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-        })
-        .optional()
-        .default({ failedAttempts: 0, status: "ACTIVE" }),
-      creator: z.string().optional(),
-      targetId: z.string(),
-      created: z.string().datetime({ offset: true }).optional(),
-      targetType: z.string().optional(),
-      type: z.string().min(3).optional(),
-      destinationId: z.string(),
-      url: z.string(),
-      accountId: z.string().optional(),
-      facetType: z.string().optional(),
-      subscriptionVariant: z.literal("FACET-WEBHOOK"),
-      subscriptionType: z.literal("FACET"),
-      facetId: z.string().optional(),
-      name: z.string().optional(),
-      destinationType: z.literal("WEBHOOK"),
-      id: z.string().min(3),
-    }),
-    z.object({
-      delivery: z
-        .object({
-          lastDeliveryAttempt: z.string().optional(),
-          nextRetryAt: z.string().optional(),
-          lastSuccessfulDelivery: z.string().optional(),
-          failedAttempts: z.number().gte(0).optional().default(0),
-          status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-        })
-        .optional()
-        .default({ failedAttempts: 0, status: "ACTIVE" }),
-      creator: z.string().optional(),
-      targetId: z.string(),
-      created: z.string().datetime({ offset: true }).optional(),
-      targetType: z.string().optional(),
-      type: z.string().min(3).optional(),
-      destinationId: z.string(),
-      url: z.string(),
-      accountId: z.string().optional(),
-      subscriptionVariant: z.literal("DATA-WEBHOOK"),
-      subscriptionType: z.literal("DATA"),
-      name: z.string().optional(),
-      destinationType: z.literal("WEBHOOK"),
-      id: z.string().min(3),
-    }),
-    z.object({
-      delivery: z
-        .object({
-          lastDeliveryAttempt: z.string().optional(),
-          nextRetryAt: z.string().optional(),
-          lastSuccessfulDelivery: z.string().optional(),
-          failedAttempts: z.number().gte(0).optional().default(0),
-          status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-        })
-        .optional()
-        .default({ failedAttempts: 0, status: "ACTIVE" }),
-      creator: z.string().optional(),
-      targetId: z.string(),
-      created: z.string().datetime({ offset: true }).optional(),
-      targetType: z.string().optional(),
-      type: z.string().min(3).optional(),
-      destinationId: z.string(),
-      url: z.string(),
-      accountId: z.string().optional(),
-      subscriptionVariant: z.literal("MEMBER-WEBHOOK"),
-      subscriptionType: z.literal("MEMBER"),
-      name: z.string().optional(),
-      destinationType: z.literal("WEBHOOK"),
-      id: z.string().min(3),
-    }),
-    z.object({
-      delivery: z
-        .object({
-          lastDeliveryAttempt: z.string().optional(),
-          nextRetryAt: z.string().optional(),
-          lastSuccessfulDelivery: z.string().optional(),
-          failedAttempts: z.number().gte(0).optional().default(0),
-          status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-        })
-        .optional()
-        .default({ failedAttempts: 0, status: "ACTIVE" }),
-      creator: z.string().optional(),
-      targetId: z.string(),
-      created: z.string().datetime({ offset: true }).optional(),
-      targetType: z.string().optional(),
-      type: z.string().min(3).optional(),
-      destinationId: z.string(),
-      accountId: z.string().optional(),
-      facetType: z.string().optional(),
-      subscriptionVariant: z.literal("FACET-WEBSOCKET"),
-      subscriptionType: z.literal("FACET"),
-      facetId: z.string().optional(),
-      name: z.string().optional(),
-      destinationType: z.literal("WEBSOCKET"),
-      connectionId: z.string(),
-      id: z.string().min(3),
-    }),
-    z.object({
-      delivery: z
-        .object({
-          lastDeliveryAttempt: z.string().optional(),
-          nextRetryAt: z.string().optional(),
-          lastSuccessfulDelivery: z.string().optional(),
-          failedAttempts: z.number().gte(0).optional().default(0),
-          status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-        })
-        .optional()
-        .default({ failedAttempts: 0, status: "ACTIVE" }),
-      creator: z.string().optional(),
-      targetId: z.string(),
-      created: z.string().datetime({ offset: true }).optional(),
-      targetType: z.string().optional(),
-      type: z.string().min(3).optional(),
-      destinationId: z.string(),
-      accountId: z.string().optional(),
-      subscriptionVariant: z.literal("DATA-WEBSOCKET"),
-      subscriptionType: z.literal("DATA"),
-      name: z.string().optional(),
-      destinationType: z.literal("WEBSOCKET"),
-      connectionId: z.string(),
-      id: z.string().min(3),
-    }),
-    z.object({
-      delivery: z
-        .object({
-          lastDeliveryAttempt: z.string().optional(),
-          nextRetryAt: z.string().optional(),
-          lastSuccessfulDelivery: z.string().optional(),
-          failedAttempts: z.number().gte(0).optional().default(0),
-          status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
-        })
-        .optional()
-        .default({ failedAttempts: 0, status: "ACTIVE" }),
-      creator: z.string().optional(),
-      targetId: z.string(),
-      created: z.string().datetime({ offset: true }).optional(),
-      targetType: z.string().optional(),
-      type: z.string().min(3).optional(),
-      destinationId: z.string(),
-      accountId: z.string().optional(),
-      subscriptionVariant: z.literal("MEMBER-WEBSOCKET"),
-      subscriptionType: z.literal("MEMBER"),
-      name: z.string().optional(),
-      destinationType: z.literal("WEBSOCKET"),
-      connectionId: z.string(),
-      id: z.string().min(3),
-    }),
+  z.discriminatedUnion("subscriptionVariant", [
+    XubeGetDeviceSubscriptionsFacetWebhookWebhookFacetResponse,
+    XubeGetDeviceSubscriptionsDataWebhookWebhookDataResponse,
+    XubeGetDeviceSubscriptionsMemberWebhookWebhookMemberResponse,
+    XubeGetDeviceSubscriptionsFacetWebsocketWebsocketFacetResponse,
+    XubeGetDeviceSubscriptionsDataWebsocketWebsocketDataResponse,
+    XubeGetDeviceSubscriptionsMemberWebsocketWebsocketMemberResponse,
   ])
 );
 export type TXubeGetDeviceSubscriptionsResponse = z.infer<
@@ -4077,736 +2991,18 @@ export const XubeGetDevicesFacetsResponse = z.object({
         })
         .passthrough(),
       facets: z.array(
-        z.union([
-          z.object({
-            accountId: z.string(),
-            componentType: z.string(),
-            facetType: z.literal("ACCOUNT"),
-            creator: z.string().optional(),
-            facetId: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            activationStatus: z.enum(["active", "inactive"]),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-            updater: z.string().optional(),
-            accountId: z.string(),
-            facetType: z.literal("ACTIVATION-STATUS"),
-            facetId: z.string().optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            updated: z.string().datetime({ offset: true }).optional(),
-            timestamp: z.string(),
-          }),
-          z.object({
-            componentType: z.string(),
-            facetType: z.literal("HEARTBEAT"),
-            facetId: z.string().optional(),
-            id: z.string().min(3),
-            deviceId: z.string(),
-            timestamp: z.string().datetime({ offset: true }),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string().optional(),
-            targetId: z.string(),
-            created: z.string().datetime({ offset: true }).optional(),
-            destination: z.object({
-              headers: z
-                .object({ Authorization: z.string(), "x-api-key": z.string() })
-                .partial()
-                .passthrough()
-                .optional(),
-              id: z.string(),
-              url: z.string().url(),
-            }),
-            source: z.object({ id: z.string(), type: z.string() }).optional(),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-            updater: z.string(),
-            accountId: z.string(),
-            facetType: z.literal("DATA-DESTINATION"),
-            facetId: z.string().optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            updated: z.string().datetime({ offset: true }),
-          }),
-          z.object({
-            componentType: z.string(),
-            orphaned: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            storage: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            scripting: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            facetType: z.literal("FILES"),
-            environment: z.object({
-              release: z.string(),
-              mqttEndpoint: z.string(),
-              region: z.string(),
-              status: z
-                .enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ])
-                .optional(),
-            }),
-            system: z.object({
-              firmware: z.object({
-                path: z.string(),
-                existing: z
-                  .array(
-                    z.object({
-                      partition: z.string().optional(),
-                      size: z.number().optional(),
-                      checksum: z.number().optional(),
-                      version: z.string(),
-                      key: z.string(),
-                    })
-                  )
-                  .optional(),
-                acceptance: z
-                  .object({
-                    accepted: z.boolean(),
-                    timestamp: z.string().optional(),
-                  })
-                  .optional(),
-                active: z.object({
-                  partition: z.string().optional(),
-                  size: z.number().optional(),
-                  checksum: z.number().optional(),
-                  version: z.string(),
-                  key: z.string(),
-                }),
-              }),
-            }),
-            stage: z.enum(["current", "expected", "historical"]),
-            facetId: z.string().optional(),
-            communication: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            device: z.string(),
-            config: z
-              .record(
-                z.object({
-                  path: z.string(),
-                  existing: z
-                    .array(
-                      z.object({
-                        partition: z.string().optional(),
-                        size: z.number().optional(),
-                        checksum: z.number().optional(),
-                        version: z.string(),
-                        key: z.string(),
-                      })
-                    )
-                    .optional(),
-                  acceptance: z
-                    .object({
-                      accepted: z.boolean(),
-                      timestamp: z.string().optional(),
-                    })
-                    .optional(),
-                  active: z.object({
-                    partition: z.string().optional(),
-                    size: z.number().optional(),
-                    checksum: z.number().optional(),
-                    version: z.string(),
-                    key: z.string(),
-                  }),
-                })
-              )
-              .optional(),
-            updated: z.string().datetime({ offset: true }).optional(),
-            status: z.enum([
-              "disabled",
-              "pending",
-              "unknown",
-              "error",
-              "warning",
-              "healthy",
-            ]),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            latitude: z.number(),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-            updater: z.string().optional(),
-            facetType: z.literal("LOCATION"),
-            facetId: z.string().optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            updated: z.string().datetime({ offset: true }).optional(),
-            longitude: z.number(),
-          }),
-          z.object({
-            componentType: z.string(),
-            facetType: z.literal("STATUS"),
-            connectivity: z
-              .object({
-                wifi: z.object({
-                  signalStrength: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  ssid: z.string().optional(),
-                }),
-                cellular: z.object({
-                  signalStrength: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                }),
-                eth: z.object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  mac: z.string().optional(),
-                }),
-                platform: z.object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                }),
-              })
-              .partial(),
-            engine: z
-              .object({
-                state: z.enum(["running", "stopped", "error", "unknown"]),
-                updated: z.string(),
-              })
-              .optional(),
-            facetId: z.string().optional(),
-            temperature: z
-              .object({
-                state: z.enum([
-                  "disabled",
-                  "pending",
-                  "unknown",
-                  "error",
-                  "warning",
-                  "healthy",
-                ]),
-                message: z.string().optional(),
-                updated: z.string(),
-                value: z.number(),
-              })
-              .optional(),
-            availability: z
-              .object({
-                state: z.enum(["online", "offline", "unknown"]),
-                updated: z.string(),
-              })
-              .optional(),
-            power: z.object({
-              auxiliary: z
-                .object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  voltage: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                })
-                .optional(),
-              usb: z
-                .object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  voltage: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                })
-                .optional(),
-              solar: z
-                .object({
-                  connection: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.enum([
-                      "connected",
-                      "notConnected",
-                      "notInUse",
-                      "pending",
-                    ]),
-                  }),
-                  voltage: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number().optional(),
-                    })
-                    .optional(),
-                })
-                .optional(),
-              source: z.object({
-                currentSource: z.object({
-                  state: z.enum([
-                    "disabled",
-                    "pending",
-                    "unknown",
-                    "error",
-                    "warning",
-                    "healthy",
-                  ]),
-                  message: z.string().optional(),
-                  updated: z.string(),
-                  value: z.enum([
-                    "battery",
-                    "usb",
-                    "solar",
-                    "auxiliary",
-                    "noSource",
-                    "unknownSource",
-                  ]),
-                }),
-              }),
-              battery: z
-                .object({
-                  charge: z.object({
-                    state: z.enum([
-                      "disabled",
-                      "pending",
-                      "unknown",
-                      "error",
-                      "warning",
-                      "healthy",
-                    ]),
-                    message: z.string().optional(),
-                    updated: z.string(),
-                    value: z.number(),
-                  }),
-                  temperature: z
-                    .object({
-                      state: z.enum([
-                        "disabled",
-                        "pending",
-                        "unknown",
-                        "error",
-                        "warning",
-                        "healthy",
-                      ]),
-                      message: z.string().optional(),
-                      updated: z.string(),
-                      value: z.number(),
-                    })
-                    .optional(),
-                  chargingState: z.enum(["charging", "notCharging", "unknown"]),
-                })
-                .optional(),
-            }),
-            timestamp: z.string(),
-          }),
-          z.object({
-            componentType: z.string(),
-            facetType: z.literal("SNAPSHOT"),
-            creator: z.string().optional(),
-            facetId: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            name: z.string().optional(),
-            index: z.number(),
-            id: z.string().min(3),
-            type: z.string().min(3).optional(),
-            updated: z.string().datetime({ offset: true }).optional(),
-            snapshot: z.object({
-              fw: z.object({ v: z.number() }),
-              cfg: z.record(
-                z.object({
-                  cv: z.number(),
-                  v: z.union([z.number(), z.string()]).optional(),
-                  n: z.object({}).partial().passthrough().optional(),
-                })
-              ),
-            }),
-            updater: z.string().optional(),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            approval: z.object({
-              created: z.string().datetime({ offset: true }),
-              state: z.enum(["approved", "denied", "pending"]),
-              conditions: z.array(z.enum(["local", "remote"])).optional(),
-              updated: z.string().datetime({ offset: true }).optional(),
-              updater: z.string().optional(),
-            }),
-            type: z.string().min(3).optional(),
-            updater: z.string().optional(),
-            facetType: z.literal("UPDATE"),
-            facetId: z.string().optional(),
-            mismatch: z
-              .record(z.object({ actual: z.string(), expected: z.string() }))
-              .optional(),
-            name: z.string().optional(),
-            progress: z.record(
-              z
-                .object({
-                  totalSize: z.number(),
-                  lastOffset: z.number(),
-                  updated: z.string(),
-                })
-                .partial()
-            ),
-            id: z.string().min(3),
-            state: z.enum([
-              "waiting_for_device_status",
-              "ready_to_send",
-              "sent",
-              "failed",
-              "in_progress",
-              "completed",
-            ]),
-            job: z.string().optional(),
-            conditions: z.array(z.enum(["local", "remote"])).optional(),
-            updated: z.string().datetime({ offset: true }).optional(),
-            device: z.string(),
-            tasks: z.array(
-              z.object({
-                a: z.enum([
-                  "d",
-                  "uf",
-                  "u",
-                  "upd",
-                  "r",
-                  "cdr",
-                  "z",
-                  "a",
-                  "s",
-                  "b",
-                  "e",
-                  "k",
-                  "x",
-                  "crash",
-                  "t",
-                ]),
-                tries: z.number().optional(),
-                topics: z.record(z.string()).optional(),
-                ctx: z.record(z.object({}).partial().passthrough()).optional(),
-                timeout: z.number().optional(),
-              })
-            ),
-          }),
-          z.object({
-            componentType: z.string(),
-            creator: z.string(),
-            created: z.string(),
-            firmwareHash: z.string(),
-            firmwareSize: z.number(),
-            type: z.string().min(3).optional(),
-            version: z.union([z.string(), z.number()]),
-            deviceId: z.string(),
-            target: z.string(),
-            facetType: z.literal("FIRMWARE-INFO"),
-            facetId: z.string().optional(),
-            name: z.string().optional(),
-            id: z.string().min(3),
-            firmwareVersion: z.string(),
-            key: z.string(),
-          }),
-          z.object({
-            componentType: z.string(),
-            facetType: z.literal("FIRMWARE"),
-            creator: z.string().optional(),
-            facetId: z.string().optional(),
-            created: z.string().datetime({ offset: true }).optional(),
-            name: z.string().optional(),
-            objectVersionId: z.string(),
-            id: z.string().min(3),
-            type: z.string().min(3).optional(),
-            deviceId: z.string(),
-            version: z.union([z.string(), z.number()]),
-            key: z.string(),
-          }),
+        z.discriminatedUnion("facetType", [
+          XubeGetAccountFacetsAccountResponse,
+          XubeGetAccountFacetsActivationStatusResponse,
+          XubeGetAccountFacetsHeartbeatResponse,
+          XubeGetAccountFacetsDataDestinationResponse,
+          XubeGetAccountFacetsFilesResponse,
+          XubeGetAccountFacetsLocationResponse,
+          XubeGetAccountFacetsStatusResponse,
+          XubeGetAccountFacetsSnapshotResponse,
+          XubeGetAccountFacetsUpdateResponse,
+          XubeGetAccountFacetsFirmwareInfoResponse,
+          XubeGetAccountFacetsFirmwareResponse,
         ])
       ),
     })
@@ -4892,19 +3088,6 @@ export const XubeGetDeviceVersionDownloadUrlRequest = z.object({
 export type TXubeGetDeviceVersionDownloadUrlRequest = z.infer<
   typeof XubeGetDeviceVersionDownloadUrlRequest
 >;
-export const XubeDeviceAccount = z.object({
-  accountId: z.string(),
-  componentType: z.string(),
-  facetType: z.literal("ACCOUNT"),
-  creator: z.string().optional(),
-  facetId: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
-  name: z.string().optional(),
-  id: z.string().min(3),
-  type: z.string().min(3).optional(),
-  deviceId: z.string(),
-});
-export type TXubeDeviceAccount = z.infer<typeof XubeDeviceAccount>;
 export const XubeDeviceStatus = z.object({
   componentType: z.string(),
   facetType: z.literal("STATUS"),
@@ -5188,13 +3371,19 @@ export const XubeDeviceStatus = z.object({
   timestamp: z.string(),
 });
 export type TXubeDeviceStatus = z.infer<typeof XubeDeviceStatus>;
-export const XubeCopyDeviceConfigRequest = z.object({
-  sourceDeviceId: z.string(),
-  targetDeviceIds: z.array(z.string()),
+export const XubeDeviceAccount = z.object({
+  accountId: z.string(),
+  componentType: z.string(),
+  facetType: z.literal("ACCOUNT"),
+  creator: z.string().optional(),
+  facetId: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  name: z.string().optional(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+  deviceId: z.string(),
 });
-export type TXubeCopyDeviceConfigRequest = z.infer<
-  typeof XubeCopyDeviceConfigRequest
->;
+export type TXubeDeviceAccount = z.infer<typeof XubeDeviceAccount>;
 export const XubeGetLatestDeviceHeartbeatRequest = z.object({
   device: z.string(),
 });
@@ -5207,6 +3396,13 @@ export const XubeGetLatestDeviceHeartbeatResponse = z.object({
 });
 export type TXubeGetLatestDeviceHeartbeatResponse = z.infer<
   typeof XubeGetLatestDeviceHeartbeatResponse
+>;
+export const XubeCopyDeviceConfigRequest = z.object({
+  sourceDeviceId: z.string(),
+  targetDeviceIds: z.array(z.string()),
+});
+export type TXubeCopyDeviceConfigRequest = z.infer<
+  typeof XubeCopyDeviceConfigRequest
 >;
 export const XubeGetDestinationDevicesRequest = z.object({
   nextToken: z.string().optional(),
@@ -7816,7 +6012,7 @@ export const endpoints = makeApi([
   {
     method: "get",
     path: "/devices/facets",
-    alias: "get-devices-facets",
+    alias: "Get Devices Facets",
     description: `Get facets for multiple devices. Actions: Device:GetDevicesFacets`,
     requestFormat: "json",
     parameters: [
@@ -7830,8 +6026,23 @@ export const endpoints = makeApi([
   },
   {
     method: "get",
+    path: "/devices/facets/categories",
+    alias: "Get Device Facet Categories",
+    description: `Get categories for specified device facet types. Actions: `,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeGetDeviceFacetCategoriesRequest,
+      },
+    ],
+    response: XubeGetDeviceFacetCategoriesResponse,
+  },
+  {
+    method: "get",
     path: "/devices/facets/types",
-    alias: "get-device-facet-types",
+    alias: "Get Device Facet Types",
     description: `Get all available device facet types. Actions: `,
     requestFormat: "json",
     parameters: [

@@ -7,9 +7,23 @@ import unzipper from "unzipper";
 import type { Authentication } from "../../auth";
 import { xubeSdk } from "../../constants";
 
+const ULID_REGEX = /^[0-9A-HJKMNP-TV-Z]{26}$/i;
+
+function isUlid(version: string): boolean {
+  return ULID_REGEX.test(version);
+}
+
+export function sortVersionsDescending(versions: string[]): string[] {
+  const ulids = versions.filter(isUlid).sort().reverse();
+  const numeric = versions
+    .filter((v) => !isUlid(v))
+    .sort((a, b) => Number(b) - Number(a));
+  return [...ulids, ...numeric];
+}
+
 export const getDeviceVersions = async (
   auth: Authentication,
-  device: string
+  device: string,
 ): Promise<string[]> => {
   let spinner = ora();
   spinner.start(`Fetching versions for ${device}`);
@@ -30,7 +44,7 @@ export const fetchAndExtractDeviceVersion = async (
   auth: Authentication,
   device: string,
   version: string,
-  destinationDir: string = "./devices"
+  destinationDir: string = "./devices",
 ): Promise<boolean> => {
   let spinner = ora();
   try {
@@ -50,10 +64,10 @@ export const fetchAndExtractDeviceVersion = async (
     const response = await fetch(url);
     if (!response.ok || !response.body) {
       spinner.fail(
-        `Failed to download file: ${response.status} ${response.statusText}`
+        `Failed to download file: ${response.status} ${response.statusText}`,
       );
       throw new Error(
-        `Failed to download file: ${response.status} ${response.statusText}`
+        `Failed to download file: ${response.status} ${response.statusText}`,
       );
     }
     spinner.succeed(`Downloaded version ${version} for ${device}`);
@@ -68,7 +82,7 @@ export const fetchAndExtractDeviceVersion = async (
     return true;
   } catch (error) {
     spinner.fail(
-      `An error occurred while processing version ${version} for device ${device}`
+      `An error occurred while processing version ${version} for device ${device}`,
     );
     throw new Error(JSON.stringify(error, null, 2));
   }

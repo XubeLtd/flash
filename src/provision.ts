@@ -10,6 +10,7 @@ import { getAccountDevices } from "./device/get";
 import {
   fetchAndExtractDeviceVersion,
   getDeviceVersions,
+  sortVersionsDescending,
 } from "./device/version/get";
 
 async function main() {
@@ -60,7 +61,7 @@ const promptToSelectDeviceVersion = async (
 ): Promise<string> => {
   const version: string = await select({
     message: "Select the device version you want to provision:",
-    choices: [...deviceVersions].sort().reverse(),
+    choices: sortVersionsDescending(deviceVersions),
   });
   return version;
 };

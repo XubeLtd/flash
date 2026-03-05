@@ -1262,6 +1262,13 @@ export const XubeGetSubscriptionsByTargetsResponse = z.object({
 export type TXubeGetSubscriptionsByTargetsResponse = z.infer<
   typeof XubeGetSubscriptionsByTargetsResponse
 >;
+export const XubeCancelDeviceUpdateRequest = z.object({
+  reason: z.string().optional(),
+  device: z.string(),
+});
+export type TXubeCancelDeviceUpdateRequest = z.infer<
+  typeof XubeCancelDeviceUpdateRequest
+>;
 export const XubeDeviceRequest = z.object({ device: z.string() });
 export type TXubeDeviceRequest = z.infer<typeof XubeDeviceRequest>;
 export const XubeDevice = z.object({
@@ -1922,6 +1929,7 @@ export const XubeGetAccountFacetsUpdateResponse = z.object({
     "failed",
     "in_progress",
     "completed",
+    "cancelled",
   ]),
   job: z.string().optional(),
   conditions: z.array(z.enum(["local", "remote"])).optional(),
@@ -2204,6 +2212,16 @@ export const XubeSetFirmwareVersionsRequest = z.object({
 export type TXubeSetFirmwareVersionsRequest = z.infer<
   typeof XubeSetFirmwareVersionsRequest
 >;
+export const XubeGetDeviceVersionsRequest = z.object({ device: z.string() });
+export type TXubeGetDeviceVersionsRequest = z.infer<
+  typeof XubeGetDeviceVersionsRequest
+>;
+export const XubeGetDeviceVersionsResponse = z.object({
+  versions: z.array(z.string()),
+});
+export type TXubeGetDeviceVersionsResponse = z.infer<
+  typeof XubeGetDeviceVersionsResponse
+>;
 export const XubeGetDeviceLocationRequest = z.object({ device: z.string() });
 export type TXubeGetDeviceLocationRequest = z.infer<
   typeof XubeGetDeviceLocationRequest
@@ -2237,16 +2255,6 @@ export type TXubeSuccessModel = z.infer<typeof XubeSuccessModel>;
 export const XubeClearDeviceLocationRequest = z.object({ device: z.string() });
 export type TXubeClearDeviceLocationRequest = z.infer<
   typeof XubeClearDeviceLocationRequest
->;
-export const XubeGetDeviceVersionsRequest = z.object({ device: z.string() });
-export type TXubeGetDeviceVersionsRequest = z.infer<
-  typeof XubeGetDeviceVersionsRequest
->;
-export const XubeGetDeviceVersionsResponse = z.object({
-  versions: z.array(z.string()),
-});
-export type TXubeGetDeviceVersionsResponse = z.infer<
-  typeof XubeGetDeviceVersionsResponse
 >;
 export const XubeGetDevicesRequestModelName = z.object({
   devices: z.array(z.string()),
@@ -2363,6 +2371,7 @@ export const XubeDeviceFirmwareUpdate = z.object({
     "failed",
     "in_progress",
     "completed",
+    "cancelled",
   ]),
   job: z.string().optional(),
   conditions: z.array(z.enum(["local", "remote"])).optional(),
@@ -2425,6 +2434,7 @@ export const XubeSetDeviceUpdateRequest = z.object({
       "failed",
       "in_progress",
       "completed",
+      "cancelled",
     ])
     .optional(),
   device: z.string(),
@@ -2468,6 +2478,7 @@ export const XubeDeviceUpdate = z.object({
     "failed",
     "in_progress",
     "completed",
+    "cancelled",
   ]),
   job: z.string().optional(),
   conditions: z.array(z.enum(["local", "remote"])).optional(),
@@ -3365,19 +3376,6 @@ export const XubeGetDeviceVersionDownloadUrlRequest = z.object({
 export type TXubeGetDeviceVersionDownloadUrlRequest = z.infer<
   typeof XubeGetDeviceVersionDownloadUrlRequest
 >;
-export const XubeDeviceAccount = z.object({
-  accountId: z.string(),
-  componentType: z.string(),
-  facetType: z.literal("ACCOUNT"),
-  creator: z.string().optional(),
-  facetId: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
-  name: z.string().optional(),
-  id: z.string().min(3),
-  type: z.string().min(3).optional(),
-  deviceId: z.string(),
-});
-export type TXubeDeviceAccount = z.infer<typeof XubeDeviceAccount>;
 export const XubeDeviceStatus = z.object({
   componentType: z.string(),
   facetType: z.literal("STATUS"),
@@ -3661,6 +3659,26 @@ export const XubeDeviceStatus = z.object({
   timestamp: z.string(),
 });
 export type TXubeDeviceStatus = z.infer<typeof XubeDeviceStatus>;
+export const XubeDeviceAccount = z.object({
+  accountId: z.string(),
+  componentType: z.string(),
+  facetType: z.literal("ACCOUNT"),
+  creator: z.string().optional(),
+  facetId: z.string().optional(),
+  created: z.string().datetime({ offset: true }).optional(),
+  name: z.string().optional(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+  deviceId: z.string(),
+});
+export type TXubeDeviceAccount = z.infer<typeof XubeDeviceAccount>;
+export const XubeCopyDeviceConfigRequest = z.object({
+  sourceDeviceId: z.string(),
+  targetDeviceIds: z.array(z.string()),
+});
+export type TXubeCopyDeviceConfigRequest = z.infer<
+  typeof XubeCopyDeviceConfigRequest
+>;
 export const XubeGetLatestDeviceHeartbeatRequest = z.object({
   device: z.string(),
 });
@@ -3673,13 +3691,6 @@ export const XubeGetLatestDeviceHeartbeatResponse = z.object({
 });
 export type TXubeGetLatestDeviceHeartbeatResponse = z.infer<
   typeof XubeGetLatestDeviceHeartbeatResponse
->;
-export const XubeCopyDeviceConfigRequest = z.object({
-  sourceDeviceId: z.string(),
-  targetDeviceIds: z.array(z.string()),
-});
-export type TXubeCopyDeviceConfigRequest = z.infer<
-  typeof XubeCopyDeviceConfigRequest
 >;
 export const XubeGetDestinationDevicesRequest = z.object({
   nextToken: z.string().optional(),
@@ -4274,9 +4285,20 @@ export const XubeSignUpRequest = z.object({
 export type TXubeSignUpRequest = z.infer<typeof XubeSignUpRequest>;
 export const XubeSignUpResponse = z.object({ id: z.string().min(3) });
 export type TXubeSignUpResponse = z.infer<typeof XubeSignUpResponse>;
+export const XubeForgotPasswordRequest = z.object({ email: z.string() });
+export type TXubeForgotPasswordRequest = z.infer<
+  typeof XubeForgotPasswordRequest
+>;
+export const XubePasswordResetResponse = z.object({ success: z.boolean() });
+export type TXubePasswordResetResponse = z.infer<
+  typeof XubePasswordResetResponse
+>;
 export const XubeRefreshRequest = z.object({ refreshToken: z.string() });
 export type TXubeRefreshRequest = z.infer<typeof XubeRefreshRequest>;
-export const XubeRefreshResponse = z.object({ token: z.string() });
+export const XubeRefreshResponse = z.object({
+  idToken: z.string(),
+  token: z.string(),
+});
 export type TXubeRefreshResponse = z.infer<typeof XubeRefreshResponse>;
 export const XubeLogInRequest = z.object({
   password: z.string(),
@@ -4284,10 +4306,19 @@ export const XubeLogInRequest = z.object({
 });
 export type TXubeLogInRequest = z.infer<typeof XubeLogInRequest>;
 export const XubeLogInResponse = z.object({
+  idToken: z.string(),
   token: z.string(),
   refreshToken: z.string(),
 });
 export type TXubeLogInResponse = z.infer<typeof XubeLogInResponse>;
+export const XubeConfirmResetPasswordRequest = z.object({
+  code: z.string(),
+  newPassword: z.string(),
+  email: z.string(),
+});
+export type TXubeConfirmResetPasswordRequest = z.infer<
+  typeof XubeConfirmResetPasswordRequest
+>;
 export const XubeGetUserRequest = z.object({ user: z.string().email() });
 export type TXubeGetUserRequest = z.infer<typeof XubeGetUserRequest>;
 export const XubeUser = z
@@ -4928,6 +4959,36 @@ export const endpoints = makeApi([
   },
   {
     method: "post",
+    path: "/auth/confirm-forgot-password",
+    alias: "Confirm forgot password",
+    description: `Confirm password reset with verification code. Actions: user:ConfirmResetPassword`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeConfirmResetPasswordRequest,
+      },
+    ],
+    response: z.object({ success: z.boolean() }),
+  },
+  {
+    method: "post",
+    path: "/auth/forgot-password",
+    alias: "Forgot password",
+    description: `Initiate forgot password flow. Actions: user:ForgotPassword`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ email: z.string() }),
+      },
+    ],
+    response: z.object({ success: z.boolean() }),
+  },
+  {
+    method: "post",
     path: "/auth/log-in",
     alias: "Log in",
     description: `Log into your account. Actions: user:LogIn`,
@@ -4954,7 +5015,7 @@ export const endpoints = makeApi([
         schema: z.object({ refreshToken: z.string() }),
       },
     ],
-    response: z.object({ token: z.string() }),
+    response: XubeRefreshResponse,
   },
   {
     method: "post",
@@ -6121,6 +6182,26 @@ export const endpoints = makeApi([
     response: z.boolean(),
   },
   {
+    method: "post",
+    path: "/devices/:device/config/update/cancel",
+    alias: "Cancel Device Config Update",
+    description: `Cancel Device Config Update. Actions: `,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeCancelDeviceUpdateRequest,
+      },
+      {
+        name: "device",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.boolean(),
+  },
+  {
     method: "get",
     path: "/devices/:device/data-destinations",
     alias: "Get Device Data Destination",
@@ -6411,6 +6492,26 @@ export const endpoints = makeApi([
         name: "body",
         type: "Body",
         schema: XubeSetUpdateApprovalRequest,
+      },
+      {
+        name: "device",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.boolean(),
+  },
+  {
+    method: "post",
+    path: "/devices/:device/firmware/update/cancel",
+    alias: "Cancel Device Firmware Update",
+    description: `Cancel Device Firmware Update. Actions: `,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeCancelDeviceUpdateRequest,
       },
       {
         name: "device",
