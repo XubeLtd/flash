@@ -1,3 +1,4 @@
+import { resolve } from "path";
 import {
   BOOTLOADER_FILE_NAME,
   BOOTLOADER_FOLDER_NAME,
@@ -11,18 +12,31 @@ import { flashWithJLink } from "../../jlink";
 import { DeviceType } from "../device-type";
 import { DEVICE_TYPE_SUN, type IDeviceType } from "../device-type.interface";
 
-export const getCommanderScript = (deviceId: string, version: string) => `
+export const getCommanderScript = (sourceDir: string) => {
+  const bootloader = resolve(
+    sourceDir,
+    BOOTLOADER_FOLDER_NAME,
+    BOOTLOADER_FILE_NAME
+  );
+  const firmware = resolve(sourceDir, FIRMWARE_FOLDER_NAME, FIRMWARE_FILE_NAME);
+  const fs = resolve(
+    sourceDir,
+    FILE_SYSTEM_FOLDER_NAME,
+    STORAGE_PARTITION_FILE_NAME
+  );
+  return `
   device RW612
   speed 4000
   r
   h
-  loadfile devices/${deviceId}/${version}/${BOOTLOADER_FOLDER_NAME}/${BOOTLOADER_FILE_NAME} 0x08000000
-  loadfile devices/${deviceId}/${version}/${FIRMWARE_FOLDER_NAME}/${FIRMWARE_FILE_NAME} 0x08020000
-  loadfile devices/${deviceId}/${version}/${FILE_SYSTEM_FOLDER_NAME}/${STORAGE_PARTITION_FILE_NAME} 0x09620000
+  loadfile ${bootloader} 0x08000000
+  loadfile ${firmware} 0x08020000
+  loadfile ${fs} 0x09620000
   r
   g
   exit
 `;
+};
 
 export class SunDeviceType extends DeviceType implements IDeviceType {
   hasFileSystem = true;
@@ -31,10 +45,10 @@ export class SunDeviceType extends DeviceType implements IDeviceType {
     super(model, DEVICE_TYPE_SUN);
   }
 
-  flash = async (deviceId: string, version: string): Promise<boolean> => {
+  flash = async (deviceId: string, sourceDir: string): Promise<boolean> => {
     return flashWithJLink({
       deviceId,
-      commanderScript: getCommanderScript(deviceId, version),
+      commanderScript: getCommanderScript(sourceDir),
     });
   };
 }

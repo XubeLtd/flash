@@ -1,7 +1,9 @@
 import { search, select } from "@inquirer/prompts";
+import { resolve } from "path";
 import { creds } from "../config";
 import { getUserAccounts } from "./account/get";
 import { Authentication } from "./auth";
+import { promptReadyToFlash } from "./config-edit/prompt-edits";
 import { type TXubeAccountDevices } from "./constants";
 import { type IDeviceType } from "./device-type/device-type.interface";
 import { DeviceTypeFactory } from "./device-type/factory/device-type-factory";
@@ -12,6 +14,10 @@ import {
   getDeviceVersions,
   sortVersionsDescending,
 } from "./device/version/get";
+import { ensureBackendReachable } from "./version/connectivity";
+import { promptAndPrepareEdit } from "./version/prepare-edit";
+import { removeStagedDir } from "./version/stage";
+import { uploadVersionZip } from "./version/upload";
 
 async function main() {
   console.log("--------------------------------------------------");
@@ -21,8 +27,7 @@ async function main() {
   const auth = new Authentication(creds);
 
   try {
-    await provisionExistingDevice(auth);
-
+    await flashDevice(auth);
     return;
   } catch (error) {
     console.error("Error in main function:", error);
@@ -45,7 +50,7 @@ const promptToSelectDevice = async (
 ): Promise<string> => {
   const deviceIds = devices.data.map((device) => device.id);
   const device = await search<string>({
-    message: "Select the device you want to provision:",
+    message: "Select the device you want to flash:",
     source: (input) => {
       if (!input) {
         return deviceIds;
@@ -60,31 +65,14 @@ const promptToSelectDeviceVersion = async (
   deviceVersions: string[]
 ): Promise<string> => {
   const version: string = await select({
-    message: "Select the device version you want to provision:",
+    message: "Select the device version you want to flash:",
     choices: sortVersionsDescending(deviceVersions),
   });
   return version;
 };
 
-const promptToFlashDevice = async (): Promise<boolean> => {
-  const flashDeviceChoice: boolean = await select({
-    message: "Do you want to flash the device?",
-    choices: [
-      {
-        name: "Yes",
-        value: true,
-      },
-      {
-        name: "No",
-        value: false,
-      },
-    ],
-  });
-  return flashDeviceChoice;
-};
-
-const provisionExistingDevice = async (auth: Authentication): Promise<void> => {
-  const userAccounts: string[] | undefined = await getUserAccounts(auth);
+const flashDevice = async (auth: Authentication): Promise<void> => {
+  const userAccounts = await getUserAccounts(auth);
   if (!userAccounts) {
     console.error("❌ Failed to fetch user accounts.");
     return;
@@ -98,36 +86,96 @@ const provisionExistingDevice = async (auth: Authentication): Promise<void> => {
   }
   const deviceId = await promptToSelectDevice(accountDevices);
 
-  const deviceVersions: string[] = await getDeviceVersions(auth, deviceId);
-  const version = await promptToSelectDeviceVersion(deviceVersions);
-  const fetchedAndExtractedDeviceVersion: boolean =
-    await fetchAndExtractDeviceVersion(auth, deviceId, version);
+  const priorVersions = await getDeviceVersions(auth, deviceId);
+  const version = await promptToSelectDeviceVersion(priorVersions);
 
-  if (!fetchedAndExtractedDeviceVersion) {
+  const fetched = await fetchAndExtractDeviceVersion(auth, deviceId, version);
+  if (!fetched) {
     console.error(
       `❌ Failed to fetch device version ${version} for device ${deviceId}`
     );
     return;
   }
 
-  const deviceType: IDeviceType | undefined = await getDeviceTypeByDeviceId(
+  const deviceType: IDeviceType = await getDeviceTypeByDeviceId(
     auth,
     deviceId,
     new DeviceTypeFactory()
   );
-  if (!deviceType) {
-    console.error(`❌ Failed to get device type for device ${deviceId}`);
+
+  const originalVersionDir = resolve("./devices", deviceId, version);
+
+  let prepared: Awaited<ReturnType<typeof promptAndPrepareEdit>> = null;
+  if (deviceType.hasFileSystem) {
+    prepared = await promptAndPrepareEdit(
+      deviceId,
+      deviceType,
+      originalVersionDir
+    );
+  } else {
+    console.log(
+      `ℹ️  Config editing is not supported for ${deviceType.type} devices. Flashing the fetched version as-is.`
+    );
+  }
+
+  const sourceDir = prepared ? prepared.stagedDir : originalVersionDir;
+
+  const readyToFlash = await promptReadyToFlash();
+  if (!readyToFlash) {
+    console.log("Cancelled before flashing.");
+    if (prepared) {
+      console.log(
+        `ℹ️  Edited version staged at ${prepared.stagedDir} (and zip at ${prepared.zipPath}). Not uploaded.`
+      );
+    }
     return;
   }
 
-  const flashDeviceChoice = await promptToFlashDevice();
-  if (flashDeviceChoice) {
-    const flashSuccess = await deviceType.flash(deviceId, version);
-    if (!flashSuccess) {
-      console.error("❌ Failed to flash device.");
+  if (prepared) {
+    const reachable = await ensureBackendReachable(auth, deviceId);
+    if (!reachable) {
+      console.error(
+        "❌ Cannot reach the Xube backend. Refusing to flash — resolve connectivity and retry."
+      );
+      console.log(
+        `ℹ️  Edited version staged at ${prepared.stagedDir} (and zip at ${prepared.zipPath}).`
+      );
       return;
     }
-    console.log("✅ Device flashed successfully.");
+  }
+
+  const flashSuccess = await deviceType.flash(deviceId, sourceDir);
+  if (!flashSuccess) {
+    console.error("❌ Failed to flash device.");
+    if (prepared) {
+      console.log(
+        `ℹ️  Edited version kept at ${prepared.stagedDir} — no version uploaded to backend.`
+      );
+    }
+    process.exit(1);
+  }
+  console.log("✅ Device flashed successfully.");
+
+  if (prepared) {
+    try {
+      const { newVersion } = await uploadVersionZip(
+        auth,
+        deviceId,
+        prepared.zipPath,
+        priorVersions
+      );
+      console.log(`✅ New version ${newVersion} uploaded and re-fetched.`);
+      await removeStagedDir(prepared.stagedDir);
+    } catch (error) {
+      console.error(
+        "❌ Device was flashed but the new version failed to upload to the backend."
+      );
+      console.error(
+        `   Zip kept at: ${prepared.zipPath}. Please contact Xube or retry with \`bun push\`.`
+      );
+      console.error(error);
+      process.exit(1);
+    }
   }
 
   console.log(`🎉 ${deviceId} successfully provisioned!`);

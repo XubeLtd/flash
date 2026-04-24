@@ -1,6 +1,5 @@
 import type { Authentication } from "../auth";
 import { xubeSdk } from "../constants";
-import type { IDevice } from "../device/device.interface";
 import ora from "ora";
 
 export const getUserAccounts = async (

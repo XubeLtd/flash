@@ -17,5 +17,5 @@ export interface IDeviceType {
 
   hasFileSystem: boolean;
 
-  flash: (deviceId: string, version: string) => Promise<boolean>;
+  flash: (deviceId: string, sourceDir: string) => Promise<boolean>;
 }

@@ -9,7 +9,7 @@ export class PlanetDeviceType extends DeviceType implements IDeviceType {
     super(model, DEVICE_TYPE_PLANET);
   }
 
-  flash = async (deviceId: string): Promise<boolean> => {
+  flash = async (_deviceId: string, _sourceDir: string): Promise<boolean> => {
     throw new Error(`Flashing planet devices is not currently supported`);
   };
 }

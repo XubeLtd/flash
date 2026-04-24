@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
     "@types/bun": "latest",
     "@types/inquirer": "^9.0.8",
     "@types/unzipper": "^0.10.11"
@@ -13,6 +14,7 @@
   },
   "dependencies": {
     "@inquirer/prompts": "^7.5.3",
+    "adm-zip": "^0.5.17",
     "openapi-zod-client": "^1.18.3",
     "openapi3-ts": "^4.4.0",
     "ora": "^8.2.0",
@@ -22,6 +24,8 @@
   },
   "scripts": {
     "flash": "bun run src/provision.ts",
+    "push": "bun run src/push.ts",
+    "setup": "bun run src/setup.ts",
     "generate:sdk": "bun run generate:prod && bun run generate:dev",
     "generate:prod": "bun run ./scripts/generate-xube-sdk.ts generate prod ./src/sdk",
     "generate:dev": "bun run ./scripts/generate-xube-sdk.ts generate dev ./src/sdk"
