@@ -105,18 +105,11 @@ const flashDevice = async (auth: Authentication): Promise<void> => {
 
   const originalVersionDir = resolve("./devices", deviceId, version);
 
-  let prepared: Awaited<ReturnType<typeof promptAndPrepareEdit>> = null;
-  if (deviceType.hasFileSystem) {
-    prepared = await promptAndPrepareEdit(
-      deviceId,
-      deviceType,
-      originalVersionDir
-    );
-  } else {
-    console.log(
-      `ℹ️  Config editing is not supported for ${deviceType.type} devices. Flashing the fetched version as-is.`
-    );
-  }
+  const prepared = await promptAndPrepareEdit(
+    deviceId,
+    deviceType,
+    originalVersionDir
+  );
 
   const sourceDir = prepared ? prepared.stagedDir : originalVersionDir;
 

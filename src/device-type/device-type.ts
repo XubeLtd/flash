@@ -1,6 +1,7 @@
 import ora from "ora";
 import type { Authentication } from "../auth";
 import { xubeSdk, type TXubeGetDeviceModelsResponse } from "../constants";
+import type { ValidationResult } from "../version/validate";
 import {
   DeviceTypeOptionSchema,
   type IDeviceType,
@@ -16,7 +17,14 @@ export abstract class DeviceType implements IDeviceType {
     public readonly type: TDeviceTypeOption
   ) {}
 
+  get generation(): string {
+    return this.model.generation;
+  }
+
   abstract flash(deviceId: string, sourceDir: string): Promise<boolean>;
+
+  abstract validateForRebuild(versionDir: string): Promise<ValidationResult>;
+  abstract rebuildFileSystem(stagedDir: string): Promise<void>;
 }
 
 export const getDeviceTypes = async (

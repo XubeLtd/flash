@@ -7,7 +7,11 @@ const VENV_DIR = resolve("./.venv");
 const VENV_PYTHON = resolve(VENV_DIR, "bin/python");
 const VENV_PIP = resolve(VENV_DIR, "bin/pip");
 const REQUIREMENTS_PATH = resolve("./tools/requirements.txt");
-const MKLITTLEFS_SCRIPT = resolve("./tools/mklittlefs.py");
+const REQUIRED_SCRIPTS = [
+  resolve("./tools/mklittlefs.py"),
+  resolve("./tools/mksettings.py"),
+  resolve("./tools/bin_to_sparse_hex.py"),
+];
 
 const MIN_PYTHON_MAJOR = 3;
 const MIN_PYTHON_MINOR = 13;
@@ -57,7 +61,8 @@ const findSystemPython = async (): Promise<string | null> => {
 
 const venvIsReady = async (): Promise<boolean> => {
   if (!(await fileExists(VENV_PYTHON))) return false;
-  const result = await $`${VENV_PYTHON} -c "import littlefs"`.nothrow().quiet();
+  const result =
+    await $`${VENV_PYTHON} -c "import littlefs, intelhex"`.nothrow().quiet();
   return result.exitCode === 0;
 };
 
@@ -79,7 +84,9 @@ const createVenv = async (systemPython: string): Promise<void> => {
 };
 
 const installRequirements = async (): Promise<void> => {
-  const spinner = ora("Installing Python dependencies (littlefs-python)").start();
+  const spinner = ora(
+    "Installing Python dependencies (littlefs-python, intelhex)"
+  ).start();
   try {
     const upgrade = await $`${VENV_PIP} install --upgrade pip`.nothrow().quiet();
     if (upgrade.exitCode !== 0) {
@@ -101,16 +108,13 @@ const installRequirements = async (): Promise<void> => {
   }
 };
 
-/**
- * Ensures ./.venv exists with littlefs-python installed. Idempotent: a no-op
- * when the venv is already usable. On first run, creates the venv from a
- * system Python 3.13+ interpreter and installs tools/requirements.txt.
- */
 export const ensurePythonEnv = async (): Promise<string> => {
-  if (!(await fileExists(MKLITTLEFS_SCRIPT))) {
-    throw new Error(
-      `Expected mklittlefs.py at ${MKLITTLEFS_SCRIPT}. The flash repo is incomplete.`
-    );
+  for (const script of REQUIRED_SCRIPTS) {
+    if (!(await fileExists(script))) {
+      throw new Error(
+        `Expected Python script at ${script}. The flash repo is incomplete.`
+      );
+    }
   }
 
   if (await venvIsReady()) {
@@ -133,7 +137,7 @@ export const ensurePythonEnv = async (): Promise<string> => {
 
   if (!(await venvIsReady())) {
     throw new Error(
-      `Python venv at ${VENV_DIR} was set up but 'import littlefs' still fails.`
+      `Python venv at ${VENV_DIR} was set up but required imports still fail.`
     );
   }
 

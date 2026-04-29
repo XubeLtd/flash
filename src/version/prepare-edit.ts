@@ -10,16 +10,12 @@ import {
   promptEditableFields,
 } from "../config-edit/prompt-edits";
 import type { IDeviceType } from "../device-type/device-type.interface";
-import { rebuildSunFilesystem } from "./build-filesystem";
 import {
   copyVersionToStaged,
   getStagedDir,
   removeStagedDir,
 } from "./stage";
-import {
-  formatValidationError,
-  validateSunVersionForRebuild,
-} from "./validate";
+import { formatValidationError } from "./validate";
 import { buildVersionZip } from "./zip";
 
 const CFG_JSON_FILE_NAME = "cfg.json";
@@ -58,7 +54,7 @@ export const promptAndPrepareEdit = async (
   }
 
   if (deviceType.hasFileSystem) {
-    const validation = await validateSunVersionForRebuild(sourceVersionDir);
+    const validation = await deviceType.validateForRebuild(sourceVersionDir);
     if (!validation.ok) {
       throw new Error(formatValidationError(validation, sourceVersionDir));
     }
@@ -105,7 +101,7 @@ export const promptAndPrepareEdit = async (
     }
 
     if (deviceType.hasFileSystem) {
-      await rebuildSunFilesystem(stagedDir);
+      await deviceType.rebuildFileSystem(stagedDir);
     }
 
     const { changedPaths: changedAfterBuild } =

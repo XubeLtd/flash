@@ -18,10 +18,6 @@ import { ensureBackendReachable } from "./version/connectivity";
 import { promptAndPrepareEdit } from "./version/prepare-edit";
 import { removeStagedDir } from "./version/stage";
 import { uploadVersionZip } from "./version/upload";
-import {
-  formatValidationError,
-  validateSunVersionForRebuild,
-} from "./version/validate";
 
 async function main() {
   console.log("--------------------------------------------------");
@@ -114,17 +110,6 @@ const listLocalDeviceVersions = async (deviceId: string): Promise<string[]> => {
   }
 };
 
-const validateLocalVersion = async (
-  deviceId: string,
-  version: string
-): Promise<boolean> => {
-  const base = resolve("./devices", deviceId, version);
-  const result = await validateSunVersionForRebuild(base);
-  if (result.ok) return true;
-  console.error("❌ " + formatValidationError(result, base));
-  return false;
-};
-
 const pushDeviceConfig = async (auth: Authentication): Promise<void> => {
   const userAccounts = await getUserAccounts(auth);
   if (!userAccounts) {
@@ -173,13 +158,6 @@ const pushDeviceConfig = async (auth: Authentication): Promise<void> => {
       "Select a local version to edit:"
     );
     originalVersionDir = resolve("./devices", deviceId, version);
-    const isValid = await validateLocalVersion(deviceId, version);
-    if (!isValid) {
-      console.error(
-        "❌ Local version is missing required files. Re-fetch from the backend."
-      );
-      return;
-    }
   } else {
     deviceId = await promptToSelectDeviceFromBackend(accountDevices);
     const versions = await getDeviceVersions(auth, deviceId);

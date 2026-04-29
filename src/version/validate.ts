@@ -11,10 +11,6 @@ import {
 
 const CFG_JSON_FILE_NAME = "cfg.json";
 
-// Files required to rebuild a SUN filesystem image (cfg + all certs that end
-// up inside storage_partition.bin under cert/mqtt/). Matches the layout
-// produced by zephyr-fw/tools (src/device-type/device-types/sun.ts
-// stageCertificates + buildFileSystem).
 export const SUN_REBUILD_REQUIRED_FILES = [
   [CONFIG_FOLDER_NAME, CFG_JSON_FILE_NAME],
   [CERTIFICATES_FOLDER_NAME, CERT_NAME_CRT],
@@ -23,17 +19,22 @@ export const SUN_REBUILD_REQUIRED_FILES = [
   [CERTIFICATES_FOLDER_NAME, CERT_NAME_CA],
 ] as const;
 
+export const PLANET_REBUILD_REQUIRED_FILES = [
+  [CONFIG_FOLDER_NAME, CFG_JSON_FILE_NAME],
+] as const;
+
 export type ValidationResult =
   | { ok: true }
   | { ok: false; missing: string[]; empty: string[] };
 
-export const validateSunVersionForRebuild = async (
-  versionDir: string
+export const validateRequiredFiles = async (
+  versionDir: string,
+  requiredFiles: ReadonlyArray<ReadonlyArray<string>>
 ): Promise<ValidationResult> => {
   const missing: string[] = [];
   const empty: string[] = [];
 
-  for (const parts of SUN_REBUILD_REQUIRED_FILES) {
+  for (const parts of requiredFiles) {
     const path = resolve(versionDir, ...parts);
     try {
       const s = await stat(path);
