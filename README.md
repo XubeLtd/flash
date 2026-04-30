@@ -17,17 +17,15 @@ A small helper for flashing Xube devices and updating their configuration.
    bun install
    ```
 
-2. Install the right flashing tool for the device you'll be programming. These are only needed if you'll use `bun flash`; `bun push` needs none of them.
+2. Install the tool that matches the device you're flashing. Skip this step if you're only ever using `bun push`.
 
-   | Device         | Probe                | Tools you need                                                                                                      |
-   | -------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------- |
-   | Sun Gen 1      | J‑Link               | [SEGGER J‑Link Software](https://www.segger.com/downloads/jlink/) — `JLinkExe` on PATH                              |
-   | Sun Gen 2      | MCU‑Link / CMSIS‑DAP | `pyocd` on PATH (`pipx install pyocd`)                                                                              |
-   | Planet (Gen 1) | ST‑LINK              | [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html) — `STM32_Programmer_CLI` on PATH¹ |
+   | Device         | Install                                                                                |
+   | -------------- | -------------------------------------------------------------------------------------- |
+   | Sun Gen 1      | [SEGGER J‑Link Software](https://www.segger.com/downloads/jlink/)                      |
+   | Sun Gen 2      | `pipx install pyocd`                                                                   |
+   | Planet (Gen 1) | [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html)      |
 
-   ¹ The Mac installer puts the CLI in the app bundle. If it isn't on your PATH, set `STM32_PRG_PATH` to the directory containing `STM32_Programmer_CLI` (e.g. `/Applications/STMicroelectronics/STM32Cube/STM32CubeProgrammer/STM32CubeProgrammer.app/Contents/Resources/bin`).
-
-   You also need Python 3.13+ available on PATH — the rest is bootstrapped into a local `.venv` automatically the first time you flash.
+   Python 3.13+ also needs to be on your PATH. Everything else is set up automatically the first time you flash.
 
 3. Copy `config.example.ts` to `config.ts` and fill in the email and password you use to log into the Xube Console:
 
@@ -46,6 +44,18 @@ bun flash
 You'll be asked which account, device, and version to flash. Before flashing, you'll be offered the chance to change a few config values (currently just WiFi SSID and password). If you make changes, a new version is automatically saved on the backend after the device is successfully flashed, so the next time anyone touches this device they start from the up-to-date config.
 
 If you don't want to change anything, just say "use as-is" and the device is flashed exactly as it is on the backend.
+
+Once flashing finishes, `bun flash` automatically starts streaming firmware logs to your terminal. Hit Ctrl+C to stop.
+
+## `bun monitor` — stream firmware logs from a connected device
+
+```bash
+bun monitor
+```
+
+Streams logs from whatever device is plugged in. If both a Sun and a Planet are connected, you'll be asked which one to monitor. Ctrl+C exits.
+
+For Planet, attaching the monitor briefly resets the firmware so it starts logging from boot — that's expected.
 
 ## `bun push` — update config without flashing
 

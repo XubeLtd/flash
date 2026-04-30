@@ -9,12 +9,15 @@ export interface FlashImageOptions {
 }
 
 const LOADFILE_PATH = /^\s*loadfile\s+(\S+)/gm;
+// "J-Link connection not established yet but required for command." is a
+// benign informational line JLink prints during autoconnect *before* it
+// actually connects — it does not indicate failure. The real failure modes
+// are caught by "FAILED:" and the "Cannot connect …" markers below.
 const JLINK_FAILURE_MARKERS = [
   "Failed to open file",
   "Cannot connect to target",
   "Could not connect to target",
   "Cannot connect to J-Link",
-  "J-Link connection not established",
   "FAILED:",
   "ERROR:",
 ];

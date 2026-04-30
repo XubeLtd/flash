@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { TXubeGetDeviceModelsResponse } from "../constants";
+import type { MonitorChannel } from "../serial-monitor";
 import type { ValidationResult } from "../version/validate";
 
 export const DEVICE_TYPE_PLANET = "PLANET";
@@ -23,4 +24,11 @@ export interface IDeviceType {
 
   validateForRebuild: (versionDir: string) => Promise<ValidationResult>;
   rebuildFileSystem: (stagedDir: string) => Promise<void>;
+
+  /**
+   * Locate the device's debug probe (and its VCOM endpoint, if any) for the
+   * post-flash monitor. Returns null when no probe matching this device type
+   * is connected (post-flash monitoring is skipped in that case).
+   */
+  discoverProbe: () => Promise<MonitorChannel | null>;
 }

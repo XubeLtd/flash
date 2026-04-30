@@ -68,7 +68,8 @@ export const promptAndPrepareEdit = async (
 
   const { patches, allowedPaths } = await collectPatches(
     sourceConfigPath,
-    fields
+    fields,
+    deviceId
   );
 
   if (patches.length === 0) {

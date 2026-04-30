@@ -21,15 +21,16 @@ const writeJson = async (path: string, obj: unknown): Promise<void> => {
 
 export const collectPatches = async (
   configPath: string,
-  fields: EditableFieldDef[]
+  fields: EditableFieldDef[],
+  deviceId: string
 ): Promise<{ patches: EditableFieldPatch[]; allowedPaths: string[] }> => {
   const config = await readJson(configPath);
   const patches: EditableFieldPatch[] = [];
   const allowedPaths: string[] = [];
 
   for (const field of fields) {
-    const patch = await field.prompt(config);
-    allowedPaths.push(...field.jsonPaths);
+    allowedPaths.push(...field.jsonPaths(deviceId));
+    const patch = await field.prompt({ deviceId, currentConfig: config });
     if (patch) {
       patches.push(patch);
     }

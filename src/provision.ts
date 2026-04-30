@@ -14,6 +14,7 @@ import {
   getDeviceVersions,
   sortVersionsDescending,
 } from "./device/version/get";
+import { runMonitor } from "./serial-monitor";
 import { ensureBackendReachable } from "./version/connectivity";
 import { promptAndPrepareEdit } from "./version/prepare-edit";
 import { removeStagedDir } from "./version/stage";
@@ -172,6 +173,15 @@ const flashDevice = async (auth: Authentication): Promise<void> => {
   }
 
   console.log(`🎉 ${deviceId} successfully provisioned!`);
+
+  const channel = await deviceType.discoverProbe();
+  if (channel) {
+    await runMonitor(channel);
+  } else {
+    console.log(
+      `ℹ️  No debug probe detected for ${deviceType.type} — skipping post-flash monitor.`
+    );
+  }
 };
 
 main().catch((error) => {

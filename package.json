@@ -25,6 +25,7 @@
   "scripts": {
     "flash": "bun run src/provision.ts",
     "push": "bun run src/push.ts",
+    "monitor": "bun run src/monitor.ts",
     "setup": "bun run src/setup.ts",
     "generate:sdk": "bun run generate:prod && bun run generate:dev",
     "generate:prod": "bun run ./scripts/generate-xube-sdk.ts generate prod ./src/sdk",

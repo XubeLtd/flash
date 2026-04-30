@@ -11,6 +11,10 @@ import {
 import { flashWithJLink } from "../../jlink";
 import { flashWithRw612 } from "../../rw612";
 import {
+  findRw612RttChannel,
+  type MonitorChannel,
+} from "../../serial-monitor";
+import {
   rebuildLittleFsImage,
   type LittleFsParams,
 } from "../../version/build-filesystem";
@@ -106,6 +110,10 @@ abstract class BaseSunDeviceType extends DeviceType implements IDeviceType {
       blockCount: this.fsBlockCount,
     };
     await rebuildLittleFsImage(stagedDir, params);
+  };
+
+  discoverProbe = async (): Promise<MonitorChannel | null> => {
+    return findRw612RttChannel();
   };
 }
 

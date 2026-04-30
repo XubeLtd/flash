@@ -11,6 +11,10 @@ import {
   STORAGE_PARTITION_FILE_NAME,
   type TXubeGetDeviceModelsResponse,
 } from "../../constants";
+import {
+  findStLinkChannel,
+  type MonitorChannel,
+} from "../../serial-monitor";
 import { flashWithStm32Programmer } from "../../stm32-programmer";
 import { ensurePythonEnv } from "../../version/python-setup";
 import {
@@ -80,9 +84,17 @@ abstract class BasePlanetDeviceType extends DeviceType implements IDeviceType {
   rebuildFileSystem = async (stagedDir: string): Promise<void> => {
     await rebuildSettingsFsImage(stagedDir, PLANET_SETTINGS_PARAMS);
   };
+
+  discoverProbe = async (): Promise<MonitorChannel | null> => {
+    return null;
+  };
 }
 
 export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
+  override discoverProbe = async (): Promise<MonitorChannel | null> => {
+    return findStLinkChannel();
+  };
+
   flash = async (deviceId: string, sourceDir: string): Promise<boolean> => {
     const fsBin = resolve(
       sourceDir,
