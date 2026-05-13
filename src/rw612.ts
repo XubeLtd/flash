@@ -26,6 +26,44 @@ const requireCli = async (cli: string, install: string): Promise<void> => {
   }
 };
 
+const detectProbeUID = async (): Promise<string> => {
+  const command = $`pyocd list --probe`;
+  const { exitCode, stdout, stderr } = await command.nothrow();
+  if (exitCode !== 0) {
+    const stderrStr = stderr.toString();
+    throw new Error(
+      `Failed to list pyocd probes. Exit code ${exitCode}. Stderr: ${stderrStr}`
+    );
+  }
+  // Locate "Unique ID" column
+  const stdoutStr = stdout.toString();
+  const lines = stdoutStr.split("\n").map((line) => line.trim());
+  const header = lines.find((line) => line.includes("Unique ID"));
+  if (!header) {
+    throw new Error(`Could not find "Unique ID" column in pyocd list output.`);
+  }
+  const uidIndex = header.split(/\s{2,}/).indexOf("Unique ID");
+  if (uidIndex === -1) {
+    throw new Error(`Could not determine index of "Unique ID" column.`);
+  }
+  // Locate line containing "CMSIS-DAP" and extract UID
+  const probeLine = lines.find((line) => line.includes("CMSIS-DAP"));
+  if (!probeLine) {
+    throw new Error(`Could not find a CMSIS-DAP probe in pyocd list output.`);
+  }
+  const columns = probeLine.split(/\s{2,}/);
+  if (columns.length <= uidIndex) {
+    throw new Error(
+      `Probe line does not have enough columns to extract UID: ${probeLine}`
+    );
+  }
+  const uid = columns[uidIndex];
+  if (!uid) {
+    throw new Error(`Extracted UID is empty from line: ${probeLine}`);
+  }
+  return uid;
+}
+
 const verifyEntries = async (entries: Rw612FlashEntry[]): Promise<void> => {
   for (const entry of entries) {
     const info = await stat(entry.path).catch(() => null);
@@ -41,7 +79,8 @@ interface LoadResult {
 
 const loadOnce = async (entry: Rw612FlashEntry): Promise<LoadResult> => {
   const fileArg = `${entry.path}@${entry.flashBase}`;
-  const command = $`pyocd load --target rw612 --format bin ${fileArg}`;
+  const probeUID = await detectProbeUID();
+  const command = $`pyocd load --target rw612 --format bin --uid ${probeUID} ${fileArg}`;
   const { exitCode, stdout, stderr } = await command.nothrow();
   const stdoutStr = stdout.toString();
   const stderrStr = stderr.toString();
