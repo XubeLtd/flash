@@ -22,7 +22,7 @@ A small helper for flashing Xube devices and updating their configuration.
    | Device         | Install                                                                                |
    | -------------- | -------------------------------------------------------------------------------------- |
    | Sun Gen 1      | [SEGGER J‑Link Software](https://www.segger.com/downloads/jlink/)                      |
-   | Sun Gen 2      | `pipx install pyocd`                                                                   |
+   | Sun Gen 2      | `pip install pyocd`, [LinkServer](https://www.nxp.com/design/design-center/software/development-software/mcuxpresso-software-and-tools-/linkserver-for-microcontrollers:LINKERSERVER), on Windows get [libusb](https://github.com/libusb/libusb/releases/download/v1.0.29/libusb-1.0.29.7z) and copy libusb-1.0.29.7z\VS2022\MS64\dll\libusb-1.0.dll to C:\Users\user\AppData\Local\Microsoft\WindowsApps                                                       |
    | Planet (Gen 1) | [STM32CubeProgrammer](https://www.st.com/en/development-tools/stm32cubeprog.html)      |
 
    Python 3.13+ also needs to be on your PATH. Everything else is set up automatically the first time you flash.

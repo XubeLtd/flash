@@ -20,7 +20,8 @@
     "ora": "^8.2.0",
     "unzipper": "^0.12.3",
     "zod": "^3.25.63",
-    "zodios": "^5.1.0"
+    "zodios": "^5.1.0",
+    "which": "latest"
   },
   "scripts": {
     "flash": "bun run src/provision.ts",

@@ -1,5 +1,6 @@
 import { $ } from "bun";
 import { stat } from "fs/promises";
+import which from "which";
 
 const SUCCESS_LINE = /Erased \d+ bytes \(\d+ sectors\), programmed \d+ bytes \(\d+ pages\)/;
 const TRANSIENT_SWD_FAILURE = /SWD\/JTAG communication failure/;
@@ -16,8 +17,9 @@ export interface Rw612FlashOptions {
 }
 
 const requireCli = async (cli: string, install: string): Promise<void> => {
-  const result = await $`command -v ${cli}`.nothrow().quiet();
-  if (result.exitCode !== 0) {
+  try {
+    await which(cli);
+  } catch {
     throw new Error(
       `${cli} is required to flash RW612 devices but was not found on PATH. ${install}`
     );
