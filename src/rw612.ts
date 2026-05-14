@@ -276,7 +276,7 @@ export async function flashWithRw612(
   options: Rw612FlashOptions
 ): Promise<boolean> {
   console.log(
-    `⚡ Flashing ${options.deviceId} with pyocd (MCU-Link / CMSIS-DAP, RW612)...`
+    `⚡Flashing ${options.deviceId} (MCU-Link / CMSIS-DAP, RW612)...`
   );
 
   try {
