@@ -114,7 +114,7 @@ const resetAndDebug = async (probeUID: string): Promise<void> => {
 };
 
 const resetDevice = async (probeUID: string): Promise<void> => {
-  const output = await pyocdCmds(probeUID, ["reset"]);
+  const output = await pyocdCmds(probeUID, ["reset --type hardware", "go"]);
   if (!output.toLowerCase().includes("resetting target")) {
     throw new Error("Failed to reset device");
   }

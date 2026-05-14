@@ -176,6 +176,9 @@ const flashDevice = async (auth: Authentication): Promise<void> => {
 
   const channel = await deviceType.discoverProbe();
   if (channel) {
+    // Wait for device to boot and start the RTT server before trying to connect with the monitor
+    console.log("⏱ Waiting for device to boot...");
+    await Bun.sleep(3000);
     await runMonitor(channel);
   } else {
     console.log(

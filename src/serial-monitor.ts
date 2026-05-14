@@ -1,8 +1,8 @@
+import { select } from "@inquirer/prompts";
 import { $ } from "bun";
 import { readdir, stat, unlink, writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
-import { select } from "@inquirer/prompts";
 
 const SERIAL_BAUD = 115200;
 const TTY_DIR = "/dev";
@@ -145,8 +145,6 @@ const streamRw612Rtt = async (uid: string): Promise<void> => {
       "rw612",
       "--uid",
       uid,
-      "-M",
-      "attach",
       "-a",
       RW612_RTT_SEARCH_BASE,
       "-s",
