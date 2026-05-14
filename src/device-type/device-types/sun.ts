@@ -54,9 +54,9 @@ const GEN1_OFFSETS: SunFlashOffsets = {
 };
 
 const GEN2_OFFSETS: SunFlashOffsets = {
-  bootloader: "0x08000000",
-  firmware: "0x08020000",
-  fileSystem: "0x08920000",
+  bootloader: "0x18000000",
+  firmware: "0x18020000",
+  fileSystem: "0x18920000",
 };
 
 const sourcePaths = (sourceDir: string) => ({
