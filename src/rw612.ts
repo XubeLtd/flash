@@ -303,7 +303,5 @@ export async function flashWithRw612(
     const ok = await loadOne(entry);
     if (!ok) return false;
   }
-
-  console.log(`✅ pyocd load completed successfully for all binaries.`);
   return true;
 }
