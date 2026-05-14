@@ -170,10 +170,26 @@ export const setAtPath = (
   path: string,
   value: unknown
 ): void => {
+  const topKeys: string[] = Object.keys(obj);
+  // Ignore "schema_version" at the top level since it's not actually part of the config structure
+  if (!topKeys.includes("schema_version") && topKeys.length !== 2) {
+    throw new Error(`Expected config object to have exactly 2 top-level keys (device ID and schema_version), but found ${topKeys.length}: ${topKeys.join(", ")}`);
+  }
+  const deviceId = topKeys.filter((k) => k !== "schema_version")[0];
+  if (!deviceId) throw new Error(`No device ID found in config`);
+  // Start path search from the device ID object, not the root, since the root also contains "schema_version" which is not part of the config structure
+  const deviceConfig = obj[deviceId];
+  if (typeof deviceConfig !== "object" || deviceConfig === null) {
+    throw new Error(`Expected config to have a top-level object for device ID ${deviceId}`);
+  }
+  const nestedCmps = (deviceConfig as Record<string, unknown>)["cmp"];
+  if (nestedCmps === null || nestedCmps === undefined || typeof nestedCmps !== "object") {
+    throw new Error(`Expected config structure to have a nested "cmp" object, but not found one`);
+  }
+  let current: Record<string, unknown> = nestedCmps as Record<string, unknown>;
   const parts = path.split(".");
   const last = parts.pop();
   if (!last) throw new Error(`Invalid path: ${path}`);
-  let current: Record<string, unknown> = obj;
   for (const part of parts) {
     const next = current[part];
     if (next === null || next === undefined || typeof next !== "object") {

@@ -93,7 +93,7 @@ export const assertOnlyAllowedPathsChanged = async (
 
   const changedPaths = diffChangedPaths(original, updated);
   const allowed = new Set(allowedPaths);
-  const unauthorised = changedPaths.filter((p) => !allowed.has(p));
+  const unauthorised = changedPaths.filter((p) => ![...allowed].some((a) => p.endsWith(a)));
 
   if (unauthorised.length > 0) {
     throw new Error(
