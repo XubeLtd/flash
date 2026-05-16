@@ -107,17 +107,25 @@ const readResultWords = (output: string): number[] => {
 };
 
 const resetAndDebug = async (probeUID: string): Promise<void> => {
-  const output = await pyocdCmds(probeUID, ["reset halt"]);
-  if (!output.toLowerCase().includes("successfully halted")) {
-    throw new Error("Failed to reset device and start debug session");
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const output = await pyocdCmds(probeUID, ["reset halt"]);
+    if (output.toLowerCase().includes("successfully halted")) {
+      return;
+    }
+    await Bun.sleep(500);
   }
+  throw new Error("Failed to reset device and start debug session");
 };
 
 const resetDevice = async (probeUID: string): Promise<void> => {
-  const output = await pyocdCmds(probeUID, ["reset --type hardware", "go"]);
-  if (!output.toLowerCase().includes("resetting target")) {
-    throw new Error("Failed to reset device");
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const output = await pyocdCmds(probeUID, ["reset --type hardware", "go"]);
+    if (output.toLowerCase().includes("resetting target")) {
+      return;
+    }
+    await Bun.sleep(500);
   }
+  throw new Error("Failed to reset device");
 };
 
 const programChunk = async (
@@ -145,9 +153,9 @@ const programChunk = async (
   const loadOutput = await pyocdCmds(probeUID, [
     "halt",
     `fill 32 ${hex(RESULT_ADDR)} 32 0`,
-    `loadmem ${hex(CODE_ADDR)} ${SRAM_FLASHER_BIN}`,
-    `loadmem ${hex(PARAM_ADDR)} ${paramFile}`,
-    `loadmem ${hex(DATA_ADDR)} ${dataFile}`,
+    `loadmem ${hex(CODE_ADDR)} ${SRAM_FLASHER_BIN.replaceAll("\\", "/")}`,
+    `loadmem ${hex(PARAM_ADDR)} ${paramFile.replaceAll("\\", "/")}`,
+    `loadmem ${hex(DATA_ADDR)} ${dataFile.replaceAll("\\", "/")}`,
     `wreg pc ${hex(CODE_ADDR)}`,
     "go",
   ]);
