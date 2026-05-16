@@ -16,11 +16,11 @@ import {
   type MonitorChannel,
 } from "../../serial-monitor";
 import { flashWithStm32Programmer } from "../../stm32-programmer";
-import { ensurePythonEnv } from "../../version/python-setup";
 import {
   rebuildSettingsFsImage,
   type SettingsFsParams,
 } from "../../version/build-filesystem";
+import { ensurePythonEnv } from "../../version/python-setup";
 import {
   PLANET_REBUILD_REQUIRED_FILES,
   validateRequiredFiles,
@@ -127,9 +127,9 @@ export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
       return await flashWithStm32Programmer({
         deviceId,
         entries: [
-          { path: bootloader, address: STM32WB55_OFFSETS.bootloader },
-          { path: firmware, address: STM32WB55_OFFSETS.firmware },
-          { path: fsHex },
+          { label: "bootloader", path: bootloader, address: STM32WB55_OFFSETS.bootloader },
+          { label: "firmware", path: firmware, address: STM32WB55_OFFSETS.firmware },
+          { label: "filesystem", path: fsHex, address: STM32WB55_OFFSETS.fileSystem },
         ],
       });
     } finally {

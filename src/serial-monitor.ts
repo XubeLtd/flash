@@ -3,6 +3,7 @@ import { $ } from "bun";
 import { readdir, stat, unlink, writeFile } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
+import which from "which";
 
 const SERIAL_BAUD = 115200;
 const TTY_DIR = "/dev";
@@ -269,6 +270,27 @@ const streamRw612UartJLink = async (uid: string): Promise<void> => {
   }
 };
 
+const resolveStm32Cli = async (): Promise<string> => {
+  const fromEnv = process.env.STM32_PRG_PATH;
+  if (fromEnv) {
+    const candidate = join(fromEnv, "STM32_Programmer_CLI");
+    try {
+      return await which(candidate);
+    } catch {
+      throw new Error(
+        `STM32_PRG_PATH=${fromEnv} but STM32_Programmer_CLI not found`
+      );
+    }
+  }
+  try {
+    return await which("STM32_Programmer_CLI");
+  } catch {
+    throw new Error(
+      `STM32_Programmer_CLI not found`
+    );
+  }
+};
+
 /**
  * Stream STM32 SWV ITM port 0 to stdout via STM32_Programmer_CLI. We run the
  * CLI in `mode=NORMAL` (software reset on connect) — `mode=HOTPLUG` and
@@ -284,10 +306,16 @@ const streamStm32Swv = async (uid: string): Promise<void> => {
     `📡 Connecting to STM32WB55 SWV via ST-Link ${uid} (mode=NORMAL — ` +
       `the chip will be soft-reset on attach). Press Ctrl+C to exit.\n`
   );
-
+  let cli: string;
+  try {
+    cli = await resolveStm32Cli();
+  } catch (e) {
+    console.error(`❌ Failed to launch programmer: ${(e as Error).message}`);
+    return;
+  }
   const swv = Bun.spawn(
     [
-      "STM32_Programmer_CLI",
+      cli,
       "-c",
       "port=SWD",
       "mode=NORMAL",
@@ -296,27 +324,17 @@ const streamStm32Swv = async (uid: string): Promise<void> => {
       `portnumber=${STM32WB55_SWV_ITM_PORT}`,
       logPath,
     ],
-    { stdout: "ignore", stderr: "ignore" }
+    { stdout: "inherit", stderr: "inherit" }
   );
-
-  // Give the CLI a moment to initialise before tailing — otherwise we miss
-  // the fact that the file is the active log and not a stale one.
-  await new Promise((r) => setTimeout(r, 500));
-
-  const tail = Bun.spawn(["tail", "-n", "+1", "-f", logPath], {
-    stdout: "inherit",
-    stderr: "inherit",
-  });
 
   const cleanup = (): void => {
     swv.kill("SIGTERM");
-    tail.kill("SIGTERM");
   };
   const onSigint = (): void => cleanup();
   process.on("SIGINT", onSigint);
 
   try {
-    await Promise.race([swv.exited, tail.exited]);
+    await Promise.race([swv.exited]);
   } finally {
     cleanup();
     process.off("SIGINT", onSigint);
