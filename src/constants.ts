@@ -1,7 +1,7 @@
 export * from "./sdk/prod/xube-sdk";
 export { xubeSdk };
 
-import { xube as xubeSdk } from "./sdk/prod/xube-sdk";
+    import { xube as xubeSdk } from "./sdk/prod/xube-sdk";
 // import { xubeDev as xubeSdk } from "./sdk/dev/xube-sdk";
 
 export const BOOTLOADER_FOLDER_NAME = "bootloader";
@@ -16,6 +16,7 @@ export const CERT_NAME_PUB = "pub.pem.key";
 export const CERT_NAME_CA = "rootca.pem";
 
 export const FIRMWARE_FILE_NAME = "firmware.bin";
+export const FIRMWARE_NET_FILE_NAME = "firmware_net.bin";
 export const BOOTLOADER_FILE_NAME = "bootloader.bin";
 export const STORAGE_PARTITION_FILE_NAME = "storage_partition.bin";
 

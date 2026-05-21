@@ -8,10 +8,13 @@ import {
   FILE_SYSTEM_FOLDER_NAME,
   FIRMWARE_FILE_NAME,
   FIRMWARE_FOLDER_NAME,
+  FIRMWARE_NET_FILE_NAME,
   STORAGE_PARTITION_FILE_NAME,
-  type TXubeGetDeviceModelsResponse,
+  type TXubeGetDeviceModelsResponse
 } from "../../constants";
+import { flashWithNRFUtil } from "../../nrf-programmer";
 import {
+  findJLinkChannel,
   findStLinkChannel,
   type MonitorChannel,
 } from "../../serial-monitor";
@@ -41,6 +44,20 @@ const STM32WB55_OFFSETS: Stm32wb55Offsets = {
   bootloader: "0x08000000",
   firmware: "0x0800C000",
   fileSystem: "0x080A2000",
+};
+
+interface Nrf5340Offsets {
+  firmware_net: string;
+  bootloader_app: string;
+  firmware_app: string;
+  fileSystem: string;
+}
+
+const NRF5340_OFFSETS: Nrf5340Offsets = {
+  firmware_net: "0x01000000",
+  bootloader_app: "0x00000000",
+  firmware_app: "0x0000C000",
+  fileSystem: "0x000A2000",
 };
 
 const PLANET_SETTINGS_PARAMS: SettingsFsParams = {
@@ -139,12 +156,79 @@ export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
 }
 
 export class Gen2PlanetDeviceType extends BasePlanetDeviceType {
-  flash = async (
-    _deviceId: string,
-    _sourceDir: string
-  ): Promise<boolean> => {
-    throw new Error(
-      `Flashing planet generation 2 devices is not currently supported via the flash repo.`
+  override discoverProbe = async (): Promise<MonitorChannel | null> => {
+    return findJLinkChannel();
+  };
+
+  flash = async (deviceId: string, sourceDir: string): Promise<boolean> => {
+    const bootloaderBin = resolve(
+      sourceDir,
+      BOOTLOADER_FOLDER_NAME,
+      BOOTLOADER_FILE_NAME
     );
+    const firmwareBin = resolve(
+      sourceDir,
+      FIRMWARE_FOLDER_NAME,
+      FIRMWARE_FILE_NAME
+    );
+    const firmwareNetBin = resolve(
+      sourceDir,
+      FIRMWARE_FOLDER_NAME,
+      FIRMWARE_NET_FILE_NAME
+    );
+    const fsBin = resolve(
+      sourceDir,
+      FILE_SYSTEM_FOLDER_NAME,
+      STORAGE_PARTITION_FILE_NAME
+    );
+
+    const tempDir = resolve(tmpdir(), `flash-${deviceId}-planet-nrf5340`);
+
+    try {
+      await mkdir(tempDir, { recursive: true });
+      const bootloaderHex = resolve(tempDir, "bootloader.hex");
+      const firmwareHex = resolve(tempDir, "firmware.hex");
+      const firmwareNetHex = resolve(tempDir, "firmware_net.hex");
+      const fsHex = resolve(tempDir, "storage_partition.hex");
+
+      await convertBinToSparseHex(
+        bootloaderBin,
+        bootloaderHex,
+        NRF5340_OFFSETS.bootloader_app
+      );
+      await convertBinToSparseHex(
+        firmwareBin,
+        firmwareHex,
+        NRF5340_OFFSETS.firmware_app
+      );
+      await convertBinToSparseHex(
+        firmwareNetBin,
+        firmwareNetHex,
+        NRF5340_OFFSETS.firmware_net
+      );
+      await convertBinToSparseHex(
+        fsBin,
+        fsHex,
+        NRF5340_OFFSETS.fileSystem
+      );
+
+      await convertBinToSparseHex(
+        fsBin,
+        fsHex,
+        NRF5340_OFFSETS.fileSystem
+      );
+
+      return await flashWithNRFUtil({
+        deviceId,
+        entries: [
+          { label: "firmware-net", path: firmwareNetHex, address: NRF5340_OFFSETS.firmware_net, core: "network" },
+          { label: "bootloader", path: bootloaderHex, address: NRF5340_OFFSETS.bootloader_app, core: "application" },
+          { label: "firmware", path: firmwareHex, address: NRF5340_OFFSETS.firmware_app, core: "application" },
+          { label: "filesystem", path: fsHex, address: NRF5340_OFFSETS.fileSystem, core: "application" },
+        ],
+      });
+    } finally {
+      // await rm(tempDir, { recursive: true, force: true });
+    }
   };
 }

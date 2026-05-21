@@ -14,6 +14,9 @@ const TTY_DIR = "/dev";
 const RW612_RTT_SEARCH_BASE = "0x20000000";
 const RW612_RTT_SEARCH_SIZE = "0x130000";
 
+const NRF5340_APP_RTT_SEARCH_BASE = "0x20000000";
+const NRF5340_APP_RTT_SEARCH_SIZE = "0x80000";
+
 // STM32WB55 SWV settings — match xubeplanet defconfig:
 //   CONFIG_LOG_BACKEND_SWO_REF_FREQ_HZ=64000000  (64 MHz core / TPIU ref)
 //   CONFIG_LOG_BACKEND_SWO_FREQ_HZ=2000000      (2 MHz SWO output)
@@ -70,8 +73,8 @@ const parsePyocdProbes = (
 };
 
 export type MonitorChannelKind =
-  | "rtt-rw612-mcu-link"
-  | "uart-rw612-jlink"
+  | "mcu-link"
+  | "jlink"
   | "uart-vcom"
   | "swv-stm32";
 
@@ -98,23 +101,23 @@ export const listMonitorChannels = async (): Promise<MonitorChannel[]> => {
   const channels: MonitorChannel[] = [];
   for (const uid of mcuLinkUids) {
     channels.push({
-      kind: "rtt-rw612-mcu-link",
+      kind: "mcu-link",
       ref: uid,
-      label: `Sun · MCU-Link ${uid} (RTT via pyocd)`,
+      label: `MCU-Link ${uid}`,
     });
   }
   for (const uid of jlinkUids) {
     channels.push({
-      kind: "uart-rw612-jlink",
+      kind: "jlink",
       ref: uid,
-      label: `Sun · J-Link ${uid} (UART via VCOM, 115200 8N1)`,
+      label: `J-Link ${uid}`,
     });
   }
   for (const uid of stLinkUids) {
     channels.push({
       kind: "swv-stm32",
       ref: uid,
-      label: `Planet · ST-Link ${uid} (SWV via STM32_Programmer_CLI)`,
+      label: `ST-Link ${uid}`,
     });
   }
   return channels;
@@ -150,6 +153,37 @@ const streamRw612Rtt = async (uid: string): Promise<void> => {
       RW612_RTT_SEARCH_BASE,
       "-s",
       RW612_RTT_SEARCH_SIZE,
+    ],
+    { stdin: "inherit", stdout: "inherit", stderr: "inherit" }
+  );
+  const onSigint = (): void => {
+    child.kill("SIGTERM");
+  };
+  process.on("SIGINT", onSigint);
+  try {
+    await child.exited;
+  } finally {
+    process.off("SIGINT", onSigint);
+  }
+};
+const streamNrf5340Rtt = async (uid: string): Promise<void> => {
+  console.log(
+    `📡 Connecting to NRF5340 RTT via J-Link ${uid}. The first ` +
+      `connection scans SRAM for the SEGGER RTT control block (~10s). ` +
+      `Press Ctrl+C to exit.\n`
+  );
+  const child = Bun.spawn(
+    [
+      "pyocd",
+      "rtt",
+      "--target",
+      "nrf5340_xxaa",
+      "--uid",
+      uid,
+      "-a",
+      NRF5340_APP_RTT_SEARCH_BASE,
+      "-s",
+      NRF5340_APP_RTT_SEARCH_SIZE,
     ],
     { stdin: "inherit", stdout: "inherit", stderr: "inherit" }
   );
@@ -381,11 +415,11 @@ const streamUartVcom = async (port: string): Promise<void> => {
  */
 export const runMonitor = async (channel: MonitorChannel): Promise<void> => {
   switch (channel.kind) {
-    case "rtt-rw612-mcu-link":
+    case "mcu-link":
       await streamRw612Rtt(channel.ref);
       return;
-    case "uart-rw612-jlink":
-      await streamRw612UartJLink(channel.ref);
+    case "jlink":
+      await streamNrf5340Rtt(channel.ref);
       return;
     case "swv-stm32":
       await streamStm32Swv(channel.ref);
@@ -407,8 +441,8 @@ export const runMonitor = async (channel: MonitorChannel): Promise<void> => {
 export const findRw612RttChannel = async (): Promise<MonitorChannel | null> => {
   const channels = await listMonitorChannels();
   return (
-    channels.find((c) => c.kind === "rtt-rw612-mcu-link") ??
-    channels.find((c) => c.kind === "uart-rw612-jlink") ??
+    channels.find((c) => c.kind === "mcu-link") ??
+    channels.find((c) => c.kind === "jlink") ??
     null
   );
 };
@@ -416,6 +450,11 @@ export const findRw612RttChannel = async (): Promise<MonitorChannel | null> => {
 export const findStLinkChannel = async (): Promise<MonitorChannel | null> => {
   const channels = await listMonitorChannels();
   return channels.find((c) => c.kind === "swv-stm32") ?? null;
+};
+
+export const findJLinkChannel = async (): Promise<MonitorChannel | null> => {
+  const channels = await listMonitorChannels();
+  return channels.find((c) => c.kind === "jlink") ?? null;
 };
 
 // Helpers retained for the rare case anyone wants direct VCOM listing.
