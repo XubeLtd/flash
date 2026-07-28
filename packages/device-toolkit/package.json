@@ -1,0 +1,45 @@
+{
+  "name": "@xube/device-toolkit",
+  "version": "0.1.0",
+  "description": "Public, credential-agnostic device configuration and flashing primitives for Xube tools.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "bun": "./src/index.ts",
+      "import": "./dist/index.js"
+    },
+    "./config": {
+      "types": "./src/config.ts",
+      "bun": "./src/config.ts",
+      "import": "./dist/config.js"
+    },
+    "./layouts": {
+      "types": "./src/layouts.ts",
+      "bun": "./src/layouts.ts",
+      "import": "./dist/layouts.js"
+    },
+    "./nrfutil": {
+      "types": "./src/nrfutil.ts",
+      "bun": "./src/nrfutil.ts",
+      "import": "./dist/nrfutil.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "bun run build && bun test"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
+}

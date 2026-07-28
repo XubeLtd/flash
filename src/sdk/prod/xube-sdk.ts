@@ -986,16 +986,34 @@ export type TXubeDeviceRequest = z.infer<typeof XubeDeviceRequest>;
 export const XubeDevice = z.object({
   generation: z.string(),
   componentType: z.literal("DEVICE"),
-  accountId: z.string().optional(),
   creator: z.string().optional(),
-  modelId: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true }),
+  entityType: z.literal("DEVICE"),
   certificate: z.object({ certificateArn: z.string() }).partial().optional(),
+  description: z.string().optional(),
+  type: z.literal("DEVICE:COMPONENT"),
+  updater: z.string().optional(),
+  lifecycle: z.enum(["ACTIVE", "INACTIVE"]),
+  accountId: z.string().optional(),
+  thingArn: z.string().optional(),
+  service: z.literal("Device"),
   name: z.string().optional(),
   model: z.string(),
   id: z.string().min(3),
-  type: z.string().min(3).optional(),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   make: z.string(),
+  modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }),
 });
 export type TXubeDevice = z.infer<typeof XubeDevice>;
 export const XubeUpdateDeviceRequest = z.object({
@@ -1003,6 +1021,13 @@ export const XubeUpdateDeviceRequest = z.object({
   device: z.string(),
 });
 export type TXubeUpdateDeviceRequest = z.infer<typeof XubeUpdateDeviceRequest>;
+export const XubeCancelDeviceUpdateRequest = z.object({
+  reason: z.string().optional(),
+  device: z.string(),
+});
+export type TXubeCancelDeviceUpdateRequest = z.infer<
+  typeof XubeCancelDeviceUpdateRequest
+>;
 export const XubeGetAccountFacetRequest = z.object({
   facet: z.string(),
   account: z.string(),
@@ -1010,56 +1035,140 @@ export const XubeGetAccountFacetRequest = z.object({
 export type TXubeGetAccountFacetRequest = z.infer<
   typeof XubeGetAccountFacetRequest
 >;
-export const XubeGetAccountFacetsAccountResponse = z.object({
-  accountId: z.string(),
-  componentType: z.string(),
-  facetType: z.literal("ACCOUNT"),
-  creator: z.string().optional(),
-  facetId: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
-  name: z.string().optional(),
-  id: z.string().min(3),
-  type: z.string().min(3).optional(),
-  deviceId: z.string(),
+export const XubeGetAccountFacetsResponse = z.object({
+  data: z.array(
+    z.object({
+      component: z
+        .object({
+          generation: z.string(),
+          componentType: z.literal("DEVICE"),
+          creator: z.string().optional(),
+          created: z
+            .string()
+            .regex(
+              /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+            )
+            .datetime({ offset: true }),
+          entityType: z.literal("DEVICE"),
+          certificate: z
+            .object({ certificateArn: z.string() })
+            .partial()
+            .optional(),
+          description: z.string().optional(),
+          type: z.literal("DEVICE:COMPONENT"),
+          updater: z.string().optional(),
+          lifecycle: z.enum(["ACTIVE", "INACTIVE"]),
+          accountId: z.string().optional(),
+          thingArn: z.string().optional(),
+          service: z.literal("Device"),
+          name: z.string().optional(),
+          model: z.string(),
+          id: z.string().min(3),
+          updated: z
+            .string()
+            .regex(
+              /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+            )
+            .datetime({ offset: true })
+            .optional(),
+          make: z.string(),
+          modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }),
+        })
+        .passthrough(),
+      facets: z.array(
+        z
+          .object({
+            accountId: z.string().optional(),
+            creator: z.string().optional(),
+            facetType: z.string(),
+            created: z
+              .string()
+              .regex(
+                /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+              )
+              .datetime({ offset: true })
+              .optional(),
+            service: z.string(),
+            name: z.string().optional(),
+            isGlobal: z.boolean().optional(),
+            entityId: z.string(),
+            id: z.string().min(3),
+            type: z.string().min(3).optional(),
+            updated: z
+              .string()
+              .regex(
+                /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+              )
+              .datetime({ offset: true })
+              .optional(),
+            updater: z.string().optional(),
+          })
+          .passthrough()
+      ),
+    })
+  ),
+  nextToken: z.string().optional(),
 });
-export type TXubeGetAccountFacetsAccountResponse = z.infer<
-  typeof XubeGetAccountFacetsAccountResponse
+export type TXubeGetAccountFacetsResponse = z.infer<
+  typeof XubeGetAccountFacetsResponse
 >;
-export const XubeGetAccountFacetsActivationStatusResponse = z.object({
-  componentType: z.string(),
-  creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
-  activationStatus: z.enum(["active", "inactive"]),
-  type: z.string().min(3).optional(),
-  deviceId: z.string(),
-  updater: z.string().optional(),
-  accountId: z.string(),
-  facetType: z.literal("ACTIVATION-STATUS"),
-  facetId: z.string().optional(),
-  name: z.string().optional(),
-  id: z.string().min(3),
-  updated: z.string().datetime({ offset: true }).optional(),
-  timestamp: z.string(),
+export const XubeStringModel = z.string();
+export type TXubeStringModel = z.infer<typeof XubeStringModel>;
+export const XubeSetDevicesSubscriptionsFacetRequest = z
+  .object({
+    facetType: z.string().optional(),
+    subscriptionType: z.literal("FACET"),
+    facetId: z.string().optional(),
+    destination: z.string(),
+    targets: z.array(z.string()),
+  })
+  .passthrough();
+export type TXubeSetDevicesSubscriptionsFacetRequest = z.infer<
+  typeof XubeSetDevicesSubscriptionsFacetRequest
+>;
+export const XubeSetDevicesSubscriptionsDataRequest = z
+  .object({
+    subscriptionType: z.literal("DATA"),
+    destination: z.string(),
+    targets: z.array(z.string()),
+  })
+  .passthrough();
+export type TXubeSetDevicesSubscriptionsDataRequest = z.infer<
+  typeof XubeSetDevicesSubscriptionsDataRequest
+>;
+export const XubeSetDevicesSubscriptionsRequest = z.discriminatedUnion(
+  "subscriptionType",
+  [
+    XubeSetDevicesSubscriptionsFacetRequest,
+    XubeSetDevicesSubscriptionsDataRequest,
+  ]
+);
+export type TXubeSetDevicesSubscriptionsRequest = z.infer<
+  typeof XubeSetDevicesSubscriptionsRequest
+>;
+export const XubeSetDevicesSubscriptionsResponse = z.object({
+  success: z.boolean(),
 });
-export type TXubeGetAccountFacetsActivationStatusResponse = z.infer<
-  typeof XubeGetAccountFacetsActivationStatusResponse
+export type TXubeSetDevicesSubscriptionsResponse = z.infer<
+  typeof XubeSetDevicesSubscriptionsResponse
 >;
-export const XubeGetAccountFacetsHeartbeatResponse = z.object({
-  componentType: z.string(),
-  facetType: z.literal("HEARTBEAT"),
-  facetId: z.string().optional(),
-  id: z.string().min(3),
-  deviceId: z.string(),
-  timestamp: z.string().datetime({ offset: true }),
+export const XubeGetDeviceDataDestinationRequest = z.object({
+  destination: z.string().url(),
+  device: z.string(),
 });
-export type TXubeGetAccountFacetsHeartbeatResponse = z.infer<
-  typeof XubeGetAccountFacetsHeartbeatResponse
+export type TXubeGetDeviceDataDestinationRequest = z.infer<
+  typeof XubeGetDeviceDataDestinationRequest
 >;
-export const XubeGetAccountFacetsDataDestinationResponse = z.object({
-  componentType: z.string(),
+export const XubeDeviceDataDestination = z.object({
   creator: z.string().optional(),
   targetId: z.string(),
-  created: z.string().datetime({ offset: true }).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   destination: z.object({
     headers: z
       .object({ Authorization: z.string(), "x-api-key": z.string() })
@@ -1069,22 +1178,188 @@ export const XubeGetAccountFacetsDataDestinationResponse = z.object({
     id: z.string(),
     url: z.string().url(),
   }),
+  entityId: z.string(),
   source: z.object({ id: z.string(), type: z.string() }).optional(),
-  type: z.string().min(3).optional(),
+  type: z.literal("DEVICE:COMPONENT:FACET:DATA-DESTINATION"),
   deviceId: z.string(),
-  updater: z.string(),
-  accountId: z.string(),
+  updater: z.string().optional(),
+  accountId: z.string().optional(),
   facetType: z.literal("DATA-DESTINATION"),
-  facetId: z.string().optional(),
+  service: z.string(),
   name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
   id: z.string().min(3),
-  updated: z.string().datetime({ offset: true }),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
 });
-export type TXubeGetAccountFacetsDataDestinationResponse = z.infer<
-  typeof XubeGetAccountFacetsDataDestinationResponse
+export type TXubeDeviceDataDestination = z.infer<
+  typeof XubeDeviceDataDestination
 >;
-export const XubeGetAccountFacetsFilesResponse = z.object({
-  componentType: z.string(),
+export const XubeGetAccountFacetsRequest = z.object({
+  nextToken: z.string().optional(),
+  facetTypes: z.array(z.string()).optional(),
+  limit: z.number().lte(100).optional().default(100),
+  descending: z.boolean().optional().default(false),
+  account: z.string(),
+});
+export type TXubeGetAccountFacetsRequest = z.infer<
+  typeof XubeGetAccountFacetsRequest
+>;
+export const XubeJobResponse = z.object({ job: z.string() });
+export type TXubeJobResponse = z.infer<typeof XubeJobResponse>;
+export const XubeSetUpdateApprovalRequest = z.object({
+  approval: z.enum(["approved", "denied", "pending"]),
+  conditions: z.array(z.enum(["local", "remote"])).optional(),
+  device: z.string(),
+});
+export type TXubeSetUpdateApprovalRequest = z.infer<
+  typeof XubeSetUpdateApprovalRequest
+>;
+export const XubeGetLatestDeviceVersionRequest = z.object({
+  device: z.string(),
+});
+export type TXubeGetLatestDeviceVersionRequest = z.infer<
+  typeof XubeGetLatestDeviceVersionRequest
+>;
+export const XubeDeviceFacetsAccount = z.object({
+  accountId: z.string(),
+  creator: z.string().optional(),
+  facetType: z.literal("ACCOUNT"),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  name: z.string().optional(),
+  entityId: z.string(),
+  id: z.string().min(3),
+  type: z.string().min(3).optional(),
+});
+export type TXubeDeviceFacetsAccount = z.infer<typeof XubeDeviceFacetsAccount>;
+export const XubeDeviceFacetsActivationStatusDeviceComponentFacetActivationStatus =
+  z.object({
+    creator: z.string().optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
+    activationStatus: z.enum(["active", "inactive"]),
+    entityId: z.string(),
+    type: z.literal("DEVICE:COMPONENT:FACET:ACTIVATION-STATUS"),
+    deviceId: z.string(),
+    updater: z.string().optional(),
+    accountId: z.string(),
+    facetType: z.literal("ACTIVATION-STATUS"),
+    service: z.string(),
+    name: z.string().optional(),
+    isGlobal: z.boolean().optional(),
+    id: z.string().min(3),
+    updated: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
+    timestamp: z.string(),
+  });
+export type TXubeDeviceFacetsActivationStatusDeviceComponentFacetActivationStatus =
+  z.infer<
+    typeof XubeDeviceFacetsActivationStatusDeviceComponentFacetActivationStatus
+  >;
+export const XubeDeviceFacetsHeartbeatDeviceComponentFacetHeartbeat = z.object({
+  creator: z.string().optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  entityId: z.string(),
+  type: z.literal("DEVICE:COMPONENT:FACET:HEARTBEAT"),
+  deviceId: z.string(),
+  updater: z.string().optional(),
+  accountId: z.string().optional(),
+  facetType: z.literal("HEARTBEAT"),
+  service: z.string(),
+  name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
+  id: z.string().min(3),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  timestamp: z.string(),
+});
+export type TXubeDeviceFacetsHeartbeatDeviceComponentFacetHeartbeat = z.infer<
+  typeof XubeDeviceFacetsHeartbeatDeviceComponentFacetHeartbeat
+>;
+export const XubeDeviceFacetsDataDestinationDeviceComponentFacetDataDestination =
+  z.object({
+    creator: z.string().optional(),
+    targetId: z.string(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
+    destination: z.object({
+      headers: z
+        .object({ Authorization: z.string(), "x-api-key": z.string() })
+        .partial()
+        .passthrough()
+        .optional(),
+      id: z.string(),
+      url: z.string().url(),
+    }),
+    entityId: z.string(),
+    source: z.object({ id: z.string(), type: z.string() }).optional(),
+    type: z.literal("DEVICE:COMPONENT:FACET:DATA-DESTINATION"),
+    deviceId: z.string(),
+    updater: z.string().optional(),
+    accountId: z.string().optional(),
+    facetType: z.literal("DATA-DESTINATION"),
+    service: z.string(),
+    name: z.string().optional(),
+    isGlobal: z.boolean().optional(),
+    id: z.string().min(3),
+    updated: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
+  });
+export type TXubeDeviceFacetsDataDestinationDeviceComponentFacetDataDestination =
+  z.infer<
+    typeof XubeDeviceFacetsDataDestinationDeviceComponentFacetDataDestination
+  >;
+export const XubeDeviceFacetsFilesDeviceComponentFacetFiles = z.object({
+  creator: z.string().optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   orphaned: z
     .record(
       z.object({
@@ -1113,6 +1388,7 @@ export const XubeGetAccountFacetsFilesResponse = z.object({
       })
     )
     .optional(),
+  entityId: z.string(),
   storage: z
     .record(
       z.object({
@@ -1141,6 +1417,9 @@ export const XubeGetAccountFacetsFilesResponse = z.object({
       })
     )
     .optional(),
+  type: z.literal("DEVICE:COMPONENT:FACET:FILES"),
+  updater: z.string().optional(),
+  accountId: z.string().optional(),
   scripting: z
     .record(
       z.object({
@@ -1205,7 +1484,10 @@ export const XubeGetAccountFacetsFilesResponse = z.object({
     }),
   }),
   stage: z.enum(["current", "expected", "historical"]),
-  facetId: z.string().optional(),
+  service: z.string(),
+  name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
+  id: z.string().min(3),
   communication: z
     .record(
       z.object({
@@ -1233,6 +1515,13 @@ export const XubeGetAccountFacetsFilesResponse = z.object({
         }),
       })
     )
+    .optional(),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
     .optional(),
   device: z.string(),
   config: z
@@ -1263,7 +1552,6 @@ export const XubeGetAccountFacetsFilesResponse = z.object({
       })
     )
     .optional(),
-  updated: z.string().datetime({ offset: true }).optional(),
   status: z.enum([
     "disabled",
     "pending",
@@ -1273,29 +1561,62 @@ export const XubeGetAccountFacetsFilesResponse = z.object({
     "healthy",
   ]),
 });
-export type TXubeGetAccountFacetsFilesResponse = z.infer<
-  typeof XubeGetAccountFacetsFilesResponse
+export type TXubeDeviceFacetsFilesDeviceComponentFacetFiles = z.infer<
+  typeof XubeDeviceFacetsFilesDeviceComponentFacetFiles
 >;
-export const XubeGetAccountFacetsLocationResponse = z.object({
-  componentType: z.string(),
+export const XubeDeviceFacetsLocationEntityComponentFacetLocation = z.object({
   creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   latitude: z.number(),
-  type: z.string().min(3).optional(),
+  entityId: z.string(),
+  type: z.literal("ENTITY:COMPONENT:FACET:LOCATION"),
   deviceId: z.string(),
   updater: z.string().optional(),
+  accountId: z.string().optional(),
   facetType: z.literal("LOCATION"),
-  facetId: z.string().optional(),
+  service: z.string(),
   name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
   id: z.string().min(3),
-  updated: z.string().datetime({ offset: true }).optional(),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   longitude: z.number(),
 });
-export type TXubeGetAccountFacetsLocationResponse = z.infer<
-  typeof XubeGetAccountFacetsLocationResponse
+export type TXubeDeviceFacetsLocationEntityComponentFacetLocation = z.infer<
+  typeof XubeDeviceFacetsLocationEntityComponentFacetLocation
 >;
-export const XubeGetAccountFacetsStatusResponse = z.object({
-  componentType: z.string(),
+export const XubeDeviceFacetsStatusDeviceComponentFacetStatus = z.object({
+  creator: z.string().optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  entityId: z.string(),
+  availability: z
+    .object({
+      lastSeenAt: z.string().optional(),
+      lastReportedAt: z.string().optional(),
+      state: z.enum(["online", "offline", "unknown"]),
+      updated: z.string(),
+    })
+    .optional(),
+  type: z.literal("DEVICE:COMPONENT:FACET:STATUS"),
+  updater: z.string().optional(),
+  accountId: z.string().optional(),
   facetType: z.literal("STATUS"),
   connectivity: z
     .object({
@@ -1399,7 +1720,9 @@ export const XubeGetAccountFacetsStatusResponse = z.object({
       updated: z.string(),
     })
     .optional(),
-  facetId: z.string().optional(),
+  service: z.string(),
+  name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
   temperature: z
     .object({
       state: z.enum([
@@ -1415,12 +1738,7 @@ export const XubeGetAccountFacetsStatusResponse = z.object({
       value: z.number(),
     })
     .optional(),
-  availability: z
-    .object({
-      state: z.enum(["online", "offline", "unknown"]),
-      updated: z.string(),
-    })
-    .optional(),
+  id: z.string().min(3),
   power: z.object({
     auxiliary: z
       .object({
@@ -1574,65 +1892,101 @@ export const XubeGetAccountFacetsStatusResponse = z.object({
       })
       .optional(),
   }),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   timestamp: z.string(),
 });
-export type TXubeGetAccountFacetsStatusResponse = z.infer<
-  typeof XubeGetAccountFacetsStatusResponse
+export type TXubeDeviceFacetsStatusDeviceComponentFacetStatus = z.infer<
+  typeof XubeDeviceFacetsStatusDeviceComponentFacetStatus
 >;
-export const XubeGetAccountFacetsSnapshotResponse = z.object({
-  componentType: z.string(),
-  facetType: z.literal("SNAPSHOT"),
+export const XubeDeviceFacetsSnapshotDeviceComponentFacetSnapshot = z.object({
   creator: z.string().optional(),
-  facetId: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
-  name: z.string().optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   index: z.number(),
+  entityId: z.string(),
+  type: z.literal("DEVICE:COMPONENT:FACET:SNAPSHOT"),
+  updater: z.string().optional(),
+  accountId: z.string().optional(),
+  facetType: z.literal("SNAPSHOT"),
+  service: z.string(),
+  name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
   id: z.string().min(3),
-  type: z.string().min(3).optional(),
-  updated: z.string().datetime({ offset: true }).optional(),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   snapshot: z.object({
     fw: z.object({ v: z.number() }),
-    cfg: z.record(
-      z.object({
-        cv: z.number(),
-        v: z.union([z.number(), z.string()]).optional(),
-        n: z.object({}).partial().passthrough().optional(),
-      })
-    ),
+    cfg: z.object({}).partial().passthrough(),
   }),
-  updater: z.string().optional(),
 });
-export type TXubeGetAccountFacetsSnapshotResponse = z.infer<
-  typeof XubeGetAccountFacetsSnapshotResponse
+export type TXubeDeviceFacetsSnapshotDeviceComponentFacetSnapshot = z.infer<
+  typeof XubeDeviceFacetsSnapshotDeviceComponentFacetSnapshot
 >;
-export const XubeGetAccountFacetsUpdateResponse = z.object({
-  componentType: z.string(),
+export const XubeDeviceFacetsUpdateDeviceComponentFacetUpdate = z.object({
   creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   approval: z.object({
-    created: z.string().datetime({ offset: true }),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true }),
     state: z.enum(["approved", "denied", "pending"]),
     conditions: z.array(z.enum(["local", "remote"])).optional(),
-    updated: z.string().datetime({ offset: true }).optional(),
+    updated: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     updater: z.string().optional(),
   }),
-  type: z.string().min(3).optional(),
+  entityId: z.string(),
+  type: z.literal("DEVICE:COMPONENT:FACET:UPDATE"),
   updater: z.string().optional(),
+  accountId: z.string().optional(),
   facetType: z.literal("UPDATE"),
-  facetId: z.string().optional(),
+  service: z.string(),
   mismatch: z
     .record(z.object({ actual: z.string(), expected: z.string() }))
     .optional(),
   name: z.string().optional(),
-  progress: z.record(
-    z
-      .object({
-        totalSize: z.number(),
-        lastOffset: z.number(),
-        updated: z.string(),
-      })
-      .partial()
-  ),
+  isGlobal: z.boolean().optional(),
+  progress: z
+    .record(
+      z
+        .object({
+          totalSize: z.number(),
+          lastOffset: z.number(),
+          updated: z.string(),
+        })
+        .partial()
+    )
+    .optional(),
   id: z.string().min(3),
   state: z.enum([
     "waiting_for_device_status",
@@ -1645,7 +1999,13 @@ export const XubeGetAccountFacetsUpdateResponse = z.object({
   ]),
   job: z.string().optional(),
   conditions: z.array(z.enum(["local", "remote"])).optional(),
-  updated: z.string().datetime({ offset: true }).optional(),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   device: z.string(),
   tasks: z.array(
     z.object({
@@ -1668,209 +2028,123 @@ export const XubeGetAccountFacetsUpdateResponse = z.object({
       ]),
       tries: z.number().optional(),
       topics: z.record(z.string()).optional(),
-      ctx: z.record(z.object({}).partial().passthrough()).optional(),
+      ctx: z.record(z.object({}).partial()).optional(),
       timeout: z.number().optional(),
     })
   ),
 });
-export type TXubeGetAccountFacetsUpdateResponse = z.infer<
-  typeof XubeGetAccountFacetsUpdateResponse
+export type TXubeDeviceFacetsUpdateDeviceComponentFacetUpdate = z.infer<
+  typeof XubeDeviceFacetsUpdateDeviceComponentFacetUpdate
 >;
-export const XubeGetAccountFacetsFirmwareInfoResponse = z.object({
-  componentType: z.string(),
-  creator: z.string(),
-  created: z.string(),
-  firmwareHash: z.string(),
-  firmwareSize: z.number(),
-  type: z.string().min(3).optional(),
-  version: z.union([z.string(), z.number()]),
-  deviceId: z.string(),
-  target: z.string(),
-  facetType: z.literal("FIRMWARE-INFO"),
-  facetId: z.string().optional(),
-  name: z.string().optional(),
-  id: z.string().min(3),
-  firmwareVersion: z.string(),
-  key: z.string(),
-});
-export type TXubeGetAccountFacetsFirmwareInfoResponse = z.infer<
-  typeof XubeGetAccountFacetsFirmwareInfoResponse
->;
-export const XubeGetAccountFacetsFirmwareResponse = z.object({
-  componentType: z.string(),
-  facetType: z.literal("FIRMWARE"),
+export const XubeDeviceFacetsFirmwareInfoDeviceComponentFacetFirmwareInfo =
+  z.object({
+    creator: z.string().optional(),
+    created: z.string(),
+    firmwareHash: z.string(),
+    firmwareSize: z.number(),
+    entityId: z.string(),
+    type: z.literal("DEVICE:COMPONENT:FACET:FIRMWARE-INFO"),
+    version: z.union([z.string(), z.number()]),
+    deviceId: z.string(),
+    updater: z.string().optional(),
+    target: z.string(),
+    accountId: z.string().optional(),
+    facetType: z.literal("FIRMWARE-INFO"),
+    service: z.string(),
+    name: z.string().optional(),
+    isGlobal: z.boolean().optional(),
+    id: z.string().min(3),
+    firmwareVersion: z.string(),
+    updated: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
+    key: z.string(),
+  });
+export type TXubeDeviceFacetsFirmwareInfoDeviceComponentFacetFirmwareInfo =
+  z.infer<typeof XubeDeviceFacetsFirmwareInfoDeviceComponentFacetFirmwareInfo>;
+export const XubeDeviceFacetsFirmwareDeviceComponentFacetFirmware = z.object({
   creator: z.string().optional(),
-  facetId: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  entityId: z.string(),
+  type: z.literal("DEVICE:COMPONENT:FACET:FIRMWARE"),
+  deviceId: z.string(),
+  version: z.union([z.string(), z.number()]),
+  updater: z.string().optional(),
+  accountId: z.string().optional(),
+  facetType: z.literal("FIRMWARE"),
+  service: z.string(),
   name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
   objectVersionId: z.string(),
   id: z.string().min(3),
-  type: z.string().min(3).optional(),
-  deviceId: z.string(),
-  version: z.union([z.string(), z.number()]),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   key: z.string(),
 });
-export type TXubeGetAccountFacetsFirmwareResponse = z.infer<
-  typeof XubeGetAccountFacetsFirmwareResponse
+export type TXubeDeviceFacetsFirmwareDeviceComponentFacetFirmware = z.infer<
+  typeof XubeDeviceFacetsFirmwareDeviceComponentFacetFirmware
 >;
-export const XubeGetAccountFacetsResponse = z.object({
-  data: z.array(
-    z.object({
-      component: z
-        .object({
-          generation: z.string(),
-          componentType: z.literal("DEVICE"),
-          accountId: z.string().optional(),
-          creator: z.string().optional(),
-          modelId: z.string().optional(),
-          created: z.string().datetime({ offset: true }).optional(),
-          certificate: z
-            .object({ certificateArn: z.string() })
-            .partial()
-            .optional(),
-          name: z.string().optional(),
-          model: z.string(),
-          id: z.string().min(3),
-          type: z.string().min(3).optional(),
-          make: z.string(),
-        })
-        .passthrough(),
-      facets: z.array(
-        z.discriminatedUnion("facetType", [
-          XubeGetAccountFacetsAccountResponse,
-          XubeGetAccountFacetsActivationStatusResponse,
-          XubeGetAccountFacetsHeartbeatResponse,
-          XubeGetAccountFacetsDataDestinationResponse,
-          XubeGetAccountFacetsFilesResponse,
-          XubeGetAccountFacetsLocationResponse,
-          XubeGetAccountFacetsStatusResponse,
-          XubeGetAccountFacetsSnapshotResponse,
-          XubeGetAccountFacetsUpdateResponse,
-          XubeGetAccountFacetsFirmwareInfoResponse,
-          XubeGetAccountFacetsFirmwareResponse,
-        ])
-      ),
-    })
-  ),
-  nextToken: z.string().optional(),
-});
-export type TXubeGetAccountFacetsResponse = z.infer<
-  typeof XubeGetAccountFacetsResponse
->;
-export const XubeStringModel = z.string();
-export type TXubeStringModel = z.infer<typeof XubeStringModel>;
-export const XubeSetDevicesSubscriptionsFacetRequest = z
-  .object({
-    facetType: z.string().optional(),
-    subscriptionType: z.literal("FACET"),
-    facetId: z.string().optional(),
-    destination: z.string(),
-    targets: z.array(z.string()),
-  })
-  .passthrough();
-export type TXubeSetDevicesSubscriptionsFacetRequest = z.infer<
-  typeof XubeSetDevicesSubscriptionsFacetRequest
->;
-export const XubeSetDevicesSubscriptionsDataRequest = z
-  .object({
-    subscriptionType: z.literal("DATA"),
-    destination: z.string(),
-    targets: z.array(z.string()),
-  })
-  .passthrough();
-export type TXubeSetDevicesSubscriptionsDataRequest = z.infer<
-  typeof XubeSetDevicesSubscriptionsDataRequest
->;
-export const XubeSetDevicesSubscriptionsRequest = z.discriminatedUnion(
-  "subscriptionType",
-  [
-    XubeSetDevicesSubscriptionsFacetRequest,
-    XubeSetDevicesSubscriptionsDataRequest,
-  ]
-);
-export type TXubeSetDevicesSubscriptionsRequest = z.infer<
-  typeof XubeSetDevicesSubscriptionsRequest
->;
-export const XubeSetDevicesSubscriptionsResponse = z.object({
-  success: z.boolean(),
-});
-export type TXubeSetDevicesSubscriptionsResponse = z.infer<
-  typeof XubeSetDevicesSubscriptionsResponse
->;
-export const XubeGetDeviceDataDestinationRequest = z.object({
-  destination: z.string().url(),
-  device: z.string(),
-});
-export type TXubeGetDeviceDataDestinationRequest = z.infer<
-  typeof XubeGetDeviceDataDestinationRequest
->;
-export const XubeDeviceDataDestination = z.object({
-  componentType: z.string(),
+export const XubeDeviceFacetsModelEntityComponentFacetModel = z.object({
   creator: z.string().optional(),
-  targetId: z.string(),
-  created: z.string().datetime({ offset: true }).optional(),
-  destination: z.object({
-    headers: z
-      .object({ Authorization: z.string(), "x-api-key": z.string() })
-      .partial()
-      .passthrough()
-      .optional(),
-    id: z.string(),
-    url: z.string().url(),
-  }),
-  source: z.object({ id: z.string(), type: z.string() }).optional(),
-  type: z.string().min(3).optional(),
-  deviceId: z.string(),
-  updater: z.string(),
-  accountId: z.string(),
-  facetType: z.literal("DATA-DESTINATION"),
-  facetId: z.string().optional(),
+  componentId: z.string(),
+  modelId: z.string(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  entityId: z.string(),
+  type: z.literal("ENTITY:COMPONENT:FACET:MODEL"),
+  updater: z.string().optional(),
+  accountId: z.string().optional(),
+  facetType: z.literal("MODEL"),
+  versionId: z.string(),
+  service: z.string(),
   name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
   id: z.string().min(3),
-  updated: z.string().datetime({ offset: true }),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
 });
-export type TXubeDeviceDataDestination = z.infer<
-  typeof XubeDeviceDataDestination
->;
-export const XubeGetAccountFacetsRequest = z.object({
-  nextToken: z.string().optional(),
-  facetTypes: z.array(z.string()).optional(),
-  limit: z.number().lte(100).optional().default(100),
-  descending: z.boolean().optional().default(false),
-  account: z.string(),
-});
-export type TXubeGetAccountFacetsRequest = z.infer<
-  typeof XubeGetAccountFacetsRequest
->;
-export const XubeJobResponse = z.object({ job: z.string() });
-export type TXubeJobResponse = z.infer<typeof XubeJobResponse>;
-export const XubeSetUpdateApprovalRequest = z.object({
-  approval: z.enum(["approved", "denied", "pending"]),
-  conditions: z.array(z.enum(["local", "remote"])).optional(),
-  device: z.string(),
-});
-export type TXubeSetUpdateApprovalRequest = z.infer<
-  typeof XubeSetUpdateApprovalRequest
->;
-export const XubeGetLatestDeviceVersionRequest = z.object({
-  device: z.string(),
-});
-export type TXubeGetLatestDeviceVersionRequest = z.infer<
-  typeof XubeGetLatestDeviceVersionRequest
+export type TXubeDeviceFacetsModelEntityComponentFacetModel = z.infer<
+  typeof XubeDeviceFacetsModelEntityComponentFacetModel
 >;
 export const XubeDeviceFacets = z.array(
   z.discriminatedUnion("facetType", [
-    XubeGetAccountFacetsAccountResponse,
-    XubeGetAccountFacetsActivationStatusResponse,
-    XubeGetAccountFacetsHeartbeatResponse,
-    XubeGetAccountFacetsDataDestinationResponse,
-    XubeGetAccountFacetsFilesResponse,
-    XubeGetAccountFacetsLocationResponse,
-    XubeGetAccountFacetsStatusResponse,
-    XubeGetAccountFacetsSnapshotResponse,
-    XubeGetAccountFacetsUpdateResponse,
-    XubeGetAccountFacetsFirmwareInfoResponse,
-    XubeGetAccountFacetsFirmwareResponse,
+    XubeDeviceFacetsAccount,
+    XubeDeviceFacetsActivationStatusDeviceComponentFacetActivationStatus,
+    XubeDeviceFacetsHeartbeatDeviceComponentFacetHeartbeat,
+    XubeDeviceFacetsDataDestinationDeviceComponentFacetDataDestination,
+    XubeDeviceFacetsFilesDeviceComponentFacetFiles,
+    XubeDeviceFacetsLocationEntityComponentFacetLocation,
+    XubeDeviceFacetsStatusDeviceComponentFacetStatus,
+    XubeDeviceFacetsSnapshotDeviceComponentFacetSnapshot,
+    XubeDeviceFacetsUpdateDeviceComponentFacetUpdate,
+    XubeDeviceFacetsFirmwareInfoDeviceComponentFacetFirmwareInfo,
+    XubeDeviceFacetsFirmwareDeviceComponentFacetFirmware,
+    XubeDeviceFacetsModelEntityComponentFacetModel,
   ])
 );
 export type TXubeDeviceFacets = z.infer<typeof XubeDeviceFacets>;
@@ -1886,15 +2160,21 @@ export type TXubeFirmwareRequest = z.infer<typeof XubeFirmwareRequest>;
 export const XubeFirmwares = z.array(
   z.object({
     creator: z.string().optional(),
-    created: z.string().datetime({ offset: true }).optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     forceUpdate: z.boolean().optional(),
     type: z.string().min(3).optional(),
     version: z.string(),
     versionDescriptions: z.record(z.array(z.string())).optional(),
     partition: z.string().optional(),
     size: z.number().optional(),
-    checksum: z.number().optional(),
     name: z.string().optional(),
+    checksum: z.number().optional(),
     id: z.string().min(3),
     compatibility: z.array(
       z.object({
@@ -1929,18 +2209,32 @@ export type TXubeGetDeviceLocationRequest = z.infer<
   typeof XubeGetDeviceLocationRequest
 >;
 export const XubeDeviceLocation = z.object({
-  componentType: z.string(),
   creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   latitude: z.number(),
-  type: z.string().min(3).optional(),
+  entityId: z.string(),
+  type: z.literal("ENTITY:COMPONENT:FACET:LOCATION"),
   deviceId: z.string(),
   updater: z.string().optional(),
-  facetType: z.literal("LOCATION"),
-  facetId: z.string().optional(),
+  accountId: z.string().optional(),
+  facetType: z.string(),
+  service: z.string(),
   name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
   id: z.string().min(3),
-  updated: z.string().datetime({ offset: true }).optional(),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   longitude: z.number(),
 });
 export type TXubeDeviceLocation = z.infer<typeof XubeDeviceLocation>;
@@ -1977,11 +2271,16 @@ export type TXubeGetDevicesRequestModelName = z.infer<
 export const XubeDeviceModel = z.object({
   generation: z.string(),
   creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }),
-  name: z.string(),
-  model: z.string(),
-  id: z.string().min(3),
-  type: z.string().min(3).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true }),
+  entityType: z.literal("DEVICE"),
+  description: z.string().optional(),
+  modelType: z.literal("DEVICE-MODEL"),
+  type: z.literal("DEVICE:MODEL"),
   updates: z
     .object({
       config: z
@@ -1993,17 +2292,32 @@ export const XubeDeviceModel = z.object({
     })
     .partial()
     .optional(),
+  updater: z.string().optional(),
+  lifecycle: z.enum(["ACTIVE", "INACTIVE"]),
+  accountId: z.string().optional(),
+  service: z.literal("Device"),
+  name: z.string(),
+  isGlobal: z.boolean().optional(),
+  model: z.string(),
+  id: z.string().min(3),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   make: z.string(),
   config: z
     .object({
-      schema: z.record(z.object({}).partial().passthrough()),
+      schema: z.record(z.object({}).partial()),
       properties: z.array(
         z.object({
           readable: z.boolean().optional(),
           format: z.enum(["WIFI_CREDENTIALS", "GENERAL"]).optional(),
           label: z.string(),
           value: z.string().optional(),
-          validation: z.record(z.object({}).partial().passthrough()).optional(),
+          validation: z.record(z.object({}).partial()).optional(),
           writable: z.boolean().optional(),
         })
       ),
@@ -2048,33 +2362,55 @@ export type TXubeGetDeviceFacetCategoriesResponse = z.infer<
   typeof XubeGetDeviceFacetCategoriesResponse
 >;
 export const XubeDeviceFirmwareUpdate = z.object({
-  componentType: z.literal("DEVICE"),
   creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   approval: z.object({
-    created: z.string().datetime({ offset: true }),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true }),
     state: z.enum(["approved", "denied", "pending"]),
     conditions: z.array(z.enum(["local", "remote"])).optional(),
-    updated: z.string().datetime({ offset: true }).optional(),
+    updated: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     updater: z.string().optional(),
   }),
-  type: z.string().min(3).optional(),
+  entityId: z.string(),
+  type: z.literal("DEVICE:COMPONENT:FACET:UPDATE"),
   updater: z.string().optional(),
+  accountId: z.string().optional(),
   facetType: z.literal("UPDATE"),
+  service: z.string(),
   facetId: z.literal("FIRMWARE"),
   mismatch: z
     .record(z.object({ actual: z.string(), expected: z.string() }))
     .optional(),
   name: z.string().optional(),
-  progress: z.record(
-    z
-      .object({
-        totalSize: z.number(),
-        lastOffset: z.number(),
-        updated: z.string(),
-      })
-      .partial()
-  ),
+  isGlobal: z.boolean().optional(),
+  progress: z
+    .record(
+      z
+        .object({
+          totalSize: z.number(),
+          lastOffset: z.number(),
+          updated: z.string(),
+        })
+        .partial()
+    )
+    .optional(),
   id: z.string().min(3),
   state: z.enum([
     "waiting_for_device_status",
@@ -2087,7 +2423,13 @@ export const XubeDeviceFirmwareUpdate = z.object({
   ]),
   job: z.string().optional(),
   conditions: z.array(z.enum(["local", "remote"])).optional(),
-  updated: z.string().datetime({ offset: true }).optional(),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   device: z.string(),
   tasks: z.array(
     z.object({
@@ -2110,7 +2452,7 @@ export const XubeDeviceFirmwareUpdate = z.object({
       ]),
       tries: z.number().optional(),
       topics: z.record(z.string()).optional(),
-      ctx: z.record(z.object({}).partial().passthrough()).optional(),
+      ctx: z.record(z.object({}).partial()).optional(),
       timeout: z.number().optional(),
     })
   ),
@@ -2155,33 +2497,54 @@ export type TXubeSetDeviceUpdateRequest = z.infer<
   typeof XubeSetDeviceUpdateRequest
 >;
 export const XubeDeviceUpdate = z.object({
-  componentType: z.string(),
   creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   approval: z.object({
-    created: z.string().datetime({ offset: true }),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true }),
     state: z.enum(["approved", "denied", "pending"]),
     conditions: z.array(z.enum(["local", "remote"])).optional(),
-    updated: z.string().datetime({ offset: true }).optional(),
+    updated: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     updater: z.string().optional(),
   }),
-  type: z.string().min(3).optional(),
+  entityId: z.string(),
+  type: z.literal("DEVICE:COMPONENT:FACET:UPDATE"),
   updater: z.string().optional(),
+  accountId: z.string().optional(),
   facetType: z.literal("UPDATE"),
-  facetId: z.string().optional(),
+  service: z.string(),
   mismatch: z
     .record(z.object({ actual: z.string(), expected: z.string() }))
     .optional(),
   name: z.string().optional(),
-  progress: z.record(
-    z
-      .object({
-        totalSize: z.number(),
-        lastOffset: z.number(),
-        updated: z.string(),
-      })
-      .partial()
-  ),
+  isGlobal: z.boolean().optional(),
+  progress: z
+    .record(
+      z
+        .object({
+          totalSize: z.number(),
+          lastOffset: z.number(),
+          updated: z.string(),
+        })
+        .partial()
+    )
+    .optional(),
   id: z.string().min(3),
   state: z.enum([
     "waiting_for_device_status",
@@ -2194,7 +2557,13 @@ export const XubeDeviceUpdate = z.object({
   ]),
   job: z.string().optional(),
   conditions: z.array(z.enum(["local", "remote"])).optional(),
-  updated: z.string().datetime({ offset: true }).optional(),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   device: z.string(),
   tasks: z.array(
     z.object({
@@ -2217,7 +2586,7 @@ export const XubeDeviceUpdate = z.object({
       ]),
       tries: z.number().optional(),
       topics: z.record(z.string()).optional(),
-      ctx: z.record(z.object({}).partial().passthrough()).optional(),
+      ctx: z.record(z.object({}).partial()).optional(),
       timeout: z.number().optional(),
     })
   ),
@@ -2228,23 +2597,94 @@ export const XubeDevicesModelName = z.array(
     .object({
       generation: z.string(),
       componentType: z.literal("DEVICE"),
-      accountId: z.string().optional(),
       creator: z.string().optional(),
-      modelId: z.string().optional(),
-      created: z.string().datetime({ offset: true }).optional(),
+      created: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true }),
+      entityType: z.literal("DEVICE"),
       certificate: z
         .object({ certificateArn: z.string() })
         .partial()
         .optional(),
+      description: z.string().optional(),
+      type: z.literal("DEVICE:COMPONENT"),
+      updater: z.string().optional(),
+      lifecycle: z.enum(["ACTIVE", "INACTIVE"]),
+      accountId: z.string().optional(),
+      thingArn: z.string().optional(),
+      service: z.literal("Device"),
       name: z.string().optional(),
       model: z.string(),
       id: z.string().min(3),
-      type: z.string().min(3).optional(),
+      updated: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true })
+        .optional(),
       make: z.string(),
+      modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }),
     })
     .passthrough()
 );
 export type TXubeDevicesModelName = z.infer<typeof XubeDevicesModelName>;
+export const XubeGetDeviceEventsRequest = z.object({
+  nextToken: z.string().optional(),
+  limit: z.number().optional(),
+  start: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  end: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  device: z.string(),
+  descending: z.boolean().optional().default(false),
+});
+export type TXubeGetDeviceEventsRequest = z.infer<
+  typeof XubeGetDeviceEventsRequest
+>;
+export const XubeGetDeviceEventsResponse = z.object({
+  data: z.array(
+    z.object({
+      level: z.number(),
+      arguments: z
+        .array(
+          z.union([
+            z.string(),
+            z.number(),
+            z.boolean(),
+            z.record(z.object({}).partial()),
+          ])
+        )
+        .optional(),
+      state: z.object({}).partial().optional(),
+      message: z.string().optional(),
+      event: z.string(),
+      timestamp: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true }),
+    })
+  ),
+  nextToken: z.string().optional(),
+});
+export type TXubeGetDeviceEventsResponse = z.infer<
+  typeof XubeGetDeviceEventsResponse
+>;
 export const XubeVersionResponse = z.object({ version: z.string() });
 export type TXubeVersionResponse = z.infer<typeof XubeVersionResponse>;
 export const XubeGetDeviceFilesUploadUrlRequest = z.object({
@@ -2261,19 +2701,32 @@ export type TXubeGetDeviceLatestActivationStatusRequest = z.infer<
   typeof XubeGetDeviceLatestActivationStatusRequest
 >;
 export const XubeDeviceActivationStatus = z.object({
-  componentType: z.string(),
   creator: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   activationStatus: z.enum(["active", "inactive"]),
-  type: z.string().min(3).optional(),
+  entityId: z.string(),
+  type: z.literal("DEVICE:COMPONENT:FACET:ACTIVATION-STATUS"),
   deviceId: z.string(),
   updater: z.string().optional(),
   accountId: z.string(),
   facetType: z.literal("ACTIVATION-STATUS"),
-  facetId: z.string().optional(),
+  service: z.string(),
   name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
   id: z.string().min(3),
-  updated: z.string().datetime({ offset: true }).optional(),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   timestamp: z.string(),
 });
 export type TXubeDeviceActivationStatus = z.infer<
@@ -2289,7 +2742,14 @@ export type TXubeSetDeviceActivationStatusRequest = z.infer<
 export const XubeGetDeviceFilesResponse = z
   .object({
     current: z.object({
-      componentType: z.string(),
+      creator: z.string().optional(),
+      created: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true })
+        .optional(),
       orphaned: z
         .record(
           z.object({
@@ -2321,6 +2781,7 @@ export const XubeGetDeviceFilesResponse = z
           })
         )
         .optional(),
+      entityId: z.string(),
       storage: z
         .record(
           z.object({
@@ -2352,6 +2813,9 @@ export const XubeGetDeviceFilesResponse = z
           })
         )
         .optional(),
+      type: z.literal("DEVICE:COMPONENT:FACET:FILES"),
+      updater: z.string().optional(),
+      accountId: z.string().optional(),
       scripting: z
         .record(
           z.object({
@@ -2426,7 +2890,10 @@ export const XubeGetDeviceFilesResponse = z
         }),
       }),
       stage: z.enum(["current", "expected", "historical"]),
-      facetId: z.string().optional(),
+      service: z.string(),
+      name: z.string().optional(),
+      isGlobal: z.boolean().optional(),
+      id: z.string().min(3),
       communication: z
         .record(
           z.object({
@@ -2457,6 +2924,13 @@ export const XubeGetDeviceFilesResponse = z
             }),
           })
         )
+        .optional(),
+      updated: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true })
         .optional(),
       device: z.string(),
       config: z
@@ -2490,7 +2964,6 @@ export const XubeGetDeviceFilesResponse = z
           })
         )
         .optional(),
-      updated: z.string().datetime({ offset: true }).optional(),
       status: z.enum([
         "disabled",
         "pending",
@@ -2501,7 +2974,14 @@ export const XubeGetDeviceFilesResponse = z
       ]),
     }),
     expected: z.object({
-      componentType: z.string(),
+      creator: z.string().optional(),
+      created: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true })
+        .optional(),
       orphaned: z
         .record(
           z.object({
@@ -2533,6 +3013,7 @@ export const XubeGetDeviceFilesResponse = z
           })
         )
         .optional(),
+      entityId: z.string(),
       storage: z
         .record(
           z.object({
@@ -2564,6 +3045,9 @@ export const XubeGetDeviceFilesResponse = z
           })
         )
         .optional(),
+      type: z.literal("DEVICE:COMPONENT:FACET:FILES"),
+      updater: z.string().optional(),
+      accountId: z.string().optional(),
       scripting: z
         .record(
           z.object({
@@ -2638,7 +3122,10 @@ export const XubeGetDeviceFilesResponse = z
         }),
       }),
       stage: z.enum(["current", "expected", "historical"]),
-      facetId: z.string().optional(),
+      service: z.string(),
+      name: z.string().optional(),
+      isGlobal: z.boolean().optional(),
+      id: z.string().min(3),
       communication: z
         .record(
           z.object({
@@ -2669,6 +3156,13 @@ export const XubeGetDeviceFilesResponse = z
             }),
           })
         )
+        .optional(),
+      updated: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true })
         .optional(),
       device: z.string(),
       config: z
@@ -2702,7 +3196,6 @@ export const XubeGetDeviceFilesResponse = z
           })
         )
         .optional(),
-      updated: z.string().datetime({ offset: true }).optional(),
       status: z.enum([
         "disabled",
         "pending",
@@ -2730,14 +3223,19 @@ export const XubeGetDeviceSubscriptionsFacetWebhookWebhookFacetResponse =
         lastDeliveryAttempt: z.string().optional(),
         nextRetryAt: z.string().optional(),
         lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
+        failedAttempts: z.number().gte(0).default(0),
         status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
       })
-      .optional()
       .default({ failedAttempts: 0, status: "ACTIVE" }),
     creator: z.string().optional(),
     targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     targetType: z.string().optional(),
     type: z.string().min(3).optional(),
     destinationId: z.string(),
@@ -2760,14 +3258,19 @@ export const XubeGetDeviceSubscriptionsDataWebhookWebhookDataResponse =
         lastDeliveryAttempt: z.string().optional(),
         nextRetryAt: z.string().optional(),
         lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
+        failedAttempts: z.number().gte(0).default(0),
         status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
       })
-      .optional()
       .default({ failedAttempts: 0, status: "ACTIVE" }),
     creator: z.string().optional(),
     targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     targetType: z.string().optional(),
     type: z.string().min(3).optional(),
     destinationId: z.string(),
@@ -2789,14 +3292,19 @@ export const XubeGetDeviceSubscriptionsMemberWebhookWebhookMemberResponse =
         lastDeliveryAttempt: z.string().optional(),
         nextRetryAt: z.string().optional(),
         lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
+        failedAttempts: z.number().gte(0).default(0),
         status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
       })
-      .optional()
       .default({ failedAttempts: 0, status: "ACTIVE" }),
     creator: z.string().optional(),
     targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     targetType: z.string().optional(),
     type: z.string().min(3).optional(),
     destinationId: z.string(),
@@ -2817,14 +3325,19 @@ export const XubeGetDeviceSubscriptionsFacetWebsocketWebsocketFacetResponse =
         lastDeliveryAttempt: z.string().optional(),
         nextRetryAt: z.string().optional(),
         lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
+        failedAttempts: z.number().gte(0).default(0),
         status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
       })
-      .optional()
       .default({ failedAttempts: 0, status: "ACTIVE" }),
     creator: z.string().optional(),
     targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     targetType: z.string().optional(),
     type: z.string().min(3).optional(),
     destinationId: z.string(),
@@ -2849,14 +3362,19 @@ export const XubeGetDeviceSubscriptionsDataWebsocketWebsocketDataResponse =
         lastDeliveryAttempt: z.string().optional(),
         nextRetryAt: z.string().optional(),
         lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
+        failedAttempts: z.number().gte(0).default(0),
         status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
       })
-      .optional()
       .default({ failedAttempts: 0, status: "ACTIVE" }),
     creator: z.string().optional(),
     targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     targetType: z.string().optional(),
     type: z.string().min(3).optional(),
     destinationId: z.string(),
@@ -2877,14 +3395,19 @@ export const XubeGetDeviceSubscriptionsMemberWebsocketWebsocketMemberResponse =
         lastDeliveryAttempt: z.string().optional(),
         nextRetryAt: z.string().optional(),
         lastSuccessfulDelivery: z.string().optional(),
-        failedAttempts: z.number().gte(0).optional().default(0),
+        failedAttempts: z.number().gte(0).default(0),
         status: z.enum(["ACTIVE", "PAUSED", "FAILED"]),
       })
-      .optional()
       .default({ failedAttempts: 0, status: "ACTIVE" }),
     creator: z.string().optional(),
     targetId: z.string(),
-    created: z.string().datetime({ offset: true }).optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     targetType: z.string().optional(),
     type: z.string().min(3).optional(),
     destinationId: z.string(),
@@ -2921,11 +3444,16 @@ export const XubeGetDeviceModelsResponse = z.array(
   z.object({
     generation: z.string(),
     creator: z.string().optional(),
-    created: z.string().datetime({ offset: true }),
-    name: z.string(),
-    model: z.string(),
-    id: z.string().min(3),
-    type: z.string().min(3).optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true }),
+    entityType: z.literal("DEVICE"),
+    description: z.string().optional(),
+    modelType: z.literal("DEVICE-MODEL"),
+    type: z.literal("DEVICE:MODEL"),
     updates: z
       .object({
         config: z
@@ -2937,19 +3465,32 @@ export const XubeGetDeviceModelsResponse = z.array(
       })
       .partial()
       .optional(),
+    updater: z.string().optional(),
+    lifecycle: z.enum(["ACTIVE", "INACTIVE"]),
+    accountId: z.string().optional(),
+    service: z.literal("Device"),
+    name: z.string(),
+    isGlobal: z.boolean().optional(),
+    model: z.string(),
+    id: z.string().min(3),
+    updated: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     make: z.string(),
     config: z
       .object({
-        schema: z.record(z.object({}).partial().passthrough()),
+        schema: z.record(z.object({}).partial()),
         properties: z.array(
           z.object({
             readable: z.boolean().optional(),
             format: z.enum(["WIFI_CREDENTIALS", "GENERAL"]).optional(),
             label: z.string(),
             value: z.string().optional(),
-            validation: z
-              .record(z.object({}).partial().passthrough())
-              .optional(),
+            validation: z.record(z.object({}).partial()).optional(),
             writable: z.boolean().optional(),
           })
         ),
@@ -2975,35 +3516,68 @@ export const XubeGetDevicesFacetsResponse = z.object({
         .object({
           generation: z.string(),
           componentType: z.literal("DEVICE"),
-          accountId: z.string().optional(),
           creator: z.string().optional(),
-          modelId: z.string().optional(),
-          created: z.string().datetime({ offset: true }).optional(),
+          created: z
+            .string()
+            .regex(
+              /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+            )
+            .datetime({ offset: true }),
+          entityType: z.literal("DEVICE"),
           certificate: z
             .object({ certificateArn: z.string() })
             .partial()
             .optional(),
+          description: z.string().optional(),
+          type: z.literal("DEVICE:COMPONENT"),
+          updater: z.string().optional(),
+          lifecycle: z.enum(["ACTIVE", "INACTIVE"]),
+          accountId: z.string().optional(),
+          thingArn: z.string().optional(),
+          service: z.literal("Device"),
           name: z.string().optional(),
           model: z.string(),
           id: z.string().min(3),
-          type: z.string().min(3).optional(),
+          updated: z
+            .string()
+            .regex(
+              /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+            )
+            .datetime({ offset: true })
+            .optional(),
           make: z.string(),
+          modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }),
         })
         .passthrough(),
       facets: z.array(
-        z.discriminatedUnion("facetType", [
-          XubeGetAccountFacetsAccountResponse,
-          XubeGetAccountFacetsActivationStatusResponse,
-          XubeGetAccountFacetsHeartbeatResponse,
-          XubeGetAccountFacetsDataDestinationResponse,
-          XubeGetAccountFacetsFilesResponse,
-          XubeGetAccountFacetsLocationResponse,
-          XubeGetAccountFacetsStatusResponse,
-          XubeGetAccountFacetsSnapshotResponse,
-          XubeGetAccountFacetsUpdateResponse,
-          XubeGetAccountFacetsFirmwareInfoResponse,
-          XubeGetAccountFacetsFirmwareResponse,
-        ])
+        z
+          .object({
+            accountId: z.string().optional(),
+            creator: z.string().optional(),
+            facetType: z.string(),
+            created: z
+              .string()
+              .regex(
+                /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+              )
+              .datetime({ offset: true })
+              .optional(),
+            service: z.string(),
+            name: z.string().optional(),
+            isGlobal: z.boolean().optional(),
+            entityId: z.string(),
+            id: z.string().min(3),
+            type: z.string().min(3).optional(),
+            updated: z
+              .string()
+              .regex(
+                /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+              )
+              .datetime({ offset: true })
+              .optional(),
+            updater: z.string().optional(),
+          })
+          .passthrough()
       ),
     })
   ),
@@ -3020,16 +3594,34 @@ export type TXubeGetDevicesHeartbeatsRequest = z.infer<
 export const XubeGetDevicesHeartbeatsResponse = z.array(
   z
     .object({
-      SK_GSI2: z.string(),
-      componentType: z.string(),
+      creator: z.string().optional(),
+      created: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true })
+        .optional(),
+      entityId: z.string(),
+      type: z.literal("DEVICE:COMPONENT:FACET:HEARTBEAT"),
+      deviceId: z.string(),
+      updater: z.string().optional(),
+      accountId: z.string().optional(),
       facetType: z.literal("HEARTBEAT"),
-      PK_GSI2: z.string(),
-      facetId: z.string().optional(),
+      service: z.string(),
+      name: z.string().optional(),
+      isGlobal: z.boolean().optional(),
       SK: z.string(),
       id: z.string().min(3),
       PK: z.string(),
-      deviceId: z.string(),
-      timestamp: z.string().datetime({ offset: true }),
+      updated: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true })
+        .optional(),
+      timestamp: z.string(),
     })
     .passthrough()
 );
@@ -3049,15 +3641,19 @@ export const XubeAccountDevices = z.object({
   data: z.array(
     z.object({
       accountId: z.string(),
-      componentType: z.string(),
-      facetType: z.literal("ACCOUNT"),
       creator: z.string().optional(),
-      facetId: z.string().optional(),
-      created: z.string().datetime({ offset: true }).optional(),
+      facetType: z.literal("ACCOUNT"),
+      created: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true })
+        .optional(),
       name: z.string().optional(),
+      entityId: z.string(),
       id: z.string().min(3),
       type: z.string().min(3).optional(),
-      deviceId: z.string(),
     })
   ),
   nextToken: z.string().optional(),
@@ -3089,8 +3685,27 @@ export type TXubeGetDeviceVersionDownloadUrlRequest = z.infer<
   typeof XubeGetDeviceVersionDownloadUrlRequest
 >;
 export const XubeDeviceStatus = z.object({
-  componentType: z.string(),
-  facetType: z.literal("STATUS"),
+  creator: z.string().optional(),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  entityId: z.string(),
+  availability: z
+    .object({
+      lastSeenAt: z.string().optional(),
+      lastReportedAt: z.string().optional(),
+      state: z.enum(["online", "offline", "unknown"]),
+      updated: z.string(),
+    })
+    .optional(),
+  type: z.literal("DEVICE:COMPONENT:FACET:STATUS"),
+  updater: z.string().optional(),
+  accountId: z.string().optional(),
+  facetType: z.string(),
   connectivity: z
     .object({
       wifi: z.object({
@@ -3193,7 +3808,9 @@ export const XubeDeviceStatus = z.object({
       updated: z.string(),
     })
     .optional(),
-  facetId: z.string().optional(),
+  service: z.string(),
+  name: z.string().optional(),
+  isGlobal: z.boolean().optional(),
   temperature: z
     .object({
       state: z.enum([
@@ -3209,12 +3826,7 @@ export const XubeDeviceStatus = z.object({
       value: z.number(),
     })
     .optional(),
-  availability: z
-    .object({
-      state: z.enum(["online", "offline", "unknown"]),
-      updated: z.string(),
-    })
-    .optional(),
+  id: z.string().min(3),
   power: z.object({
     auxiliary: z
       .object({
@@ -3368,20 +3980,31 @@ export const XubeDeviceStatus = z.object({
       })
       .optional(),
   }),
+  updated: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   timestamp: z.string(),
 });
 export type TXubeDeviceStatus = z.infer<typeof XubeDeviceStatus>;
 export const XubeDeviceAccount = z.object({
   accountId: z.string(),
-  componentType: z.string(),
-  facetType: z.literal("ACCOUNT"),
   creator: z.string().optional(),
-  facetId: z.string().optional(),
-  created: z.string().datetime({ offset: true }).optional(),
+  facetType: z.literal("ACCOUNT"),
+  created: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   name: z.string().optional(),
+  entityId: z.string(),
   id: z.string().min(3),
   type: z.string().min(3).optional(),
-  deviceId: z.string(),
 });
 export type TXubeDeviceAccount = z.infer<typeof XubeDeviceAccount>;
 export const XubeGetLatestDeviceHeartbeatRequest = z.object({
@@ -3392,11 +4015,32 @@ export type TXubeGetLatestDeviceHeartbeatRequest = z.infer<
 >;
 export const XubeGetLatestDeviceHeartbeatResponse = z.object({
   deviceId: z.string(),
-  timestamp: z.string().datetime({ offset: true }),
+  timestamp: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true }),
 });
 export type TXubeGetLatestDeviceHeartbeatResponse = z.infer<
   typeof XubeGetLatestDeviceHeartbeatResponse
 >;
+export const XubePushHandlerRequest = z.object({
+  changes: z.array(
+    z.object({
+      assumedMasterState: z.record(z.object({}).partial()).optional(),
+      newForkState: z.record(z.object({}).partial()),
+    })
+  ),
+});
+export type TXubePushHandlerRequest = z.infer<typeof XubePushHandlerRequest>;
+export const XubePushHandlerResponse = z.object({
+  pushErrors: z
+    .array(z.object({ index: z.number(), message: z.string() }))
+    .default([]),
+  conflicts: z.array(z.record(z.object({}).partial())).default([]),
+});
+export type TXubePushHandlerResponse = z.infer<typeof XubePushHandlerResponse>;
 export const XubeCopyDeviceConfigRequest = z.object({
   sourceDeviceId: z.string(),
   targetDeviceIds: z.array(z.string()),
@@ -3406,7 +4050,7 @@ export type TXubeCopyDeviceConfigRequest = z.infer<
 >;
 export const XubeGetDestinationDevicesRequest = z.object({
   nextToken: z.string().optional(),
-  destination: z.string().url(),
+  destination: z.string(),
   limit: z.number().optional(),
   descending: z.boolean().optional(),
 });
@@ -3426,8 +4070,27 @@ export type TXubeGetDevicesStatusRequestModelName = z.infer<
 >;
 export const XubeDevicesStatusModelName = z.record(
   z.object({
-    componentType: z.string(),
-    facetType: z.literal("STATUS"),
+    creator: z.string().optional(),
+    created: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
+    entityId: z.string(),
+    availability: z
+      .object({
+        lastSeenAt: z.string().optional(),
+        lastReportedAt: z.string().optional(),
+        state: z.enum(["online", "offline", "unknown"]),
+        updated: z.string(),
+      })
+      .optional(),
+    type: z.literal("DEVICE:COMPONENT:FACET:STATUS"),
+    updater: z.string().optional(),
+    accountId: z.string().optional(),
+    facetType: z.string(),
     connectivity: z
       .object({
         wifi: z.object({
@@ -3530,7 +4193,9 @@ export const XubeDevicesStatusModelName = z.record(
         updated: z.string(),
       })
       .optional(),
-    facetId: z.string().optional(),
+    service: z.string(),
+    name: z.string().optional(),
+    isGlobal: z.boolean().optional(),
     temperature: z
       .object({
         state: z.enum([
@@ -3546,12 +4211,7 @@ export const XubeDevicesStatusModelName = z.record(
         value: z.number(),
       })
       .optional(),
-    availability: z
-      .object({
-        state: z.enum(["online", "offline", "unknown"]),
-        updated: z.string(),
-      })
-      .optional(),
+    id: z.string().min(3),
     power: z.object({
       auxiliary: z
         .object({
@@ -3705,6 +4365,13 @@ export const XubeDevicesStatusModelName = z.record(
         })
         .optional(),
     }),
+    updated: z
+      .string()
+      .regex(
+        /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+      )
+      .datetime({ offset: true })
+      .optional(),
     timestamp: z.string(),
   })
 );
@@ -3714,8 +4381,20 @@ export type TXubeDevicesStatusModelName = z.infer<
 export const XubeGetDeviceHeartbeatsRequest = z.object({
   nextToken: z.string().optional(),
   limit: z.number().optional(),
-  start: z.string().datetime({ offset: true }).optional(),
-  end: z.string().datetime({ offset: true }).optional(),
+  start: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
+  end: z
+    .string()
+    .regex(
+      /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+    )
+    .datetime({ offset: true })
+    .optional(),
   device: z.string(),
   descending: z.boolean().optional().default(false),
 });
@@ -3726,7 +4405,12 @@ export const XubeGetDeviceHeartbeatsResponse = z.object({
   data: z.array(
     z.object({
       deviceId: z.string(),
-      timestamp: z.string().datetime({ offset: true }),
+      timestamp: z
+        .string()
+        .regex(
+          /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+        )
+        .datetime({ offset: true }),
     })
   ),
   nextToken: z.string().optional(),
@@ -3734,18 +4418,6 @@ export const XubeGetDeviceHeartbeatsResponse = z.object({
 export type TXubeGetDeviceHeartbeatsResponse = z.infer<
   typeof XubeGetDeviceHeartbeatsResponse
 >;
-export const GetProvisioningDocsrequest = z.object({}).partial().passthrough();
-export type TGetProvisioningDocsrequest = z.infer<
-  typeof GetProvisioningDocsrequest
->;
-export const GetProvisioningDocsresponse = z.string();
-export type TGetProvisioningDocsresponse = z.infer<
-  typeof GetProvisioningDocsresponse
->;
-export const GetApiDocsrequest = z.object({}).partial().passthrough();
-export type TGetApiDocsrequest = z.infer<typeof GetApiDocsrequest>;
-export const GetApiDocsresponse = z.string();
-export type TGetApiDocsresponse = z.infer<typeof GetApiDocsresponse>;
 export const XubeGetGroupChildrenRequest = z.object({ group: z.string() });
 export type TXubeGetGroupChildrenRequest = z.infer<
   typeof XubeGetGroupChildrenRequest
@@ -5092,19 +5764,37 @@ export const endpoints = makeApi([
         .object({
           generation: z.string(),
           componentType: z.literal("DEVICE"),
-          accountId: z.string().optional(),
           creator: z.string().optional(),
-          modelId: z.string().optional(),
-          created: z.string().datetime({ offset: true }).optional(),
+          created: z
+            .string()
+            .regex(
+              /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+            )
+            .datetime({ offset: true }),
+          entityType: z.literal("DEVICE"),
           certificate: z
             .object({ certificateArn: z.string() })
             .partial()
             .optional(),
+          description: z.string().optional(),
+          type: z.literal("DEVICE:COMPONENT"),
+          updater: z.string().optional(),
+          lifecycle: z.enum(["ACTIVE", "INACTIVE"]),
+          accountId: z.string().optional(),
+          thingArn: z.string().optional(),
+          service: z.literal("Device"),
           name: z.string().optional(),
           model: z.string(),
           id: z.string().min(3),
-          type: z.string().min(3).optional(),
+          updated: z
+            .string()
+            .regex(
+              /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+            )
+            .datetime({ offset: true })
+            .optional(),
           make: z.string(),
+          modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }),
         })
         .passthrough()
     ),
@@ -5310,6 +6000,26 @@ export const endpoints = makeApi([
     response: z.boolean(),
   },
   {
+    method: "post",
+    path: "/devices/:device/config/update/cancel",
+    alias: "Cancel Device Config Update",
+    description: `Cancel Device Config Update. Actions: `,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeCancelDeviceUpdateRequest,
+      },
+      {
+        name: "device",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.boolean(),
+  },
+  {
     method: "get",
     path: "/devices/:device/data-destinations",
     alias: "Get Device Data Destination",
@@ -5388,6 +6098,26 @@ export const endpoints = makeApi([
       },
     ],
     response: z.object({ job: z.string() }),
+  },
+  {
+    method: "get",
+    path: "/devices/:device/events",
+    alias: "Get Device Events",
+    description: `Get Device Events. Actions: Device:GetDeviceEvents`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeGetDeviceEventsRequest,
+      },
+      {
+        name: "device",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: XubeGetDeviceEventsResponse,
   },
   {
     method: "get",
@@ -5600,6 +6330,26 @@ export const endpoints = makeApi([
         name: "body",
         type: "Body",
         schema: XubeSetUpdateApprovalRequest,
+      },
+      {
+        name: "device",
+        type: "Path",
+        schema: z.string(),
+      },
+    ],
+    response: z.boolean(),
+  },
+  {
+    method: "post",
+    path: "/devices/:device/firmware/update/cancel",
+    alias: "Cancel Device Firmware Update",
+    description: `Cancel Device Firmware Update. Actions: `,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeCancelDeviceUpdateRequest,
       },
       {
         name: "device",
@@ -6115,16 +6865,34 @@ export const endpoints = makeApi([
     response: z.array(
       z
         .object({
-          SK_GSI2: z.string(),
-          componentType: z.string(),
+          creator: z.string().optional(),
+          created: z
+            .string()
+            .regex(
+              /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+            )
+            .datetime({ offset: true })
+            .optional(),
+          entityId: z.string(),
+          type: z.literal("DEVICE:COMPONENT:FACET:HEARTBEAT"),
+          deviceId: z.string(),
+          updater: z.string().optional(),
+          accountId: z.string().optional(),
           facetType: z.literal("HEARTBEAT"),
-          PK_GSI2: z.string(),
-          facetId: z.string().optional(),
+          service: z.string(),
+          name: z.string().optional(),
+          isGlobal: z.boolean().optional(),
           SK: z.string(),
           id: z.string().min(3),
           PK: z.string(),
-          deviceId: z.string(),
-          timestamp: z.string().datetime({ offset: true }),
+          updated: z
+            .string()
+            .regex(
+              /^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/
+            )
+            .datetime({ offset: true })
+            .optional(),
+          timestamp: z.string(),
         })
         .passthrough()
     ),
@@ -6190,32 +6958,19 @@ export const endpoints = makeApi([
     response: z.object({ success: z.boolean() }),
   },
   {
-    method: "get",
-    path: "/docs/",
-    alias: "Get API Docs",
+    method: "post",
+    path: "/devices/sync/push",
+    alias: "Push Device Sync",
+    description: `Apply a batch of RxDB change rows to device-service-owned records. Each row is routed to the device-core function for its type; unsupported types are rejected.. Actions: Device:PushDeviceSync`,
     requestFormat: "json",
     parameters: [
       {
         name: "body",
         type: "Body",
-        schema: z.object({}).partial().passthrough(),
+        schema: XubePushHandlerRequest,
       },
     ],
-    response: z.string(),
-  },
-  {
-    method: "get",
-    path: "/docs/provisioning",
-    alias: "Get Provisioning Docs",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: z.object({}).partial().passthrough(),
-      },
-    ],
-    response: z.string(),
+    response: XubePushHandlerResponse,
   },
   {
     method: "post",

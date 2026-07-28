@@ -3,17 +3,22 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "@types/adm-zip": "^0.5.8",
     "@types/bun": "latest",
     "@types/inquirer": "^9.0.8",
-    "@types/unzipper": "^0.10.11"
+    "@types/unzipper": "^0.10.11",
+    "@types/which": "^3.0.4"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.5.3",
+    "@xube/device-toolkit": "workspace:*",
     "adm-zip": "^0.5.17",
     "openapi-zod-client": "^1.18.3",
     "openapi3-ts": "^4.4.0",
@@ -28,6 +33,9 @@
     "push": "bun run src/push.ts",
     "monitor": "bun run src/monitor.ts",
     "setup": "bun run src/setup.ts",
+    "build:toolkit": "tsc -p packages/device-toolkit/tsconfig.json",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
     "generate:sdk": "bun run generate:prod && bun run generate:dev",
     "generate:prod": "bun run ./scripts/generate-xube-sdk.ts generate prod ./src/sdk",
     "generate:dev": "bun run ./scripts/generate-xube-sdk.ts generate dev ./src/sdk"

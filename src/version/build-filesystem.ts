@@ -107,6 +107,7 @@ export interface SettingsFsParams {
   rootPath: string;
   sectorSize: number;
   partitionSize: number;
+  writeBlockSize: number;
 }
 
 export const rebuildSettingsFsImage = async (
@@ -130,7 +131,8 @@ export const rebuildSettingsFsImage = async (
       await $`${pythonExecutable} ${MKSETTINGS_SCRIPT} \
         ${stagedConfig} ${params.rootPath} ${outputBin} \
         --sector-size ${params.sectorSize} \
-        --partition-size ${params.partitionSize}`
+        --partition-size ${params.partitionSize} \
+        --write-block-size ${params.writeBlockSize}`
         .nothrow()
         .quiet();
 

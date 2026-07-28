@@ -6,6 +6,7 @@
       "name": "flash",
       "dependencies": {
         "@inquirer/prompts": "^7.5.3",
+        "@xube/device-toolkit": "workspace:*",
         "adm-zip": "^0.5.17",
         "openapi-zod-client": "^1.18.3",
         "openapi3-ts": "^4.4.0",
@@ -20,9 +21,17 @@
         "@types/bun": "latest",
         "@types/inquirer": "^9.0.8",
         "@types/unzipper": "^0.10.11",
+        "@types/which": "^3.0.4",
       },
       "peerDependencies": {
         "typescript": "^5",
+      },
+    },
+    "packages/device-toolkit": {
+      "name": "@xube/device-toolkit",
+      "version": "0.1.0",
+      "devDependencies": {
+        "typescript": "^5.9.2",
       },
     },
   },
@@ -124,6 +133,10 @@
     "@types/through": ["@types/through@0.0.33", "", { "dependencies": { "@types/node": "*" } }, "sha512-HsJ+z3QuETzP3cswwtzt2vEIiHBk/dCcHGhbmG5X3ecnwFD/lPrMpliGXxSCg03L9AhrdwA4Oz/qfspkDW+xGQ=="],
 
     "@types/unzipper": ["@types/unzipper@0.10.11", "", { "dependencies": { "@types/node": "*" } }, "sha512-D25im2zjyMCcgL9ag6N46+wbtJBnXIr7SI4zHf9eJD2Dw2tEB5e+p5MYkrxKIVRscs5QV0EhtU9rgXSPx90oJg=="],
+
+    "@types/which": ["@types/which@3.0.4", "", {}, "sha512-liyfuo/106JdlgSchJzXEQCVArk0CvevqPote8F8HgWgJ3dRCcTHgJIsLDuee0kxk/mhbInzIZk3QWSZJ8R+2w=="],
+
+    "@xube/device-toolkit": ["@xube/device-toolkit@workspace:packages/device-toolkit"],
 
     "@zodios/core": ["@zodios/core@10.9.6", "", { "peerDependencies": { "axios": "^0.x || ^1.0.0", "zod": "^3.x" } }, "sha512-aH4rOdb3AcezN7ws8vDgBfGboZMk2JGGzEq/DtW65MhnRxyTGRuLJRWVQ/2KxDgWvV2F5oTkAS+5pnjKbl0n+A=="],
 
@@ -382,6 +395,8 @@
     "zodios": ["zodios@5.1.0", "", { "peerDependencies": { "axios": "^0.x", "zod": "^3.x" } }, "sha512-Am7tlwjVxtxSef7c3lGsGG3YCnafXxj0GYQ7iUmgvQ6xXhGZTPeEZK/MlC0ssBMk1H102GsgoOdWG1Ip0faGow=="],
 
     "@liuli-util/fs-extra/fs-extra": ["fs-extra@10.1.0", "", { "dependencies": { "graceful-fs": "^4.2.0", "jsonfile": "^6.0.1", "universalify": "^2.0.0" } }, "sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ=="],
+
+    "@xube/device-toolkit/typescript": ["typescript@5.9.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw=="],
 
     "ansi-escapes/type-fest": ["type-fest@0.21.3", "", {}, "sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w=="],
 

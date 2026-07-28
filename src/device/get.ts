@@ -2,6 +2,21 @@ import { xubeSdk, type TXubeAccountDevices, type TXubeDevice } from "../constant
 import type { Authentication } from "../auth";
 import ora from "ora";
 
+export const getAccountDeviceIds = (
+  devices: TXubeAccountDevices,
+): string[] =>
+  devices.data.map((device) => {
+    const accountDevice = device as typeof device & {
+      entityId?: string;
+      deviceId?: string;
+    };
+    const deviceId = accountDevice.entityId ?? accountDevice.deviceId;
+    if (!deviceId) {
+      throw new Error("Account device response did not contain a device ID.");
+    }
+    return deviceId;
+  });
+
 export const getAccountDevices = async (
   auth: Authentication,
   account: string

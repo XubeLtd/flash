@@ -29,9 +29,22 @@ export class Authentication implements IAuthentication {
 
       return this.tokens.token;
     } catch (error) {
-      console.error(error);
       spinner.fail("Login failed.");
-      throw error;
+      const status =
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof error.response === "object" &&
+        error.response !== null &&
+        "status" in error.response &&
+        typeof error.response.status === "number"
+          ? error.response.status
+          : undefined;
+      throw new Error(
+        status
+          ? `Xube platform login failed (HTTP ${status}). Check the configured environment and credentials.`
+          : "Xube platform login failed. Check the configured environment and credentials.",
+      );
     }
   };
 

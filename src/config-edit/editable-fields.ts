@@ -1,5 +1,12 @@
 import { input, password, select } from "@inquirer/prompts";
 import {
+  getAtPath,
+  resolvePlanetCommAddressPath,
+  resolveWifiConfigPaths,
+  setAtPath,
+  type JsonObject,
+} from "@xube/device-toolkit/config";
+import {
   DEVICE_TYPE_PLANET,
   DEVICE_TYPE_SUN,
   type TDeviceTypeOption,
@@ -26,11 +33,20 @@ export type EditableFieldDef = {
 const WIFI_SSID_PATH = "net.cfg.wlan0.wifi_cfg.ssid";
 const WIFI_PASS_PATH = "net.cfg.wlan0.wifi_cfg.pass";
 
+const asConfigObject = (config: unknown): JsonObject => {
+  if (typeof config !== "object" || config === null || Array.isArray(config)) {
+    throw new Error("cfg.json must contain a JSON object.");
+  }
+  return config as JsonObject;
+};
+
 const promptForWifi = async (
   ctx: EditableFieldContext
 ): Promise<EditableFieldPatch | null> => {
-  const currentSsid = getAtPath(ctx.currentConfig, WIFI_SSID_PATH);
-  const currentPass = getAtPath(ctx.currentConfig, WIFI_PASS_PATH);
+  const config = asConfigObject(ctx.currentConfig);
+  const paths = resolveWifiConfigPaths(config, ctx.deviceId);
+  const currentSsid = getAtPath(config, paths.ssid);
+  const currentPass = getAtPath(config, paths.password);
 
   const ssid = await input({
     message: "WiFi SSID:",
@@ -51,16 +67,13 @@ const promptForWifi = async (
   }
 
   return {
-    paths: [WIFI_SSID_PATH, WIFI_PASS_PATH],
+    paths: [paths.ssid, paths.password],
     values: {
-      [WIFI_SSID_PATH]: ssid,
-      [WIFI_PASS_PATH]: pass,
+      [paths.ssid]: ssid,
+      [paths.password]: pass,
     },
   };
 };
-
-const planetCommAddrPath = (deviceId: string): string =>
-  `${deviceId}.cfg.comm_addr`;
 
 const HEX_BYTE_PATTERN = /^0[xX][0-9a-fA-F]{1,2}$/;
 
@@ -84,8 +97,9 @@ const validateI2cHex = (value: string): true | string => {
 const promptForPlanetCommAddr = async (
   ctx: EditableFieldContext
 ): Promise<EditableFieldPatch | null> => {
-  const path = planetCommAddrPath(ctx.deviceId);
-  const currentRaw = getAtPath(ctx.currentConfig, path);
+  const config = asConfigObject(ctx.currentConfig);
+  const path = resolvePlanetCommAddressPath(config, ctx.deviceId);
+  const currentRaw = getAtPath(config, path);
   const current = typeof currentRaw === "string" ? currentRaw : undefined;
   const currentLooksHex = current ? HEX_BYTE_PATTERN.test(current) : false;
 
@@ -136,14 +150,19 @@ export const EDITABLE_FIELDS: readonly EditableFieldDef[] = [
     key: "wifi",
     label: "WiFi credentials (SSID + password)",
     appliesTo: [DEVICE_TYPE_SUN],
-    jsonPaths: () => [WIFI_SSID_PATH, WIFI_PASS_PATH],
+    jsonPaths: (deviceId) => [
+      WIFI_SSID_PATH,
+      WIFI_PASS_PATH,
+      `${deviceId}.cmp.${WIFI_SSID_PATH}`,
+      `${deviceId}.cmp.${WIFI_PASS_PATH}`,
+    ],
     prompt: promptForWifi,
   },
   {
     key: "planet-comm-addr",
     label: "Communication address (Bluetooth name or I²C address)",
     appliesTo: [DEVICE_TYPE_PLANET],
-    jsonPaths: (deviceId) => [planetCommAddrPath(deviceId)],
+    jsonPaths: (deviceId) => [`${deviceId}.cfg.comm_addr`],
     prompt: promptForPlanetCommAddr,
   },
 ] as const;
@@ -153,49 +172,4 @@ export const editableFieldsForDeviceType = (
 ): EditableFieldDef[] =>
   EDITABLE_FIELDS.filter((f) => f.appliesTo.includes(deviceType));
 
-export const getAtPath = (obj: unknown, path: string): unknown => {
-  const parts = path.split(".");
-  let current: unknown = obj;
-  for (const part of parts) {
-    if (current === null || current === undefined || typeof current !== "object") {
-      return undefined;
-    }
-    current = (current as Record<string, unknown>)[part];
-  }
-  return current;
-};
-
-export const setAtPath = (
-  obj: Record<string, unknown>,
-  path: string,
-  value: unknown
-): void => {
-  const topKeys: string[] = Object.keys(obj);
-  // Ignore "schema_version" at the top level since it's not actually part of the config structure
-  if (!topKeys.includes("schema_version") && topKeys.length !== 2) {
-    throw new Error(`Expected config object to have exactly 2 top-level keys (device ID and schema_version), but found ${topKeys.length}: ${topKeys.join(", ")}`);
-  }
-  const deviceId = topKeys.filter((k) => k !== "schema_version")[0];
-  if (!deviceId) throw new Error(`No device ID found in config`);
-  // Start path search from the device ID object, not the root, since the root also contains "schema_version" which is not part of the config structure
-  const deviceConfig = obj[deviceId];
-  if (typeof deviceConfig !== "object" || deviceConfig === null) {
-    throw new Error(`Expected config to have a top-level object for device ID ${deviceId}`);
-  }
-  const nestedCmps = (deviceConfig as Record<string, unknown>)["cmp"];
-  if (nestedCmps === null || nestedCmps === undefined || typeof nestedCmps !== "object") {
-    throw new Error(`Expected config structure to have a nested "cmp" object, but not found one`);
-  }
-  let current: Record<string, unknown> = nestedCmps as Record<string, unknown>;
-  const parts = path.split(".");
-  const last = parts.pop();
-  if (!last) throw new Error(`Invalid path: ${path}`);
-  for (const part of parts) {
-    const next = current[part];
-    if (next === null || next === undefined || typeof next !== "object") {
-      throw new Error(`Path ${path} does not exist in config (stopped at ${part})`);
-    }
-    current = next as Record<string, unknown>;
-  }
-  current[last] = value;
-};
+export { getAtPath, setAtPath };

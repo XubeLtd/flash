@@ -1,5 +1,10 @@
 import axios from "axios";
-import { existsSync, mkdirSync } from "fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "fs";
 import { generateZodClientFromOpenAPI } from "openapi-zod-client";
 import type { OpenAPIObject } from "openapi3-ts/oas30";
 import { join, dirname } from "path"; // Added dirname
@@ -82,6 +87,17 @@ export const generateSdk = async (
       },
     },
   });
+
+  // openapi-zod-client double-escapes an already escaped slash in regex
+  // patterns such as JSON Pointer, producing an invalid TypeScript regex
+  // literal (`\\/` closes at the slash). Preserve one escape for the literal.
+  const generated = readFileSync(distPath, "utf8");
+  const validGeneratedSource = generated
+    .replaceAll("\\\\/", "\\/")
+    .replace(/[ \t]+$/gm, "");
+  if (validGeneratedSource !== generated) {
+    writeFileSync(distPath, validGeneratedSource);
+  }
 
   console.log(`SDK generated successfully at ${distPath}`);
 };

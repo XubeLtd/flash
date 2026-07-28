@@ -28,7 +28,15 @@ export interface StmFlashOptions {
   entries: StmFlashEntry[];
 }
 
-const resolveProgrammerCli = async (): Promise<string> => {
+const fileExists = async (path: string): Promise<boolean> => {
+  try {
+    return (await stat(path)).isFile();
+  } catch {
+    return false;
+  }
+};
+
+export const resolveStm32ProgrammerCli = async (): Promise<string> => {
   const fromEnv = process.env.STM32_PRG_PATH;
   if (fromEnv) {
     const candidate = join(fromEnv, "STM32_Programmer_CLI");
@@ -36,17 +44,22 @@ const resolveProgrammerCli = async (): Promise<string> => {
       return await which(candidate);
     } catch {
       throw new Error(
-        `STM32_PRG_PATH=${fromEnv} but STM32_Programmer_CLI not found`
+        `STM32_PRG_PATH=${fromEnv} but STM32_Programmer_CLI was not found there.`,
       );
     }
   }
   try {
     return await which("STM32_Programmer_CLI");
-  } catch {
-    throw new Error(
-      `STM32_Programmer_CLI not found`
-    );
+  } catch {}
+
+  if (process.platform === "darwin") {
+    const macDefault = join(DEFAULT_MAC_INSTALL_BIN, "STM32_Programmer_CLI");
+    if (await fileExists(macDefault)) return macDefault;
   }
+
+  throw new Error(
+    "STM32_Programmer_CLI not found. Install STM32CubeProgrammer or set STM32_PRG_PATH to the directory containing the CLI.",
+  );
 };
 
 const verifyEntries = async (entries: StmFlashEntry[]): Promise<void> => {
@@ -94,7 +107,7 @@ export async function flashWithStm32Programmer(
 
   let cli: string;
   try {
-    cli = await resolveProgrammerCli();
+    cli = await resolveStm32ProgrammerCli();
   } catch (error) {
     console.error(
       `❌ ${error instanceof Error ? error.message : String(error)}`

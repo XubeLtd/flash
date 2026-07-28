@@ -1,10 +1,12 @@
+import { select } from "@inquirer/prompts";
+import {
+  isNrfRecoveryRequired,
+  parseNrf53ProbeUids,
+} from "@xube/device-toolkit/nrfutil";
 import { $ } from "bun";
 import { stat } from "fs/promises";
 import ora from "ora";
-import { resolve } from "path";
 import which from "which";
-
-const NRF_UTIL_CONFIG = resolve("./tools/nrfutil_config.json");
 
 export interface NRFFlashEntry {
   path: string;
@@ -18,158 +20,197 @@ export interface NRFFlashOptions {
   entries: NRFFlashEntry[];
 }
 
+interface CommandResult {
+  exitCode: number;
+  output: string;
+}
+
 const requireCli = async (cli: string, install: string): Promise<void> => {
   try {
     await which(cli);
   } catch {
     throw new Error(
-      `${cli} is required to flash NRF devices but was not found on PATH. ${install}`
+      `${cli} is required to flash nRF devices but was not found on PATH. ${install}`,
     );
   }
 };
 
-const detectProbeUID = async (): Promise<string> => {
-  const command = $`pyocd list --probe`;
-  const { exitCode, stdout, stderr } = await command.nothrow().quiet();
-  if (exitCode !== 0) {
-    const stderrStr = stderr.toString();
-    throw new Error(
-      `Failed to list pyocd probes. Exit code ${exitCode}. Stderr: ${stderrStr}`
-    );
-  }
-  // Locate "Unique ID" column
-  const stdoutStr = stdout.toString();
-  const lines = stdoutStr.split("\n").map((line) => line.trim());
-  const header = lines.find((line) => line.includes("Unique ID"));
-  if (header) {
-    const uidIndex = header.split(/\s{2,}/).indexOf("Unique ID");
-    if (uidIndex !== -1) {
-      // Locate line containing "Segger J-Link" and extract UID
-      const probeLine = lines.find((line) => line.includes("Segger J-Link"));
-      if (probeLine) {
-        const columns = probeLine.split(/\s{2,}/);
-        if (columns.length > uidIndex) {
-          const uid = columns[uidIndex];
-          if (uid) {
-            return uid;
-          }
-        }
-      }
-    }
-  }
-  throw new Error(`Failed to detect debug probe UID`);
-}
+const runNrfutil = async (args: string[]): Promise<CommandResult> => {
+  const result = await $`nrfutil device ${args}`.nothrow().quiet();
+  return {
+    exitCode: result.exitCode,
+    output: `${result.stdout.toString()}${result.stderr.toString()}`,
+  };
+};
 
-const nrfutilCmds = async (probeUID: string, action: string, cmds: string[]): Promise<void> => {
-  const command = `nrfutil device ${action} --serial-number ${probeUID} --family nrf53 ${cmds.join(" ")}`;
-  const result = await $`${{ raw: command }}`.nothrow().quiet();
+const listNrf53ProbeUids = async (): Promise<string[]> => {
+  const result = await runNrfutil(["--json", "list"]);
   if (result.exitCode !== 0) {
-    const raw = result.stdout.toString() + result.stderr.toString();
-    throw new Error(`nrfutil exited with code ${result.exitCode}:\n${raw}`);
+    throw new Error(
+      `Could not enumerate nRF53 probes (nrfutil exit ${result.exitCode}).\n${result.output}`,
+    );
   }
+  return parseNrf53ProbeUids(result.output);
 };
 
-const resetDevice = async (probeUID: string): Promise<void> => {
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      await nrfutilCmds(probeUID, "reset", [
-        "--core application",
-        "--reset-kind RESET_PIN"
-      ]);
-      return;
-    } catch {
-      await Bun.sleep(500);
-    }
+export const selectNrf53ProbeUid = async (): Promise<string> => {
+  const configured = process.env.PROBE_UID?.trim();
+  if (configured) return configured;
+
+  const uids = await listNrf53ProbeUids();
+  if (uids.length === 0) {
+    throw new Error(
+      "No connected nRF53 J-Link probe was found. Check power, USB, and probe access.",
+    );
   }
-  throw new Error("Failed to reset device");
+  if (uids.length === 1) return uids[0]!;
+
+  return select<string>({
+    message: "Which nRF53 debug probe should be used?",
+    choices: uids.map((uid) => ({ name: uid, value: uid })),
+  });
 };
 
-const flashCustom = async (entry: NRFFlashEntry): Promise<void> => {
-  const probeUID = await detectProbeUID();
-
-  for (let attempt = 0; attempt < 5; attempt++) {
-    try {
-      await nrfutilCmds(probeUID, "program", [
-        `--firmware ${entry.path}`,
-        `--core ${entry.core}`,
-        `--options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,verify=VERIFY_READ`
-      ]);
-
-      await resetDevice(probeUID);
-      return;
-
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      // Recover when explicitly told to, or when device shows as (Generic) meaning
-      // it couldn't be identified (e.g. APPROTECT enabled, brand new device).
-      // Recovery unlocks the device so its full memory map becomes accessible.
-      try {
-        const needsRecovery = message.includes("recover");
-        await resetDevice(probeUID);
-        if (needsRecovery) {
-          await nrfutilCmds(probeUID, "recover", [`--core ${entry.core}`]);
-        }
-      } catch {
-        throw new Error(`Failed to program ${entry.label} after ${attempt + 1} attempts. Last error: ${message}`);
-      }
-    }
+const resetDevice = async (probeUid: string): Promise<void> => {
+  let lastOutput = "";
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const result = await runNrfutil([
+      "reset",
+      "--serial-number",
+      probeUid,
+      "--core",
+      "Application",
+      "--reset-kind",
+      "RESET_PIN",
+    ]);
+    if (result.exitCode === 0) return;
+    lastOutput = result.output;
+    await Bun.sleep(500);
   }
+  throw new Error(`Failed to reset device.\n${lastOutput}`);
+};
+
+/**
+ * Nordic's required nRF5340 recovery order is Network first (erases both
+ * cores), then Application (leaves debug access open for programming).
+ */
+const recoverDevice = async (probeUid: string): Promise<void> => {
+  const spinner = ora(
+    "Recovering nRF5340 network core (clears APPROTECT and erases both cores)...",
+  ).start();
+  const network = await runNrfutil([
+    "recover",
+    "--core",
+    "Network",
+    "--serial-number",
+    probeUid,
+  ]);
+  if (network.exitCode !== 0) {
+    spinner.fail("nRF5340 network-core recovery failed.");
+    throw new Error(network.output);
+  }
+
+  spinner.text =
+    "Recovering nRF5340 application core (keeps debug access open)...";
+  const application = await runNrfutil([
+    "recover",
+    "--core",
+    "Application",
+    "--serial-number",
+    probeUid,
+  ]);
+  if (application.exitCode !== 0) {
+    spinner.fail("nRF5340 application-core recovery failed.");
+    throw new Error(application.output);
+  }
+  spinner.succeed("nRF5340 recovered in Network → Application order.");
 };
 
 const verifyEntries = async (entries: NRFFlashEntry[]): Promise<void> => {
+  if (entries.length === 0) {
+    throw new Error("No nRF flash artefacts were provided.");
+  }
   for (const entry of entries) {
     const info = await stat(entry.path).catch(() => null);
     if (!info) throw new Error(`artefact missing: ${entry.path}`);
+    if (!info.isFile()) throw new Error(`artefact is not a file: ${entry.path}`);
     if (info.size === 0) throw new Error(`artefact is empty: ${entry.path}`);
   }
 };
 
-const loadOne = async (entry: NRFFlashEntry): Promise<boolean> => {
-  let spinner = ora();
-  spinner.start(
-    `Programming ${entry.label} (${entry.path}) at ${entry.address}...`
-  );
-  try {
-    await flashCustom(entry);
-    spinner.succeed(`Successfully programmed ${entry.label}`);
-    return true;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    spinner.fail(`Failed to program ${entry.label}: ${message}`);
-    return false;
+const programEntry = async (
+  probeUid: string,
+  entry: NRFFlashEntry,
+): Promise<void> => {
+  const spinner = ora(
+    `Programming ${entry.label} (${entry.path}) at ${entry.address}...`,
+  ).start();
+  const result = await runNrfutil([
+    "program",
+    "--serial-number",
+    probeUid,
+    "--family",
+    "nrf53",
+    "--firmware",
+    entry.path,
+    "--core",
+    entry.core,
+    "--options",
+    "chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,verify=VERIFY_READ",
+  ]);
+  if (result.exitCode !== 0) {
+    spinner.fail(`Failed to program ${entry.label}.`);
+    throw new Error(
+      `nrfutil failed while programming ${entry.label} (exit ${result.exitCode}).\n${result.output}`,
+    );
   }
+  spinner.succeed(`Successfully programmed ${entry.label}`);
+};
+
+const programAll = async (
+  probeUid: string,
+  entries: NRFFlashEntry[],
+): Promise<void> => {
+  for (const entry of entries) {
+    await programEntry(probeUid, entry);
+  }
+  await resetDevice(probeUid);
 };
 
 export async function flashWithNRFUtil(
-  options: NRFFlashOptions
+  options: NRFFlashOptions,
 ): Promise<boolean> {
-  console.log(
-    `⚡Flashing ${options.deviceId} (NRFUtil)...`
-  );
+  console.log(`⚡ Flashing ${options.deviceId} (nrfutil)...`);
 
   try {
     await verifyEntries(options.entries);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`❌ Pre-flight check failed: ${message}`);
-    return false;
-  }
-
-  try {
     await requireCli(
       "nrfutil",
-      "Install nrfutil by following the instructions at https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html."
+      "Install it by following https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html.",
     );
+
+    const probeUid = await selectNrf53ProbeUid();
+    console.log(`✔ Using nRF53 probe ${probeUid}.`);
+
+    try {
+      await programAll(probeUid, options.entries);
+      return true;
+    } catch (firstError) {
+      const message =
+        firstError instanceof Error ? firstError.message : String(firstError);
+      if (!isNrfRecoveryRequired(message)) throw firstError;
+
+      console.warn(
+        "⚠️ nRF53 access protection blocked programming. Recovering once, then restarting the complete flash plan.",
+      );
+      await recoverDevice(probeUid);
+      await programAll(probeUid, options.entries);
+      return true;
+    }
   } catch (error) {
     console.error(
-      `❌ ${error instanceof Error ? error.message : String(error)}`
+      `❌ nRF53 flash failed: ${error instanceof Error ? error.message : String(error)}`,
     );
     return false;
   }
-
-  for (const entry of options.entries) {
-    const ok = await loadOne(entry);
-    if (!ok) return false;
-  }
-  return true;
 }

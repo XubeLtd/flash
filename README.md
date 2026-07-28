@@ -17,6 +17,9 @@ A small helper for flashing Xube devices and updating their configuration.
    bun install
    ```
 
+   The install uses public npm packages only. It does not require Xube's
+   private package registry.
+
 2. Install the tool that matches the device you're flashing. Skip this step if you're only ever using `bun push`.
 
    | Device         | Install                                                                                |
@@ -48,6 +51,10 @@ If you don't want to change anything, just say "use as-is" and the device is fla
 
 Once flashing finishes, `bun flash` automatically starts streaming firmware logs to your terminal. Hit Ctrl+C to stop.
 
+For Sun devices, WiFi editing supports both legacy flat configs and current
+device-wrapped configs. The tool refuses to invent missing config paths, so a
+new or incompatible schema fails before any hardware write.
+
 ## `bun monitor` — stream firmware logs from a connected device
 
 ```bash
@@ -67,3 +74,16 @@ bun push
 Pick a device, edit the same set of config values, and the new version is pushed to the backend. The device will pick it up the next time it syncs (over-the-air or over Bluetooth).
 
 If you don't actually change anything, nothing is uploaded.
+
+## Development checks
+
+```bash
+bun test
+bun run typecheck
+bun run build:toolkit
+```
+
+The reusable public core is `@xube/device-toolkit` under
+`packages/device-toolkit`. Its public/private capability boundary and migration
+plan are documented in
+[`docs/device-tooling-architecture.md`](docs/device-tooling-architecture.md).

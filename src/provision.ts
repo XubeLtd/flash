@@ -8,7 +8,7 @@ import { type TXubeAccountDevices } from "./constants";
 import { type IDeviceType } from "./device-type/device-type.interface";
 import { DeviceTypeFactory } from "./device-type/factory/device-type-factory";
 import { getDeviceTypeByDeviceId } from "./device-type/get";
-import { getAccountDevices } from "./device/get";
+import { getAccountDeviceIds, getAccountDevices } from "./device/get";
 import {
   fetchAndExtractDeviceVersion,
   getDeviceVersions,
@@ -49,7 +49,7 @@ const promptToSelectAccount = async (
 const promptToSelectDevice = async (
   devices: TXubeAccountDevices
 ): Promise<string> => {
-  const deviceIds = devices.data.map((device) => device.id);
+  const deviceIds = getAccountDeviceIds(devices);
   const device = await search<string>({
     message: "Select the device you want to flash:",
     source: (input) => {

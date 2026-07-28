@@ -63,12 +63,14 @@ export const fetchAndExtractDeviceVersion = async (
     spinner.start(`Downloading version ${version} for ${device}`);
     const response = await fetch(url);
     if (!response.ok || !response.body) {
-      spinner.fail(
-        `Failed to download file: ${response.status} ${response.statusText}`,
-      );
-      throw new Error(
-        `Failed to download file: ${response.status} ${response.statusText}`,
-      );
+      if (response.status === 404) {
+        spinner.fail(`Version ${version} for ${device} has no downloadable artifact`);
+      } else {
+        spinner.fail(
+          `Failed to download file: ${response.status} ${response.statusText}`,
+        );
+      }
+      return false;
     }
     spinner.succeed(`Downloaded version ${version} for ${device}`);
 
@@ -84,6 +86,7 @@ export const fetchAndExtractDeviceVersion = async (
     spinner.fail(
       `An error occurred while processing version ${version} for device ${device}`,
     );
-    throw new Error(JSON.stringify(error, null, 2));
+    console.error(error instanceof Error ? error.message : String(error));
+    return false;
   }
 };

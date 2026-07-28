@@ -1,4 +1,10 @@
 import { $ } from "bun";
+import {
+  PLANET_GEN1_FLASH_LAYOUT,
+  PLANET_GEN2_FLASH_LAYOUT,
+  type PlanetFlashLayout,
+  type PlanetGen2FlashLayout,
+} from "@xube/device-toolkit/layouts";
 import { mkdir, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { resolve } from "path";
@@ -34,37 +40,14 @@ import { DEVICE_TYPE_PLANET, type IDeviceType } from "../device-type.interface";
 
 const BIN_TO_SPARSE_HEX_SCRIPT = resolve("./tools/bin_to_sparse_hex.py");
 
-interface Stm32wb55Offsets {
-  bootloader: string;
-  firmware: string;
-  fileSystem: string;
-}
-
-const STM32WB55_OFFSETS: Stm32wb55Offsets = {
-  bootloader: "0x08000000",
-  firmware: "0x0800C000",
-  fileSystem: "0x080A2000",
-};
-
-interface Nrf5340Offsets {
-  firmware_net: string;
-  bootloader_app: string;
-  firmware_app: string;
-  fileSystem: string;
-}
-
-const NRF5340_OFFSETS: Nrf5340Offsets = {
-  firmware_net: "0x01000000",
-  bootloader_app: "0x00000000",
-  firmware_app: "0x0000C000",
-  fileSystem: "0x000A2000",
-};
-
-const PLANET_SETTINGS_PARAMS: SettingsFsParams = {
+const planetSettingsParams = (
+  layout: PlanetFlashLayout,
+): SettingsFsParams => ({
   rootPath: "xube/cfg",
   sectorSize: 16384,
   partitionSize: 65536,
-};
+  writeBlockSize: layout.settingsWriteBlockSize,
+});
 
 const convertBinToSparseHex = async (
   binPath: string,
@@ -89,6 +72,7 @@ const convertBinToSparseHex = async (
 
 abstract class BasePlanetDeviceType extends DeviceType implements IDeviceType {
   hasFileSystem = true;
+  protected abstract layout: PlanetFlashLayout;
 
   constructor(model: TXubeGetDeviceModelsResponse[number]) {
     super(model, DEVICE_TYPE_PLANET);
@@ -99,7 +83,10 @@ abstract class BasePlanetDeviceType extends DeviceType implements IDeviceType {
   };
 
   rebuildFileSystem = async (stagedDir: string): Promise<void> => {
-    await rebuildSettingsFsImage(stagedDir, PLANET_SETTINGS_PARAMS);
+    await rebuildSettingsFsImage(
+      stagedDir,
+      planetSettingsParams(this.layout),
+    );
   };
 
   discoverProbe = async (): Promise<MonitorChannel | null> => {
@@ -108,6 +95,8 @@ abstract class BasePlanetDeviceType extends DeviceType implements IDeviceType {
 }
 
 export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
+  protected layout = PLANET_GEN1_FLASH_LAYOUT;
+
   override discoverProbe = async (): Promise<MonitorChannel | null> => {
     return findStLinkChannel();
   };
@@ -127,7 +116,7 @@ export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
       await convertBinToSparseHex(
         fsBin,
         fsHex,
-        STM32WB55_OFFSETS.fileSystem
+        this.layout.fileSystem
       );
 
       const bootloader = resolve(
@@ -144,9 +133,9 @@ export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
       return await flashWithStm32Programmer({
         deviceId,
         entries: [
-          { label: "bootloader", path: bootloader, address: STM32WB55_OFFSETS.bootloader },
-          { label: "firmware", path: firmware, address: STM32WB55_OFFSETS.firmware },
-          { label: "filesystem", path: fsHex, address: STM32WB55_OFFSETS.fileSystem },
+          { label: "bootloader", path: bootloader, address: this.layout.bootloader },
+          { label: "firmware", path: firmware, address: this.layout.firmware },
+          { label: "filesystem", path: fsHex, address: this.layout.fileSystem },
         ],
       });
     } finally {
@@ -156,6 +145,8 @@ export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
 }
 
 export class Gen2PlanetDeviceType extends BasePlanetDeviceType {
+  protected layout: PlanetGen2FlashLayout = PLANET_GEN2_FLASH_LAYOUT;
+
   override discoverProbe = async (): Promise<MonitorChannel | null> => {
     return findJLinkChannel();
   };
@@ -194,41 +185,35 @@ export class Gen2PlanetDeviceType extends BasePlanetDeviceType {
       await convertBinToSparseHex(
         bootloaderBin,
         bootloaderHex,
-        NRF5340_OFFSETS.bootloader_app
+        this.layout.bootloader
       );
       await convertBinToSparseHex(
         firmwareBin,
         firmwareHex,
-        NRF5340_OFFSETS.firmware_app
+        this.layout.firmware
       );
       await convertBinToSparseHex(
         firmwareNetBin,
         firmwareNetHex,
-        NRF5340_OFFSETS.firmware_net
+        this.layout.firmwareNet
       );
       await convertBinToSparseHex(
         fsBin,
         fsHex,
-        NRF5340_OFFSETS.fileSystem
-      );
-
-      await convertBinToSparseHex(
-        fsBin,
-        fsHex,
-        NRF5340_OFFSETS.fileSystem
+        this.layout.fileSystem
       );
 
       return await flashWithNRFUtil({
         deviceId,
         entries: [
-          { label: "firmware-net", path: firmwareNetHex, address: NRF5340_OFFSETS.firmware_net, core: "network" },
-          { label: "bootloader", path: bootloaderHex, address: NRF5340_OFFSETS.bootloader_app, core: "application" },
-          { label: "firmware", path: firmwareHex, address: NRF5340_OFFSETS.firmware_app, core: "application" },
-          { label: "filesystem", path: fsHex, address: NRF5340_OFFSETS.fileSystem, core: "application" },
+          { label: "firmware-net", path: firmwareNetHex, address: this.layout.firmwareNet, core: "network" },
+          { label: "bootloader", path: bootloaderHex, address: this.layout.bootloader, core: "application" },
+          { label: "firmware", path: firmwareHex, address: this.layout.firmware, core: "application" },
+          { label: "filesystem", path: fsHex, address: this.layout.fileSystem, core: "application" },
         ],
       });
     } finally {
-      // await rm(tempDir, { recursive: true, force: true });
+      await rm(tempDir, { recursive: true, force: true });
     }
   };
 }
