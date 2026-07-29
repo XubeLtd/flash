@@ -37,6 +37,24 @@ A small helper for flashing Xube devices and updating their configuration.
    cp config.example.ts config.ts
    ```
 
+The flash tool uses the development environment by default. To use the
+production API explicitly, prefix the command with `XUBE_ENV=prod`:
+
+```bash
+XUBE_ENV=prod bun flash
+```
+
+Only `dev` and `prod` are accepted, so a typo cannot silently select an
+unexpected backend.
+
+For automation, credentials may be supplied without creating `config.ts`:
+
+```bash
+XUBE_ENV=prod XUBE_EMAIL="you@example.com" XUBE_PASSWORD="..." bun flash
+```
+
+`XUBE_EMAIL` and `XUBE_PASSWORD` must always be supplied together.
+
 That's it — you're ready.
 
 ## `bun flash` — flash a connected device

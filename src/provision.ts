@@ -4,7 +4,11 @@ import { creds } from "../config";
 import { getUserAccounts } from "./account/get";
 import { Authentication } from "./auth";
 import { promptReadyToFlash } from "./config-edit/prompt-edits";
-import { type TXubeAccountDevices } from "./constants";
+import {
+  type TXubeAccountDevices,
+  xubeEnvironment,
+} from "./constants";
+import { resolveCredentials } from "./credentials";
 import { type IDeviceType } from "./device-type/device-type.interface";
 import { DeviceTypeFactory } from "./device-type/factory/device-type-factory";
 import { getDeviceTypeByDeviceId } from "./device-type/get";
@@ -24,8 +28,9 @@ async function main() {
   console.log("--------------------------------------------------");
   console.log("📦 Welcome to the Xube Device Flash Tool 🏗");
   console.log("--------------------------------------------------\n");
+  console.log(`Environment: ${xubeEnvironment}\n`);
 
-  const auth = new Authentication(creds);
+  const auth = new Authentication(resolveCredentials(creds));
 
   try {
     await flashDevice(auth);

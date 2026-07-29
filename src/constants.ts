@@ -1,7 +1,31 @@
 export * from "./sdk/dev/xube-sdk";
-export { xubeSdk };
 
-import { xubeDev as xubeSdk } from "./sdk/dev/xube-sdk";
+import { xubeDev } from "./sdk/dev/xube-sdk";
+import { xube as xubeProd } from "./sdk/prod/xube-sdk";
+
+export type TXubeEnvironment = "dev" | "prod";
+
+export const resolveXubeEnvironment = (
+  value: string | undefined,
+): TXubeEnvironment => {
+  const environment = value?.trim().toLowerCase() || "dev";
+  if (environment !== "dev" && environment !== "prod") {
+    throw new Error(
+      `Unsupported XUBE_ENV "${value}". Expected "dev" or "prod".`,
+    );
+  }
+  return environment;
+};
+
+export const xubeEnvironment = resolveXubeEnvironment(process.env.XUBE_ENV);
+
+// Dev remains the public tool's default. Both generated clients expose the
+// operations used by the flash workflow; the cast keeps the stable local type
+// surface while allowing the runtime endpoint and response schemas to differ.
+export const xubeSdk =
+  xubeEnvironment === "prod"
+    ? (xubeProd as unknown as typeof xubeDev)
+    : xubeDev;
 
 export const BOOTLOADER_FOLDER_NAME = "bootloader";
 export const CONFIG_FOLDER_NAME = "config";
