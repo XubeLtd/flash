@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "fs/promises";
+import type { JsonObject, JsonValue } from "@xube/device-toolkit/config";
 import {
   setAtPath,
   type EditableFieldDef,
@@ -10,9 +11,9 @@ export type ConfigEditResult = {
   allowedPaths: string[];
 };
 
-const readJson = async (path: string): Promise<Record<string, unknown>> => {
+const readJson = async (path: string): Promise<JsonObject> => {
   const raw = await readFile(path, "utf8");
-  return JSON.parse(raw) as Record<string, unknown>;
+  return JSON.parse(raw) as JsonObject;
 };
 
 const writeJson = async (path: string, obj: unknown): Promise<void> => {
@@ -48,7 +49,7 @@ export const applyPatchesToConfig = async (
   const config = await readJson(configPath);
   for (const patch of patches) {
     for (const [path, value] of Object.entries(patch.values)) {
-      setAtPath(config, path, value);
+      setAtPath(config, path, value as JsonValue);
     }
   }
   await writeJson(configPath, config);

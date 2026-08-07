@@ -9,22 +9,22 @@
   "devDependencies": {
     "@types/adm-zip": "^0.5.8",
     "@types/bun": "latest",
-    "@types/inquirer": "^9.0.8",
+    "@types/inquirer": "^9.0.10",
     "@types/unzipper": "^0.10.11",
     "@types/which": "^3.0.4"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@inquirer/prompts": "^7.5.3",
+    "@inquirer/prompts": "^7.10.1",
     "@xube/device-toolkit": "workspace:*",
-    "adm-zip": "^0.5.17",
+    "adm-zip": "^0.5.18",
     "openapi-zod-client": "^1.18.3",
-    "openapi3-ts": "^4.4.0",
+    "openapi3-ts": "^4.6.1",
     "ora": "^8.2.0",
-    "unzipper": "^0.12.3",
-    "zod": "^3.25.63",
+    "unzipper": "^0.12.5",
+    "zod": "^3.25.76",
     "zodios": "^5.1.0",
     "which": "latest"
   },

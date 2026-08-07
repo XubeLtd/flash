@@ -779,6 +779,78 @@ export const XubeAddModelPartRequest = z.object({ modelId: z.string() });
 export type TXubeAddModelPartRequest = z.infer<typeof XubeAddModelPartRequest>;
 export const XubeRemoveModelPartRequest = z.object({ modelId: z.string() });
 export type TXubeRemoveModelPartRequest = z.infer<typeof XubeRemoveModelPartRequest>;
+export const XubeGetWeightRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubeGetWeightRequest = z.infer<typeof XubeGetWeightRequest>;
+export const XubeGetWeightResponse = z.object({ weight: z.object({ creator: z.string().optional(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), weight: z.number().gt(0), entityId: z.string(), type: z.literal("GEOMETRY:MODEL:FACET:WEIGHT"), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("WEIGHT"), versionId: z.string(), unit: z.enum(["g", "kg", "lb", "oz"]), weightConfigurability: z.enum(["INHERENT", "IMMUTABLE", "CONFIGURABLE", "DERIVED"]).optional(), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() }) });
+export type TXubeGetWeightResponse = z.infer<typeof XubeGetWeightResponse>;
+export const XubeSetWeightRequest = z.object({ versionId: z.string(), unit: z.enum(["g", "kg", "lb", "oz"]), modelId: z.string(), weightConfigurability: z.enum(["INHERENT", "IMMUTABLE", "CONFIGURABLE", "DERIVED"]).optional(), weight: z.number().gt(0) });
+export type TXubeSetWeightRequest = z.infer<typeof XubeSetWeightRequest>;
+export const XubeSetWeightResponse = z.object({ weight: z.object({ creator: z.string().optional(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), weight: z.number().gt(0), entityId: z.string(), type: z.literal("GEOMETRY:MODEL:FACET:WEIGHT"), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("WEIGHT"), versionId: z.string(), unit: z.enum(["g", "kg", "lb", "oz"]), weightConfigurability: z.enum(["INHERENT", "IMMUTABLE", "CONFIGURABLE", "DERIVED"]).optional(), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() }) });
+export type TXubeSetWeightResponse = z.infer<typeof XubeSetWeightResponse>;
+export const XubeDeleteWeightRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubeDeleteWeightRequest = z.infer<typeof XubeDeleteWeightRequest>;
+export const XubeDeleteWeightResponse = z.object({ deleted: z.boolean() });
+export type TXubeDeleteWeightResponse = z.infer<typeof XubeDeleteWeightResponse>;
+export const XubeGetComponentColorsRequest = z.object({ componentId: z.string() });
+export type TXubeGetComponentColorsRequest = z.infer<typeof XubeGetComponentColorsRequest>;
+export const XubeGetComponentColorsResponse = z.object({ colors: z.object({ creator: z.string().optional(), componentId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), entityId: z.string(), type: z.literal("GEOMETRY:COMPONENT:FACET:COLORS"), colors: z.record(z.string().regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("COLORS"), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() }) });
+export type TXubeGetComponentColorsResponse = z.infer<typeof XubeGetComponentColorsResponse>;
+export const XubeSetComponentColorsRequest = z.object({ componentId: z.string(), colors: z.record(z.string().regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)) });
+export type TXubeSetComponentColorsRequest = z.infer<typeof XubeSetComponentColorsRequest>;
+export const XubeSetComponentColorsResponse = z.object({ colors: z.object({ creator: z.string().optional(), componentId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), entityId: z.string(), type: z.literal("GEOMETRY:COMPONENT:FACET:COLORS"), colors: z.record(z.string().regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("COLORS"), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() }) });
+export type TXubeSetComponentColorsResponse = z.infer<typeof XubeSetComponentColorsResponse>;
+export const XubeDeleteComponentColorsRequest = z.object({ componentId: z.string() });
+export type TXubeDeleteComponentColorsRequest = z.infer<typeof XubeDeleteComponentColorsRequest>;
+export const XubeDeleteComponentColorsResponse = z.object({ deleted: z.boolean() });
+export type TXubeDeleteComponentColorsResponse = z.infer<typeof XubeDeleteComponentColorsResponse>;
+export const XubePushGeometrySyncRequest = z.object({  }).partial().passthrough();
+export type TXubePushGeometrySyncRequest = z.infer<typeof XubePushGeometrySyncRequest>;
+export const XubePushGeometrySyncResponse = z.object({  }).partial().passthrough();
+export type TXubePushGeometrySyncResponse = z.infer<typeof XubePushGeometrySyncResponse>;
+export const XubeGetDimensionsRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubeGetDimensionsRequest = z.infer<typeof XubeGetDimensionsRequest>;
+export const XubeGetDimensionsResponse = z.object({ dimensions: z.object({ creator: z.string().optional(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), length: z.number().gt(0), entityId: z.string(), type: z.literal("GEOMETRY:MODEL:FACET:DIMENSIONS"), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("DIMENSIONS"), versionId: z.string(), unit: z.enum(["mm", "cm", "m", "in", "ft"]), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), width: z.number().gt(0), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), height: z.number().gt(0) }) });
+export type TXubeGetDimensionsResponse = z.infer<typeof XubeGetDimensionsResponse>;
+export const XubeSetDimensionsRequest = z.object({ versionId: z.string(), unit: z.enum(["mm", "cm", "m", "in", "ft"]), modelId: z.string(), length: z.number().gt(0), width: z.number().gt(0), height: z.number().gt(0) });
+export type TXubeSetDimensionsRequest = z.infer<typeof XubeSetDimensionsRequest>;
+export const XubeSetDimensionsResponse = z.object({ dimensions: z.object({ creator: z.string().optional(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), length: z.number().gt(0), entityId: z.string(), type: z.literal("GEOMETRY:MODEL:FACET:DIMENSIONS"), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("DIMENSIONS"), versionId: z.string(), unit: z.enum(["mm", "cm", "m", "in", "ft"]), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), width: z.number().gt(0), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), height: z.number().gt(0) }) });
+export type TXubeSetDimensionsResponse = z.infer<typeof XubeSetDimensionsResponse>;
+export const XubeDeleteDimensionsRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubeDeleteDimensionsRequest = z.infer<typeof XubeDeleteDimensionsRequest>;
+export const XubeDeleteDimensionsResponse = z.object({ deleted: z.boolean() });
+export type TXubeDeleteDimensionsResponse = z.infer<typeof XubeDeleteDimensionsResponse>;
+export const XubeDeleteCadRequest = z.object({ cadId: z.string(), versionId: z.string(), modelId: z.string() });
+export type TXubeDeleteCadRequest = z.infer<typeof XubeDeleteCadRequest>;
+export const XubeDeleteCadResponse = z.object({ newPrimaryCadId: z.string().optional(), deleted: z.boolean() });
+export type TXubeDeleteCadResponse = z.infer<typeof XubeDeleteCadResponse>;
+export const XubeGetModelColorsRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubeGetModelColorsRequest = z.infer<typeof XubeGetModelColorsRequest>;
+export const XubeGetModelColorsResponse = z.object({ colors: z.object({ creator: z.string().optional(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), entityId: z.string(), type: z.literal("GEOMETRY:MODEL:FACET:COLORS"), colors: z.record(z.string().regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("COLORS"), versionId: z.string(), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() }) });
+export type TXubeGetModelColorsResponse = z.infer<typeof XubeGetModelColorsResponse>;
+export const XubeSetModelColorsRequest = z.object({ versionId: z.string(), modelId: z.string(), colors: z.record(z.string().regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)) });
+export type TXubeSetModelColorsRequest = z.infer<typeof XubeSetModelColorsRequest>;
+export const XubeSetModelColorsResponse = z.object({ colors: z.object({ creator: z.string().optional(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), entityId: z.string(), type: z.literal("GEOMETRY:MODEL:FACET:COLORS"), colors: z.record(z.string().regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("COLORS"), versionId: z.string(), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() }) });
+export type TXubeSetModelColorsResponse = z.infer<typeof XubeSetModelColorsResponse>;
+export const XubeDeleteModelColorsRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubeDeleteModelColorsRequest = z.infer<typeof XubeDeleteModelColorsRequest>;
+export const XubeDeleteModelColorsResponse = z.object({ deleted: z.boolean() });
+export type TXubeDeleteModelColorsResponse = z.infer<typeof XubeDeleteModelColorsResponse>;
+export const XubeSetPrimaryCadRequest = z.object({ cadId: z.string(), versionId: z.string(), modelId: z.string() });
+export type TXubeSetPrimaryCadRequest = z.infer<typeof XubeSetPrimaryCadRequest>;
+export const XubeSetPrimaryCadResponse = z.object({ previousPrimaryCadId: z.string().optional(), cad: z.object({ sourceKey: z.string(), modelId: z.string(), copiedFromVersionId: z.string().optional(), type: z.literal("GEOMETRY:MODEL:FACET:CAD"), updater: z.string().optional(), bundleMapKey: z.string(), facetType: z.literal("CAD"), builtAt: z.string(), id: z.string().min(3), copiedFromCadId: z.string().optional(), cadId: z.string(), creator: z.string().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), colorConfigurability: z.enum(["INHERENT", "IMMUTABLE", "CONFIGURABLE", "DERIVED"]), entityId: z.string(), metaKey: z.string(), label: z.string().optional(), contentHash: z.string(), accountId: z.string().optional(), builtBy: z.string(), versionId: z.string(), bundleKey: z.string(), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), primary: z.boolean() }) });
+export type TXubeSetPrimaryCadResponse = z.infer<typeof XubeSetPrimaryCadResponse>;
+export const XubeCommitCadRequest = z.object({ cadId: z.string(), versionId: z.string(), modelId: z.string(), contentHash: z.string() });
+export type TXubeCommitCadRequest = z.infer<typeof XubeCommitCadRequest>;
+export const XubeCommitCadResponse = z.object({ cad: z.object({ sourceKey: z.string(), modelId: z.string(), copiedFromVersionId: z.string().optional(), type: z.literal("GEOMETRY:MODEL:FACET:CAD"), updater: z.string().optional(), bundleMapKey: z.string(), facetType: z.literal("CAD"), builtAt: z.string(), id: z.string().min(3), copiedFromCadId: z.string().optional(), cadId: z.string(), creator: z.string().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), colorConfigurability: z.enum(["INHERENT", "IMMUTABLE", "CONFIGURABLE", "DERIVED"]), entityId: z.string(), metaKey: z.string(), label: z.string().optional(), contentHash: z.string(), accountId: z.string().optional(), builtBy: z.string(), versionId: z.string(), bundleKey: z.string(), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), primary: z.boolean() }) });
+export type TXubeCommitCadResponse = z.infer<typeof XubeCommitCadResponse>;
+export const XubeListCadsRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubeListCadsRequest = z.infer<typeof XubeListCadsRequest>;
+export const XubeListCadsResponse = z.object({ cads: z.array(z.object({ download: z.object({ sourceUrl: z.string().url(), bundleMapUrl: z.string().url(), bundleUrl: z.string().url(), metaUrl: z.string().url(), expiresAt: z.string() }), cad: z.object({ sourceKey: z.string(), modelId: z.string(), copiedFromVersionId: z.string().optional(), type: z.literal("GEOMETRY:MODEL:FACET:CAD"), updater: z.string().optional(), bundleMapKey: z.string(), facetType: z.literal("CAD"), builtAt: z.string(), id: z.string().min(3), copiedFromCadId: z.string().optional(), cadId: z.string(), creator: z.string().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), colorConfigurability: z.enum(["INHERENT", "IMMUTABLE", "CONFIGURABLE", "DERIVED"]), entityId: z.string(), metaKey: z.string(), label: z.string().optional(), contentHash: z.string(), accountId: z.string().optional(), builtBy: z.string(), versionId: z.string(), bundleKey: z.string(), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), primary: z.boolean() }) })) });
+export type TXubeListCadsResponse = z.infer<typeof XubeListCadsResponse>;
+export const XubeAddCadRequest = z.object({ versionId: z.string(), modelId: z.string(), colorConfigurability: z.enum(["INHERENT", "IMMUTABLE", "CONFIGURABLE", "DERIVED"]), label: z.string().optional() });
+export type TXubeAddCadRequest = z.infer<typeof XubeAddCadRequest>;
+export const XubeAddCadResponse = z.object({ upload: z.object({ sourceUrl: z.string().url(), bundleMapUrl: z.string().url(), bundleUrl: z.string().url(), metaUrl: z.string().url(), expiresAt: z.string() }), cad: z.object({ sourceKey: z.string(), modelId: z.string(), copiedFromVersionId: z.string().optional(), type: z.literal("GEOMETRY:MODEL:FACET:CAD"), updater: z.string().optional(), bundleMapKey: z.string(), facetType: z.literal("CAD"), builtAt: z.string(), id: z.string().min(3), copiedFromCadId: z.string().optional(), cadId: z.string(), creator: z.string().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }), colorConfigurability: z.enum(["INHERENT", "IMMUTABLE", "CONFIGURABLE", "DERIVED"]), entityId: z.string(), metaKey: z.string(), label: z.string().optional(), contentHash: z.string(), accountId: z.string().optional(), builtBy: z.string(), versionId: z.string(), bundleKey: z.string(), service: z.literal("Geometry"), name: z.string().optional(), isGlobal: z.boolean().optional(), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), primary: z.boolean() }) });
+export type TXubeAddCadResponse = z.infer<typeof XubeAddCadResponse>;
 export const XubeGetGroupChildrenRequest = z.object({ group: z.string() });
 export type TXubeGetGroupChildrenRequest = z.infer<typeof XubeGetGroupChildrenRequest>;
 export const XubeGetGroupChildrenResponse = z.object({ data: z.array(z.object({ parent: z.string(), creator: z.string().optional(), created: z.string().datetime({ offset: true }).optional(), SK: z.string(), name: z.string().optional(), PK: z.string(), id: z.string().min(3), type: z.string().min(3).optional(), child: z.string() })), nextToken: z.string().optional() });
@@ -807,6 +879,84 @@ export const XubeCreateGroupRequest = z.object({ name: z.string().optional(), de
 export type TXubeCreateGroupRequest = z.infer<typeof XubeCreateGroupRequest>;
 export const XubeCreateGroupResponse = z.object({ id: z.string().min(3) });
 export type TXubeCreateGroupResponse = z.infer<typeof XubeCreateGroupResponse>;
+export const XubePublishProductModelVersionRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubePublishProductModelVersionRequest = z.infer<typeof XubePublishProductModelVersionRequest>;
+export const XubeProductModelVersion = z.object({ creator: z.string().optional(), allowsCyclicalChildConnections: z.boolean().optional(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), cloneFrom: z.string().optional(), description: z.string().optional(), changelog: z.array(z.string()).optional(), type: z.literal("PRODUCT:MODEL:VERSION"), updater: z.string().optional(), lifecycle: z.enum(["DRAFT", "ACTIVE", "INACTIVE"]), accountId: z.string().optional(), versionId: z.string(), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() });
+export type TXubeProductModelVersion = z.infer<typeof XubeProductModelVersion>;
+export const XubeGetProductModelVersionRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubeGetProductModelVersionRequest = z.infer<typeof XubeGetProductModelVersionRequest>;
+export const XubeAllocateProductPartRequest = z.object({ productId: z.string(), childComponentId: z.string(), childEntryId: z.string() });
+export type TXubeAllocateProductPartRequest = z.infer<typeof XubeAllocateProductPartRequest>;
+export const XubeGetProductRequest = z.object({ productId: z.string() });
+export type TXubeGetProductRequest = z.infer<typeof XubeGetProductRequest>;
+export const XubeProduct = z.object({ componentType: z.literal("PRODUCT"), creator: z.string().optional(), serialNumber: z.string().optional(), allowsCyclicalChildConnections: z.boolean().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityType: z.literal("PRODUCT"), description: z.string().optional(), type: z.literal("PRODUCT:COMPONENT"), updater: z.string().optional(), lifecycle: z.enum(["ACTIVE", "INACTIVE"]), accountId: z.string().optional(), service: z.literal("Product"), name: z.string().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }), slug: z.string().optional() });
+export type TXubeProduct = z.infer<typeof XubeProduct>;
+export const XubeUpdateProductRequest = z.object({ lifecycle: z.enum(["ACTIVE", "INACTIVE"]).optional(), serialNumber: z.string().optional(), productId: z.string(), name: z.string().optional(), description: z.string().optional() });
+export type TXubeUpdateProductRequest = z.infer<typeof XubeUpdateProductRequest>;
+export const XubeGetProductModelVersionsRequest = z.object({ modelId: z.string() });
+export type TXubeGetProductModelVersionsRequest = z.infer<typeof XubeGetProductModelVersionsRequest>;
+export const XubeProductModelVersions = z.array(z.object({ creator: z.string().optional(), allowsCyclicalChildConnections: z.boolean().optional(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), cloneFrom: z.string().optional(), description: z.string().optional(), changelog: z.array(z.string()).optional(), type: z.literal("PRODUCT:MODEL:VERSION"), updater: z.string().optional(), lifecycle: z.enum(["DRAFT", "ACTIVE", "INACTIVE"]), accountId: z.string().optional(), versionId: z.string(), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() }));
+export type TXubeProductModelVersions = z.infer<typeof XubeProductModelVersions>;
+export const XubeCreateProductModelVersionRequest = z.object({ versionId: z.string().optional(), allowsCyclicalChildConnections: z.boolean().optional(), modelId: z.string(), name: z.string().optional(), cloneFrom: z.string().optional(), description: z.string().optional(), changelog: z.array(z.string()).optional(), id: z.string().optional() });
+export type TXubeCreateProductModelVersionRequest = z.infer<typeof XubeCreateProductModelVersionRequest>;
+export const XubeCreateProductModelVersionResponse = z.object({ creator: z.string().optional(), allowsCyclicalChildConnections: z.boolean().optional(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), cloneFrom: z.string().optional(), description: z.string().optional(), changelog: z.array(z.string()).optional(), type: z.literal("PRODUCT:MODEL:VERSION"), updater: z.string().optional(), lifecycle: z.enum(["DRAFT", "ACTIVE", "INACTIVE"]), accountId: z.string().optional(), versionId: z.string(), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() });
+export type TXubeCreateProductModelVersionResponse = z.infer<typeof XubeCreateProductModelVersionResponse>;
+export const XubeDeallocateProductPartRequest = z.object({ productId: z.string(), childComponentId: z.string() });
+export type TXubeDeallocateProductPartRequest = z.infer<typeof XubeDeallocateProductPartRequest>;
+export const XubeListProductModelsRequest = z.object({ accountId: z.string(), nextToken: z.string(), isGlobal: z.boolean(), limit: z.number(), descending: z.boolean().default(false) }).partial();
+export type TXubeListProductModelsRequest = z.infer<typeof XubeListProductModelsRequest>;
+export const XubeProductModels = z.array(z.object({ creator: z.string().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityType: z.literal("PRODUCT"), description: z.string().optional(), modelType: z.literal("PRODUCT-MODEL"), type: z.literal("PRODUCT:MODEL"), updater: z.string().optional(), lifecycle: z.enum(["ACTIVE", "INACTIVE"]), accountId: z.string().optional(), service: z.literal("Product"), name: z.string().optional(), isGlobal: z.boolean().optional(), derivedFrom: z.object({ versionId: z.string(), modelId: z.string() }).optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() }));
+export type TXubeProductModels = z.infer<typeof XubeProductModels>;
+export const XubeCreateProductModelRequest = z.object({ accountId: z.string().optional(), name: z.string(), isGlobal: z.boolean().optional(), description: z.string().optional(), id: z.string().optional() });
+export type TXubeCreateProductModelRequest = z.infer<typeof XubeCreateProductModelRequest>;
+export const XubeCreateProductModelResponse = z.object({ creator: z.string().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityType: z.literal("PRODUCT"), description: z.string().optional(), modelType: z.literal("PRODUCT-MODEL"), type: z.literal("PRODUCT:MODEL"), updater: z.string().optional(), lifecycle: z.enum(["ACTIVE", "INACTIVE"]), accountId: z.string().optional(), service: z.literal("Product"), name: z.string().optional(), isGlobal: z.boolean().optional(), derivedFrom: z.object({ versionId: z.string(), modelId: z.string() }).optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() });
+export type TXubeCreateProductModelResponse = z.infer<typeof XubeCreateProductModelResponse>;
+export const XubeDeprecateProductModelVersionRequest = z.object({ versionId: z.string(), modelId: z.string() });
+export type TXubeDeprecateProductModelVersionRequest = z.infer<typeof XubeDeprecateProductModelVersionRequest>;
+export const XubeListProductsRequest = z.object({ accountId: z.string(), nextToken: z.string().optional(), limit: z.number().optional(), descending: z.boolean().optional().default(false) });
+export type TXubeListProductsRequest = z.infer<typeof XubeListProductsRequest>;
+export const XubeProducts = z.array(z.object({ componentType: z.literal("PRODUCT"), creator: z.string().optional(), serialNumber: z.string().optional(), allowsCyclicalChildConnections: z.boolean().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityType: z.literal("PRODUCT"), description: z.string().optional(), type: z.literal("PRODUCT:COMPONENT"), updater: z.string().optional(), lifecycle: z.enum(["ACTIVE", "INACTIVE"]), accountId: z.string().optional(), service: z.literal("Product"), name: z.string().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }), slug: z.string().optional() }));
+export type TXubeProducts = z.infer<typeof XubeProducts>;
+export const XubeGetProductStatusRequest = z.object({ productId: z.string() });
+export type TXubeGetProductStatusRequest = z.infer<typeof XubeGetProductStatusRequest>;
+export const XubeProductStatus = z.object({ reason: z.string().optional(), creator: z.string().optional(), componentId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityId: z.string(), type: z.literal("PRODUCT:COMPONENT:FACET:STATUS"), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("STATUS"), service: z.string(), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), status: z.enum(["PENDING", "ASSEMBLED", "SHIPPED"]) });
+export type TXubeProductStatus = z.infer<typeof XubeProductStatus>;
+export const XubeSetProductStatusRequest = z.object({ reason: z.string().optional(), productId: z.string(), status: z.enum(["PENDING", "ASSEMBLED", "SHIPPED"]) });
+export type TXubeSetProductStatusRequest = z.infer<typeof XubeSetProductStatusRequest>;
+export const XubeSetProductPlanRequest = z.object({ productId: z.string(), contentType: z.enum(["image/png", "image/jpeg", "image/webp"]) });
+export type TXubeSetProductPlanRequest = z.infer<typeof XubeSetProductPlanRequest>;
+export const XubeSetProductPlanResponse = z.object({ presignedUploadUrl: z.string().url() });
+export type TXubeSetProductPlanResponse = z.infer<typeof XubeSetProductPlanResponse>;
+export const XubeClearProductPlanRequest = z.object({ productId: z.string() });
+export type TXubeClearProductPlanRequest = z.infer<typeof XubeClearProductPlanRequest>;
+export const XubeGetProductReadinessRequest = z.object({ productId: z.string() });
+export type TXubeGetProductReadinessRequest = z.infer<typeof XubeGetProductReadinessRequest>;
+export const XubeProductReadiness = z.object({ allocation: z.object({ declared: z.number().int().gte(0).lte(9007199254740991), arrived: z.number().int().gte(0).lte(9007199254740991), allocated: z.number().int().gte(0).lte(9007199254740991) }), unexpected: z.array(z.object({ childComponentId: z.string() })), missing: z.array(z.object({ childModelId: z.string(), childComponentId: z.string().optional(), childEntryId: z.string(), childVersionId: z.string().optional() })), matches: z.boolean() });
+export type TXubeProductReadiness = z.infer<typeof XubeProductReadiness>;
+export const XubeGetProductModelRequest = z.object({ modelId: z.string() });
+export type TXubeGetProductModelRequest = z.infer<typeof XubeGetProductModelRequest>;
+export const XubeProductModel = z.object({ creator: z.string().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityType: z.literal("PRODUCT"), description: z.string().optional(), modelType: z.literal("PRODUCT-MODEL"), type: z.literal("PRODUCT:MODEL"), updater: z.string().optional(), lifecycle: z.enum(["ACTIVE", "INACTIVE"]), accountId: z.string().optional(), service: z.literal("Product"), name: z.string().optional(), isGlobal: z.boolean().optional(), derivedFrom: z.object({ versionId: z.string(), modelId: z.string() }).optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() });
+export type TXubeProductModel = z.infer<typeof XubeProductModel>;
+export const XubeUpdateProductModelRequest = z.object({ lifecycle: z.enum(["ACTIVE", "INACTIVE"]).optional(), modelId: z.string(), name: z.string().optional(), description: z.string().optional() });
+export type TXubeUpdateProductModelRequest = z.infer<typeof XubeUpdateProductModelRequest>;
+export const XubeGetProductPlanUrlRequest = z.object({ productId: z.string() });
+export type TXubeGetProductPlanUrlRequest = z.infer<typeof XubeGetProductPlanUrlRequest>;
+export const XubeGetProductPlanUrlResponse = z.object({ planUrl: z.string().url() });
+export type TXubeGetProductPlanUrlResponse = z.infer<typeof XubeGetProductPlanUrlResponse>;
+export const XubeCreateProductAtomicAccountEntityEntityFacetAccountRequest = z.object({ accountId: z.string(), creator: z.string().optional(), facetType: z.literal("ACCOUNT"), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), service: z.string(), name: z.string().optional(), isGlobal: z.boolean().optional(), entityId: z.string(), id: z.string().min(3), type: z.literal("ENTITY:ENTITY:FACET:ACCOUNT"), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), updater: z.string().optional() });
+export type TXubeCreateProductAtomicAccountEntityEntityFacetAccountRequest = z.infer<typeof XubeCreateProductAtomicAccountEntityEntityFacetAccountRequest>;
+export const XubeCreateProductAtomicModelEntityComponentFacetModelRequest = z.object({ creator: z.string().optional(), componentId: z.string(), modelId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityId: z.string(), type: z.literal("ENTITY:COMPONENT:FACET:MODEL"), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("MODEL"), versionId: z.string(), service: z.string(), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional() });
+export type TXubeCreateProductAtomicModelEntityComponentFacetModelRequest = z.infer<typeof XubeCreateProductAtomicModelEntityComponentFacetModelRequest>;
+export const XubeCreateProductAtomicStatusProductComponentFacetStatusRequest = z.object({ reason: z.string().optional(), creator: z.string().optional(), componentId: z.string(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityId: z.string(), type: z.literal("PRODUCT:COMPONENT:FACET:STATUS"), updater: z.string().optional(), accountId: z.string().optional(), facetType: z.literal("STATUS"), service: z.string(), name: z.string().optional(), isGlobal: z.boolean().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), status: z.enum(["PENDING", "ASSEMBLED", "SHIPPED"]) });
+export type TXubeCreateProductAtomicStatusProductComponentFacetStatusRequest = z.infer<typeof XubeCreateProductAtomicStatusProductComponentFacetStatusRequest>;
+export const XubeCreateProductAtomicRequest = z.object({ componentType: z.literal("PRODUCT"), creator: z.string().optional(), serialNumber: z.string().optional(), allowsCyclicalChildConnections: z.boolean().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityType: z.literal("PRODUCT"), description: z.string().optional(), type: z.literal("PRODUCT:COMPONENT"), updater: z.string().optional(), facets: z.array(
+                z.discriminatedUnion("facetType", [XubeCreateProductAtomicAccountEntityEntityFacetAccountRequest, XubeCreateProductAtomicModelEntityComponentFacetModelRequest, XubeCreateProductAtomicStatusProductComponentFacetStatusRequest])
+            ), lifecycle: z.enum(["ACTIVE", "INACTIVE"]), accountId: z.string().optional(), service: z.literal("Product"), name: z.string().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }), slug: z.string().optional() }).passthrough();
+export type TXubeCreateProductAtomicRequest = z.infer<typeof XubeCreateProductAtomicRequest>;
+export const XubeCreateProductAtomicResponse = z.object({ id: z.string().min(3) });
+export type TXubeCreateProductAtomicResponse = z.infer<typeof XubeCreateProductAtomicResponse>;
+export const XubeAssignProductToAccountRequest = z.object({ accountId: z.string(), productId: z.string() });
+export type TXubeAssignProductToAccountRequest = z.infer<typeof XubeAssignProductToAccountRequest>;
 export const XubeSiteRequest = z.object({ site: z.string() });
 export type TXubeSiteRequest = z.infer<typeof XubeSiteRequest>;
 export const XubeSite = z.object({ componentType: z.string(), creator: z.string().optional(), serialNumber: z.string().optional(), allowsCyclicalChildConnections: z.boolean().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityType: z.string(), icon: z.string().optional(), description: z.string().optional(), type: z.string(), updater: z.string().optional(), lifecycle: z.enum(["ACTIVE", "INACTIVE"]), accountId: z.string().optional(), service: z.string().optional(), name: z.string().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), config: z.object({ inheritFromParent: z.boolean(), overrides: z.object({}).partial().passthrough() }).partial().passthrough().optional(), modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }), slug: z.string().optional(), siteType: z.enum(["solar", "warehouse", "office", "factory", "datacenter", "other"]).optional() });
@@ -6288,6 +6438,446 @@ export const endpoints = makeApi([
     response: XubePushHandlerResponse,
   },
   {
+    method: "get",
+    path: "/geometry/components/:componentId/colors",
+    alias: "Get Component Colors",
+    description: `Read the customer-variant colour override for this component.. Actions: Geometry:GetComponentColors`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ componentId: z.string() })
+      },
+      {
+        name: "componentId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeGetComponentColorsResponse,
+  },
+  {
+    method: "put",
+    path: "/geometry/components/:componentId/colors",
+    alias: "Set Component Colors",
+    description: `Replace the component-scoped colour override. Rejected if the pinned model version&#x27;s primary CAD is IMMUTABLE / INHERENT / DERIVED.. Actions: Geometry:SetComponentColors`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeSetComponentColorsRequest
+      },
+      {
+        name: "componentId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeSetComponentColorsResponse,
+  },
+  {
+    method: "delete",
+    path: "/geometry/components/:componentId/colors",
+    alias: "Delete Component Colors",
+    description: `Remove the component-scoped colour override; component reverts to the model-version palette.. Actions: Geometry:DeleteComponentColors`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ componentId: z.string() })
+      },
+      {
+        name: "componentId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ deleted: z.boolean() }),
+  },
+  {
+    method: "get",
+    path: "/geometry/models/:modelId/versions/:versionId/cads",
+    alias: "List CADs",
+    description: `List every CAD facet on this model version paired with signed download URLs.. Actions: Geometry:ListCads`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeListCadsRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeListCadsResponse,
+  },
+  {
+    method: "post",
+    path: "/geometry/models/:modelId/versions/:versionId/cads",
+    alias: "Add CAD",
+    description: `Mint a new CAD slot on this version: generates a cadId, writes an uncommitted row, returns signed upload URLs. Caller PUTs source/bundle/map/meta then calls commit.. Actions: Geometry:AddCad`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeAddCadRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeAddCadResponse,
+  },
+  {
+    method: "delete",
+    path: "/geometry/models/:modelId/versions/:versionId/cads/:cadId",
+    alias: "Delete CAD",
+    description: `Drop a CAD and its S3 bytes. Refuses if it would leave the version with zero CADs. Promotes a new primary if needed.. Actions: Geometry:DeleteCad`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeDeleteCadRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "cadId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeDeleteCadResponse,
+  },
+  {
+    method: "post",
+    path: "/geometry/models/:modelId/versions/:versionId/cads/:cadId/commit",
+    alias: "Commit CAD",
+    description: `Finalise a CAD by recording its content hash. Idempotent — re-commit with the same hash is a no-op-equivalent overwrite.. Actions: Geometry:CommitCad`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeCommitCadRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "cadId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeCommitCadResponse,
+  },
+  {
+    method: "put",
+    path: "/geometry/models/:modelId/versions/:versionId/cads/:cadId/primary",
+    alias: "Set Primary CAD",
+    description: `Flip the primary flag to this CAD; clears it off whichever CAD held it before.. Actions: Geometry:SetPrimaryCad`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeSetPrimaryCadRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "cadId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeSetPrimaryCadResponse,
+  },
+  {
+    method: "get",
+    path: "/geometry/models/:modelId/versions/:versionId/colors",
+    alias: "Get Model Colors",
+    description: `Read the colours facet for this model version.. Actions: Geometry:GetModelColors`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeGetModelColorsRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeGetModelColorsResponse,
+  },
+  {
+    method: "put",
+    path: "/geometry/models/:modelId/versions/:versionId/colors",
+    alias: "Set Model Colors",
+    description: `Replace the model-version colours facet. Rejected if the primary CAD&#x27;s colorConfigurability is IMMUTABLE or DERIVED.. Actions: Geometry:SetModelColors`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeSetModelColorsRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeSetModelColorsResponse,
+  },
+  {
+    method: "delete",
+    path: "/geometry/models/:modelId/versions/:versionId/colors",
+    alias: "Delete Model Colors",
+    description: `Remove the model-version colours facet.. Actions: Geometry:DeleteModelColors`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeDeleteModelColorsRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ deleted: z.boolean() }),
+  },
+  {
+    method: "get",
+    path: "/geometry/models/:modelId/versions/:versionId/dimensions",
+    alias: "Get Dimensions",
+    description: `Read the dimensions facet (length, width, and height) for this model version.. Actions: Geometry:GetDimensions`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeGetDimensionsRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeGetDimensionsResponse,
+  },
+  {
+    method: "put",
+    path: "/geometry/models/:modelId/versions/:versionId/dimensions",
+    alias: "Set Dimensions",
+    description: `Replace the dimensions facet on this model version with new length, width, and height values.. Actions: Geometry:SetDimensions`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeSetDimensionsRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeSetDimensionsResponse,
+  },
+  {
+    method: "delete",
+    path: "/geometry/models/:modelId/versions/:versionId/dimensions",
+    alias: "Delete Dimensions",
+    description: `Remove the dimensions facet from this model version.. Actions: Geometry:DeleteDimensions`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeDeleteDimensionsRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ deleted: z.boolean() }),
+  },
+  {
+    method: "get",
+    path: "/geometry/models/:modelId/versions/:versionId/weight",
+    alias: "Get Weight",
+    description: `Read the weight facet for this model version.. Actions: Geometry:GetWeight`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeGetWeightRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeGetWeightResponse,
+  },
+  {
+    method: "put",
+    path: "/geometry/models/:modelId/versions/:versionId/weight",
+    alias: "Set Weight",
+    description: `Replace the weight facet on this model version with a new weight + unit.. Actions: Geometry:SetWeight`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeSetWeightRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeSetWeightResponse,
+  },
+  {
+    method: "delete",
+    path: "/geometry/models/:modelId/versions/:versionId/weight",
+    alias: "Delete Weight",
+    description: `Remove the weight facet from this model version.. Actions: Geometry:DeleteWeight`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeDeleteWeightRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ deleted: z.boolean() }),
+  },
+  {
+    method: "post",
+    path: "/geometry/sync/push",
+    alias: "Push Geometry Sync",
+    description: `Accept a sync-push batch for geometry-owned facet types. Dispatched via the shared @xubeltd/sync-protocol wire contract.. Actions: Geometry:PushGeometrySync`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({  }).partial().passthrough()
+      },
+    ],
+    response: z.object({  }).partial().passthrough(),
+  },
+  {
     method: "post",
     path: "/groups/",
     alias: "Create Group",
@@ -6421,6 +7011,488 @@ export const endpoints = makeApi([
       },
     ],
     response: XubeGetAccountGroupsResponse,
+  },
+  {
+    method: "get",
+    path: "/products/:productId",
+    alias: "Get Product",
+    description: `Get a single Product by id. Actions: Product:GetProduct`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ productId: z.string() })
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProduct,
+  },
+  {
+    method: "patch",
+    path: "/products/:productId",
+    alias: "Update Product",
+    description: `Update a Product&#x27;s name, description, serial number, or lifecycle. Actions: Product:UpdateProduct`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeUpdateProductRequest
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProduct,
+  },
+  {
+    method: "post",
+    path: "/products/:productId/account",
+    alias: "Assign Product To Account",
+    description: `Assign a Product and its allocated part tree to an account (child-first, idempotent). Actions: Product:AssignProduct`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeAssignProductToAccountRequest
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ success: z.boolean() }),
+  },
+  {
+    method: "post",
+    path: "/products/:productId/allocations",
+    alias: "Allocate Product Part",
+    description: `Allocate an unassigned part to a Product — assigns the part to the Product&#x27;s account and writes the child edge. Actions: Product:AllocateProductPart`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeAllocateProductPartRequest
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ success: z.boolean() }),
+  },
+  {
+    method: "delete",
+    path: "/products/:productId/allocations/:childComponentId",
+    alias: "Deallocate Product Part",
+    description: `Deallocate a part from a Product — removes the child edge and unassigns the part back to inventory. Actions: Product:DeallocateProductPart`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeDeallocateProductPartRequest
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "childComponentId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ success: z.boolean() }),
+  },
+  {
+    method: "post",
+    path: "/products/:productId/plan",
+    alias: "Set Product Plan",
+    description: `Write the Product&#x27;s plan facet and return a presigned upload URL for the plan image. Actions: Product:SetProductPlan`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeSetProductPlanRequest
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ presignedUploadUrl: z.string().url() }),
+  },
+  {
+    method: "delete",
+    path: "/products/:productId/plan",
+    alias: "Clear Product Plan",
+    description: `Clear the Product&#x27;s plan (deletes the image and the facet; idempotent). Actions: Product:ClearProductPlan`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ productId: z.string() })
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ success: z.boolean() }),
+  },
+  {
+    method: "get",
+    path: "/products/:productId/plan/url",
+    alias: "Get Product Plan Url",
+    description: `Get a presigned download URL for the Product&#x27;s stored plan image. Actions: Product:GetProductPlanUrl`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ productId: z.string() })
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: z.object({ planUrl: z.string().url() }),
+  },
+  {
+    method: "get",
+    path: "/products/:productId/readiness",
+    alias: "Get Product Readiness",
+    description: `Compute the Product&#x27;s build readiness — model-version tree match, missing/unexpected parts, allocation progress. Actions: Product:GetProductReadiness`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ productId: z.string() })
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductReadiness,
+  },
+  {
+    method: "get",
+    path: "/products/:productId/status",
+    alias: "Get Product Status",
+    description: `Get the Product&#x27;s build status. Actions: Product:GetProductStatus`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ productId: z.string() })
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductStatus,
+  },
+  {
+    method: "post",
+    path: "/products/:productId/status",
+    alias: "Set Product Status",
+    description: `Set the Product&#x27;s build status — ASSEMBLED is gated on full allocation, arrival, and a model-version tree match; SHIPPED requires ASSEMBLED. Actions: Product:SetProductStatus`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeSetProductStatusRequest
+      },
+      {
+        name: "productId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductStatus,
+  },
+  {
+    method: "get",
+    path: "/products/accounts/:accountId",
+    alias: "Get Products",
+    description: `List an account&#x27;s Products. Actions: Product:ListProducts`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeListProductsRequest
+      },
+      {
+        name: "accountId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProducts,
+  },
+  {
+    method: "post",
+    path: "/products/atomic",
+    alias: "Create Product Atomic",
+    description: `Create a Product via the client-supplied bundle (base + model-origin + status facets) in one atomic write. Actions: Product:CreateProduct`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ componentType: z.literal("PRODUCT"), creator: z.string().optional(), serialNumber: z.string().optional(), allowsCyclicalChildConnections: z.boolean().optional(), created: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), entityType: z.literal("PRODUCT"), description: z.string().optional(), type: z.literal("PRODUCT:COMPONENT"), updater: z.string().optional(), facets: z.array(
+                z.discriminatedUnion("facetType", [XubeCreateProductAtomicAccountEntityEntityFacetAccountRequest, XubeCreateProductAtomicModelEntityComponentFacetModelRequest, XubeCreateProductAtomicStatusProductComponentFacetStatusRequest])
+            ), lifecycle: z.enum(["ACTIVE", "INACTIVE"]), accountId: z.string().optional(), service: z.literal("Product"), name: z.string().optional(), id: z.string().min(3), updated: z.string().regex(/^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?(?:Z))$/).datetime({ offset: true }).optional(), modelOrigin: z.object({ versionId: z.string(), modelId: z.string() }), slug: z.string().optional() }).passthrough()
+      },
+    ],
+    response: z.object({ id: z.string().min(3) }),
+  },
+  {
+    method: "get",
+    path: "/products/models",
+    alias: "Get Product Models",
+    description: `List the global product model catalogue (isGlobal&#x3D;true). Actions: Product:ListProductModels`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeListProductModelsRequest
+      },
+    ],
+    response: XubeProductModels,
+  },
+  {
+    method: "post",
+    path: "/products/models",
+    alias: "Create Product Model",
+    description: `Create a product model (account-owned by default; global with isGlobal&#x3D;true). Actions: Product:CreateProductModel`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeCreateProductModelRequest
+      },
+    ],
+    response: XubeCreateProductModelResponse,
+  },
+  {
+    method: "get",
+    path: "/products/models/:modelId",
+    alias: "Get Product Model",
+    description: `Get a single product model by id. Actions: Product:GetProductModel`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ modelId: z.string() })
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductModel,
+  },
+  {
+    method: "patch",
+    path: "/products/models/:modelId",
+    alias: "Update Product Model",
+    description: `Update a product model&#x27;s name, description, or lifecycle. Actions: Product:UpdateProductModel`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeUpdateProductModelRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductModel,
+  },
+  {
+    method: "get",
+    path: "/products/models/:modelId/versions",
+    alias: "Get Product Model Versions",
+    description: `List the versions of a product model. Actions: Product:GetProductModelVersion`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: z.object({ modelId: z.string() })
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductModelVersions,
+  },
+  {
+    method: "post",
+    path: "/products/models/:modelId/versions",
+    alias: "Create Product Model Version",
+    description: `Create a DRAFT product model version — empty, or deep-cloned from an existing version via cloneFrom. Actions: Product:CreateProductModelVersion`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeCreateProductModelVersionRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeCreateProductModelVersionResponse,
+  },
+  {
+    method: "get",
+    path: "/products/models/:modelId/versions/:versionId",
+    alias: "Get Product Model Version",
+    description: `Get a single product model version. Actions: Product:GetProductModelVersion`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeGetProductModelVersionRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductModelVersion,
+  },
+  {
+    method: "post",
+    path: "/products/models/:modelId/versions/:versionId/deprecate",
+    alias: "Deprecate Product Model Version",
+    description: `Deprecate an ACTIVE product model version (ACTIVE → INACTIVE). Actions: Product:DeprecateProductModelVersion`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeDeprecateProductModelVersionRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductModelVersion,
+  },
+  {
+    method: "post",
+    path: "/products/models/:modelId/versions/:versionId/publish",
+    alias: "Publish Product Model Version",
+    description: `Publish a DRAFT product model version (DRAFT → ACTIVE; structure freezes). Actions: Product:PublishProductModelVersion`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubePublishProductModelVersionRequest
+      },
+      {
+        name: "modelId",
+        type: "Path",
+        schema: z.string()
+      },
+      {
+        name: "versionId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductModelVersion,
+  },
+  {
+    method: "get",
+    path: "/products/models/accounts/:accountId",
+    alias: "Get Account Product Models",
+    description: `List an account&#x27;s product model catalogue. Actions: Product:ListProductModels`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubeListProductModelsRequest
+      },
+      {
+        name: "accountId",
+        type: "Path",
+        schema: z.string()
+      },
+    ],
+    response: XubeProductModels,
+  },
+  {
+    method: "post",
+    path: "/products/sync/push",
+    alias: "Push Product Sync",
+    description: `Apply a batch of client change rows to product-service-owned records. Each row is routed to the product-core function for its type; unsupported types are rejected.. Actions: Product:PushProductSync`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: XubePushHandlerRequest
+      },
+    ],
+    response: XubePushHandlerResponse,
   },
   {
     method: "get",
