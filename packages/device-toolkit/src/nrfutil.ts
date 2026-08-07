@@ -36,6 +36,8 @@ const RECOVERY_MARKERS = [
   "access port protection",
   "recover",
   "device is protected",
+  "memory protection issue",
+  "probe access is non-secure",
 ] as const;
 
 export const isNrfRecoveryRequired = (output: string): boolean => {

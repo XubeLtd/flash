@@ -49,4 +49,14 @@ describe("isNrfRecoveryRequired", () => {
   test("does not recover for an unrelated programming failure", () => {
     expect(isNrfRecoveryRequired("firmware file is malformed")).toBe(false);
   });
+
+  test("recognises the nRF5340 non-secure NVMC access failure", () => {
+    expect(
+      isNrfRecoveryRequired(
+        "Device error: NVMC wait for ready failed: Memory access error at " +
+          "0x41080400. Probably a memory protection issue. Probe access is " +
+          "Non-secure (Generic)",
+      ),
+    ).toBe(true);
+  });
 });
