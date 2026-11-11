@@ -147,6 +147,8 @@ const streamRw612Rtt = async (uid: string): Promise<void> => {
       "rtt",
       "--target",
       "rw612",
+      "--connect",
+      "attach",
       "--uid",
       uid,
       "-a",
