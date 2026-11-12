@@ -5,6 +5,7 @@ import type { MonitorChannel } from "../serial-monitor";
 import type { ValidationResult } from "../version/validate";
 import {
   DeviceTypeOptionSchema,
+  type FlashOptions,
   type IDeviceType,
   type TDeviceTypeOption,
 } from "./device-type.interface";
@@ -22,7 +23,11 @@ export abstract class DeviceType implements IDeviceType {
     return this.model.generation;
   }
 
-  abstract flash(deviceId: string, sourceDir: string): Promise<boolean>;
+  abstract flash(
+    deviceId: string,
+    sourceDir: string,
+    options?: FlashOptions
+  ): Promise<boolean>;
 
   abstract validateForRebuild(versionDir: string): Promise<ValidationResult>;
   abstract rebuildFileSystem(stagedDir: string): Promise<void>;
