@@ -13,6 +13,11 @@ export const DEVICE_TYPE_OPTIONS = [
 export const DeviceTypeOptionSchema = z.enum(DEVICE_TYPE_OPTIONS);
 export type TDeviceTypeOption = z.infer<typeof DeviceTypeOptionSchema>;
 
+export type FlashOptions = {
+  /** Flash bootloader + firmware only; leave the filesystem partition untouched. */
+  skipFileSystem?: boolean;
+};
+
 export interface IDeviceType {
   model: TXubeGetDeviceModelsResponse[number];
   type: TDeviceTypeOption;
@@ -20,7 +25,11 @@ export interface IDeviceType {
 
   hasFileSystem: boolean;
 
-  flash: (deviceId: string, sourceDir: string) => Promise<boolean>;
+  flash: (
+    deviceId: string,
+    sourceDir: string,
+    options?: FlashOptions
+  ) => Promise<boolean>;
 
   validateForRebuild: (versionDir: string) => Promise<ValidationResult>;
   rebuildFileSystem: (stagedDir: string) => Promise<void>;

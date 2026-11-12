@@ -36,7 +36,7 @@ import {
   type ValidationResult,
 } from "../../version/validate";
 import { DeviceType } from "../device-type";
-import { DEVICE_TYPE_PLANET, type IDeviceType } from "../device-type.interface";
+import { DEVICE_TYPE_PLANET, type FlashOptions, type IDeviceType } from "../device-type.interface";
 
 const BIN_TO_SPARSE_HEX_SCRIPT = resolve("./tools/bin_to_sparse_hex.py");
 
@@ -101,7 +101,11 @@ export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
     return findStLinkChannel();
   };
 
-  flash = async (deviceId: string, sourceDir: string): Promise<boolean> => {
+  flash = async (
+    deviceId: string,
+    sourceDir: string,
+    options: FlashOptions = {}
+  ): Promise<boolean> => {
     const fsBin = resolve(
       sourceDir,
       FILE_SYSTEM_FOLDER_NAME,
@@ -113,11 +117,9 @@ export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
       await mkdir(tempDir, { recursive: true });
       const fsHex = resolve(tempDir, "storage_partition.hex");
 
-      await convertBinToSparseHex(
-        fsBin,
-        fsHex,
-        this.layout.fileSystem
-      );
+      if (!options.skipFileSystem) {
+        await convertBinToSparseHex(fsBin, fsHex, this.layout.fileSystem);
+      }
 
       const bootloader = resolve(
         sourceDir,
@@ -135,7 +137,9 @@ export class Gen1PlanetDeviceType extends BasePlanetDeviceType {
         entries: [
           { label: "bootloader", path: bootloader, address: this.layout.bootloader },
           { label: "firmware", path: firmware, address: this.layout.firmware },
-          { label: "filesystem", path: fsHex, address: this.layout.fileSystem },
+          ...(options.skipFileSystem
+            ? []
+            : [{ label: "filesystem", path: fsHex, address: this.layout.fileSystem }]),
         ],
       });
     } finally {
@@ -151,7 +155,11 @@ export class Gen2PlanetDeviceType extends BasePlanetDeviceType {
     return findJLinkChannel();
   };
 
-  flash = async (deviceId: string, sourceDir: string): Promise<boolean> => {
+  flash = async (
+    deviceId: string,
+    sourceDir: string,
+    options: FlashOptions = {}
+  ): Promise<boolean> => {
     const bootloaderBin = resolve(
       sourceDir,
       BOOTLOADER_FOLDER_NAME,
@@ -197,11 +205,9 @@ export class Gen2PlanetDeviceType extends BasePlanetDeviceType {
         firmwareNetHex,
         this.layout.firmwareNet
       );
-      await convertBinToSparseHex(
-        fsBin,
-        fsHex,
-        this.layout.fileSystem
-      );
+      if (!options.skipFileSystem) {
+        await convertBinToSparseHex(fsBin, fsHex, this.layout.fileSystem);
+      }
 
       return await flashWithNRFUtil({
         deviceId,
@@ -209,7 +215,9 @@ export class Gen2PlanetDeviceType extends BasePlanetDeviceType {
           { label: "firmware-net", path: firmwareNetHex, address: this.layout.firmwareNet, core: "network" },
           { label: "bootloader", path: bootloaderHex, address: this.layout.bootloader, core: "application" },
           { label: "firmware", path: firmwareHex, address: this.layout.firmware, core: "application" },
-          { label: "filesystem", path: fsHex, address: this.layout.fileSystem, core: "application" },
+          ...(options.skipFileSystem
+            ? []
+            : [{ label: "filesystem", path: fsHex, address: this.layout.fileSystem, core: "application" as const }]),
         ],
       });
     } finally {

@@ -24,7 +24,7 @@ import {
   type ValidationResult,
 } from "../../version/validate";
 import { DeviceType } from "../device-type";
-import { DEVICE_TYPE_SUN, type IDeviceType } from "../device-type.interface";
+import { DEVICE_TYPE_SUN, type FlashOptions, type IDeviceType } from "../device-type.interface";
 
 const SUN_JLINK_DEVICE = "RW612";
 const SUN_JLINK_SPEED = 4000;
@@ -71,7 +71,8 @@ const sourcePaths = (sourceDir: string) => ({
 
 const buildCommanderScript = (
   sourceDir: string,
-  offsets: SunFlashOffsets
+  offsets: SunFlashOffsets,
+  skipFileSystem: boolean
 ): string => {
   const { bootloader, firmware, fileSystem } = sourcePaths(sourceDir);
   return `
@@ -81,8 +82,7 @@ const buildCommanderScript = (
   h
   loadfile ${bootloader} ${offsets.bootloader}
   loadfile ${firmware} ${offsets.firmware}
-  loadfile ${fileSystem} ${offsets.fileSystem}
-  r
+${skipFileSystem ? "" : `  loadfile ${fileSystem} ${offsets.fileSystem}\n`}  r
   g
   exit
 `;
@@ -98,7 +98,11 @@ abstract class BaseSunDeviceType extends DeviceType implements IDeviceType {
     super(model, DEVICE_TYPE_SUN);
   }
 
-  abstract flash(deviceId: string, sourceDir: string): Promise<boolean>;
+  abstract flash(
+    deviceId: string,
+    sourceDir: string,
+    options?: FlashOptions
+  ): Promise<boolean>;
 
   validateForRebuild = async (versionDir: string): Promise<ValidationResult> => {
     return validateRequiredFiles(versionDir, SUN_REBUILD_REQUIRED_FILES);
@@ -121,10 +125,18 @@ export class Gen1SunDeviceType extends BaseSunDeviceType {
   protected offsets = GEN1_OFFSETS;
   protected fsBlockCount = GEN1_FS_BLOCK_COUNT;
 
-  flash = async (deviceId: string, sourceDir: string): Promise<boolean> => {
+  flash = async (
+    deviceId: string,
+    sourceDir: string,
+    options: FlashOptions = {}
+  ): Promise<boolean> => {
     return flashWithJLink({
       deviceId,
-      commanderScript: buildCommanderScript(sourceDir, this.offsets),
+      commanderScript: buildCommanderScript(
+        sourceDir,
+        this.offsets,
+        options.skipFileSystem ?? false
+      ),
     });
   };
 }
@@ -133,7 +145,11 @@ export class Gen2SunDeviceType extends BaseSunDeviceType {
   protected offsets = GEN2_OFFSETS;
   protected fsBlockCount = GEN2_FS_BLOCK_COUNT;
 
-  flash = async (deviceId: string, sourceDir: string): Promise<boolean> => {
+  flash = async (
+    deviceId: string,
+    sourceDir: string,
+    options: FlashOptions = {}
+  ): Promise<boolean> => {
     const { bootloader, firmware, fileSystem } = sourcePaths(sourceDir);
     return flashWithRw612({
       deviceId,
@@ -148,11 +164,15 @@ export class Gen2SunDeviceType extends BaseSunDeviceType {
           flashBase: this.offsets.firmware,
           label: "firmware",
         },
-        {
-          path: fileSystem,
-          flashBase: this.offsets.fileSystem,
-          label: "filesystem",
-        },
+        ...(options.skipFileSystem
+          ? []
+          : [
+              {
+                path: fileSystem,
+                flashBase: this.offsets.fileSystem,
+                label: "filesystem",
+              },
+            ]),
       ],
     });
   };

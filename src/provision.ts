@@ -24,16 +24,33 @@ import { promptAndPrepareEdit } from "./version/prepare-edit";
 import { removeStagedDir } from "./version/stage";
 import { uploadVersionZip } from "./version/upload";
 
+const KNOWN_FLAGS = new Set(["--skip-fs"]);
+
+const parseCliFlags = (argv: string[]): { skipFileSystem: boolean } => {
+  const unknown = argv.filter((arg) => !KNOWN_FLAGS.has(arg));
+  if (unknown.length > 0) {
+    console.error(`❌ Unknown argument(s): ${unknown.join(" ")}`);
+    console.error("Usage: bun flash [--skip-fs]");
+    process.exit(1);
+  }
+  return { skipFileSystem: argv.includes("--skip-fs") };
+};
+
 async function main() {
+  const { skipFileSystem } = parseCliFlags(process.argv.slice(2));
+
   console.log("--------------------------------------------------");
   console.log("📦 Welcome to the Xube Device Flash Tool 🏗");
   console.log("--------------------------------------------------\n");
   console.log(`Environment: ${xubeEnvironment}\n`);
+  if (skipFileSystem) {
+    console.log("⚠️  --skip-fs: the filesystem partition will NOT be flashed.\n");
+  }
 
   const auth = new Authentication(resolveCredentials(creds));
 
   try {
-    await flashDevice(auth);
+    await flashDevice(auth, skipFileSystem);
     return;
   } catch (error) {
     console.error("Error in main function:", error);
@@ -77,7 +94,10 @@ const promptToSelectDeviceVersion = async (
   return version;
 };
 
-const flashDevice = async (auth: Authentication): Promise<void> => {
+const flashDevice = async (
+  auth: Authentication,
+  skipFileSystem: boolean
+): Promise<void> => {
   const userAccounts = await getUserAccounts(auth);
   if (!userAccounts) {
     console.error("❌ Failed to fetch user accounts.");
@@ -111,11 +131,14 @@ const flashDevice = async (auth: Authentication): Promise<void> => {
 
   const originalVersionDir = resolve("./devices", deviceId, version);
 
-  const prepared = await promptAndPrepareEdit(
-    deviceId,
-    deviceType,
-    originalVersionDir
-  );
+  // Config edits live in the filesystem image, so with --skip-fs they would be
+  // uploaded as a new version without ever reaching the device. Skip them.
+  if (skipFileSystem) {
+    console.log("ℹ️  --skip-fs set — skipping config edits (they live in the filesystem).");
+  }
+  const prepared = skipFileSystem
+    ? null
+    : await promptAndPrepareEdit(deviceId, deviceType, originalVersionDir);
 
   const sourceDir = prepared ? prepared.stagedDir : originalVersionDir;
 
@@ -143,7 +166,9 @@ const flashDevice = async (auth: Authentication): Promise<void> => {
     }
   }
 
-  const flashSuccess = await deviceType.flash(deviceId, sourceDir);
+  const flashSuccess = await deviceType.flash(deviceId, sourceDir, {
+    skipFileSystem,
+  });
   if (!flashSuccess) {
     console.error("❌ Failed to flash device.");
     if (prepared) {
